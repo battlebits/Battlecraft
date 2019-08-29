@@ -1,0 +1,3 @@
+rootProject.name = 'Battlecraft'
+include 'battlecraft-main'
+
