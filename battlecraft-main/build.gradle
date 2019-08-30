@@ -16,7 +16,7 @@ repositories {
 
 dependencies {
     compile group: 'org.spigotmc', name: 'spigot-api', version: '1.14.4-R0.1-SNAPSHOT'
-    compile group: 'br.com.battlebits', name: 'commons-bukkit', version: '1.0'
+    compile group: 'br.com.battlebits', name: 'commons-bukkit', version: '1.0-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
