@@ -1,4 +1,4 @@
 package br.com.battlebits.battlecraft.event;
 
-public class PlayerKitEvent {
+public abstract class PlayerKitEvent {
 }
