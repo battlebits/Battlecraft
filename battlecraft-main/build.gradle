@@ -8,6 +8,7 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
+apply plugin: 'java'
 
 repositories {
     maven { url = uri("https://hub.spigotmc.org/nexus/content/groups/public") }
@@ -22,7 +23,16 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-apply plugin: 'java'
+processResources {
+    def fullVersion = version
+    if (System.getenv('BUILD_NUMBER')) {
+        fullVersion = version + '-' + System.getenv('BUILD_NUMBER')
+    }
+    filesMatching('plugin.yml') {
+        expand(["fullVersion":fullVersion])
+    }
+
+}
 
 sourceSets {
     main.java.srcDir "src/main/java"
