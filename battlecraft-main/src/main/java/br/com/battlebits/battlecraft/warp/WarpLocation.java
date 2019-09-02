@@ -1,20 +1,25 @@
 package br.com.battlebits.battlecraft.warp;
 
+import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
+import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.bukkit.scoreboard.BattleScoreboard;
+import br.com.battlebits.commons.command.CommandClass;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class WarpLocation implements Warp, Listener {
+@Getter
+public abstract class WarpLocation implements Warp, Listener, CommandClass {
 
     private String name;
-    private String description;
     private ItemStack icon;
     private List<Player> players;
 
@@ -24,9 +29,8 @@ public abstract class WarpLocation implements Warp, Listener {
 
     private WorldMap worldMap;
 
-    public WarpLocation(String name, String description, ItemStack itemStack, Location spawnLocation, WorldMap map) {
+    public WarpLocation(String name, ItemStack itemStack, Location spawnLocation, WorldMap map) {
         this.name = name;
-        this.description = description;
         this.icon = itemStack;
         this.players = new ArrayList<>();
         this.spawnLocation = spawnLocation;
@@ -52,5 +56,25 @@ public abstract class WarpLocation implements Warp, Listener {
     @Override
     public boolean isInWarp(Player player) {
         return players.contains(player);
+    }
+
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void addPlayer(PlayerWarpJoinEvent event) {
+        Player p = event.getPlayer();
+        if (event.getWarp() != this)
+            return;
+        players.add(p);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onJoinMonitor(PlayerWarpJoinEvent event) {
+        if(event.isCancelled())
+            players.remove(event.getPlayer());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void removePlayer(PlayerWarpQuitEvent event) {
+        if(event.isCancelled())
+            players.remove(event.getPlayer());
     }
 }
