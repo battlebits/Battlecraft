@@ -1,13 +1,13 @@
-package br.com.battlebits.battlecraft.event;
+package br.com.battlebits.battlecraft.event.warp;
 
 import br.com.battlebits.battlecraft.warp.Warp;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
-public class PlayerWarpJoinEvent extends PlayerWarpEvent {
+public class PlayerWarpQuitEvent extends PlayerWarpEvent {
     public static final HandlerList handlers = new HandlerList();
 
-    public PlayerWarpJoinEvent(Player who, Warp warp) {
+    public PlayerWarpQuitEvent(Player who, Warp warp) {
         super(who, warp);
     }
 
