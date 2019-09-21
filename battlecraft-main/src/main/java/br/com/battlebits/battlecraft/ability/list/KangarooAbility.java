@@ -87,8 +87,9 @@ public class KangarooAbility extends AbilityImpl {
         }
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             final Player player = (Player) event.getEntity();
-            //Check if using and protect status
-            //Add cooldown
+            if (!isProtected(player)) {
+                addCooldown(player, 6000);
+            }
         }
     }
 

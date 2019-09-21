@@ -53,10 +53,10 @@ public class NinjaAbility extends AbilityImpl {
     @EventHandler
     public void onPlayerToggleSneakEvent(PlayerToggleSneakEvent event) {
         final Player player = event.getPlayer();
-        if (!event.isSneaking() && this.ability.containsKey(player)) {
+        if (!event.isSneaking() && this.ability.containsKey(player) && !isProtected(player) && isUsing(player)) {
             final Player target = this.ability.get(player);
             //Check protect status
-            if (target.isOnline() && isUsing(player)) {
+            if (target.isOnline() && !isProtected(target)) {
                 if (player.getLocation().distance(target.getLocation()) > 40) {
                     player.sendMessage("§cO jogador está muito distante!");
                     return;

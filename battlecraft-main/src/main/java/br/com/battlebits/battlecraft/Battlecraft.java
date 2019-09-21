@@ -3,6 +3,7 @@ package br.com.battlebits.battlecraft;
 import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.battlecraft.listener.*;
 import br.com.battlebits.battlecraft.manager.AbilityManager;
+import br.com.battlebits.battlecraft.manager.CooldownManager;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.manager.WarpManager;
 import br.com.battlebits.battlecraft.warp.WarpLocation;
@@ -66,5 +67,6 @@ public class Battlecraft extends JavaPlugin {
     private void loadManagers() {
         AbilityManager.create();
         AbilityManager.registerKits();
+        CooldownManager.create();
     }
 }

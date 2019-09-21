@@ -1,6 +1,7 @@
 package br.com.battlebits.battlecraft.ability;
 
 import br.com.battlebits.battlecraft.manager.CooldownManager;
+import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -35,6 +36,11 @@ public abstract class AbilityImpl implements Ability {
     @Override
     public int getPrice() {
         return price;
+    }
+
+    @Override
+    public boolean isProtected(Player player) {
+        return ProtectionManager.isProtected(player);
     }
 
     @Override

@@ -18,6 +18,8 @@ public interface Ability extends Listener {
 
     void onReceiveItems(Player player);
 
+    boolean isProtected(Player player);
+
     boolean isUsing(Player player);
 
     boolean hasCooldown(Player player);

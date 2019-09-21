@@ -18,12 +18,12 @@ public class FishermanAbility extends AbilityImpl {
     public void onPlayerFishListener(PlayerFishEvent event) {
         if (event.getState() == PlayerFishEvent.State.CAUGHT_ENTITY) {
             final Player player = event.getPlayer();
-            //Check protect status
-            if (isUsing(player) && event.getCaught() instanceof Player) {
+            if (isUsing(player) && event.getCaught() instanceof Player && !isProtected(player)) {
                 Player c = (Player) event.getCaught();
-                //Check protect status
-                c.sendMessage("§eUm fisherman te puxou!");
-                c.teleport(player.getLocation());
+                if (!isProtected(c)) {
+                    c.sendMessage("§eUm fisherman te puxou!");
+                    c.teleport(player.getLocation());
+                }
             }
         }
     }
