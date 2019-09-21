@@ -37,6 +37,11 @@ public class KangarooAbility extends AbilityImpl {
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
                 event.setCancelled(true);
             }
+            if (hasCooldown(player)) {
+                //Send cooldown message
+                player.setVelocity(new Vector(0.0D, -1.0D, 0.0D));
+                return;
+            }
             //Check cooldown
             if (!this.ability.contains(player)) {
                 Vector v;

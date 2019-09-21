@@ -23,7 +23,10 @@ public class MonkAbility extends AbilityImpl {
         final Player player = event.getPlayer();
         if (event.getRightClicked() instanceof Player && player.getInventory().getItemInMainHand().getType() == Material
                 .BLAZE_ROD && isUsing(player)) {
-            //Check cooldown
+            if (hasCooldown(player)) {
+                //Send cooldown message
+                return;
+            }
             Player target = (Player) event.getRightClicked();
             PlayerInventory inv = target.getInventory();
             int slot = new Random().nextInt(35);
