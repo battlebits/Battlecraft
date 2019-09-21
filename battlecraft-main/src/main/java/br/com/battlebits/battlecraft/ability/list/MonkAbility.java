@@ -37,7 +37,7 @@ public class MonkAbility extends AbilityImpl {
             }
             inv.setItemInMainHand(randomItem);
             inv.setItem(slot, itemInHand);
-            //Add cooldown
+            addCooldown(player, 7000);
             player.sendMessage("§aVocê monkou o jogador!");
             target.sendMessage("§aVocê foi monkado!");
             target.playSound(target.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 1.0F);

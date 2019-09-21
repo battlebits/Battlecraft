@@ -3,6 +3,7 @@ package br.com.battlebits.battlecraft.manager;
 import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -63,6 +64,7 @@ public class CooldownManager implements Listener {
 
     @AllArgsConstructor
     @Getter
+    @Builder
     public static class Cooldown {
 
         private Player player;

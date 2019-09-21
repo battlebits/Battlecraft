@@ -42,7 +42,6 @@ public class KangarooAbility extends AbilityImpl {
                 player.setVelocity(new Vector(0.0D, -1.0D, 0.0D));
                 return;
             }
-            //Check cooldown
             if (!this.ability.contains(player)) {
                 Vector v;
                 if (player.isSneaking()) {

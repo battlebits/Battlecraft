@@ -22,6 +22,8 @@ public interface Ability extends Listener {
 
     boolean hasCooldown(Player player);
 
+    void addCooldown(Player player, long time);
+
     long getCooldown(Player player);
 
 }

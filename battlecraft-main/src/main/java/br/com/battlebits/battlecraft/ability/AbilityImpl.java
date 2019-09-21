@@ -51,4 +51,12 @@ public abstract class AbilityImpl implements Ability {
     public long getCooldown(Player player) {
         return CooldownManager.getCooldown(player, "ability." + name.toLowerCase()).getTime();
     }
+
+    @Override
+    public void addCooldown(Player player, long time) {
+        CooldownManager.addCooldown(CooldownManager.Cooldown.builder()
+                .name("ability." + name.toLowerCase())
+                .player(player).time(System.currentTimeMillis() + time)
+                .build());
+    }
 }

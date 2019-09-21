@@ -66,7 +66,7 @@ public class NinjaAbility extends AbilityImpl {
                     player.teleport(target.getLocation());
                     player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0F, 1.0F);
                     ability.remove(player);
-                    //Add cooldown
+                    addCooldown(player, 4000);
                 } else {
                     //Send cooldown message
                 }
