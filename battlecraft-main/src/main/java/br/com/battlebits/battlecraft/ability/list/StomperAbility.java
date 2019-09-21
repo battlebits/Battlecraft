@@ -1,5 +1,6 @@
-package br.com.battlebits.battlecraft.ability;
+package br.com.battlebits.battlecraft.ability.list;
 
+import br.com.battlebits.battlecraft.ability.AbilityImpl;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
