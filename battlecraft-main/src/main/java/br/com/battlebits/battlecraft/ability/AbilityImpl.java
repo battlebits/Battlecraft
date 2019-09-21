@@ -1,5 +1,6 @@
 package br.com.battlebits.battlecraft.ability;
 
+import br.com.battlebits.battlecraft.manager.CooldownManager;
 import lombok.AllArgsConstructor;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -43,11 +44,11 @@ public abstract class AbilityImpl implements Ability {
 
     @Override
     public boolean hasCooldown(Player player) {
-        return false;
+        return CooldownManager.hasCooldown(player, "ability." + name.toLowerCase());
     }
 
     @Override
     public long getCooldown(Player player) {
-        return 0;
+        return CooldownManager.getCooldown(player, "ability." + name.toLowerCase()).getTime();
     }
 }

@@ -4,6 +4,7 @@ import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
@@ -35,16 +36,16 @@ public class CooldownManager implements Listener {
         cooldowns.remove(cooldown);
     }
 
-    public static boolean hasCooldown(String player, String name) {
+    public static boolean hasCooldown(Player player, String name) {
         return cooldowns.stream().anyMatch(c -> c.getPlayer().equals(player) && c.getName().equals(name));
     }
 
-    public static Cooldown getCooldown(String player, String name) {
+    public static Cooldown getCooldown(Player player, String name) {
         return cooldowns.stream().filter(c -> c.getPlayer().equals(player) && c.getName().equals(name))
                 .findFirst().orElse(null);
     }
 
-    public static void removeAllCooldowns(String player) {
+    public static void removeAllCooldowns(Player player) {
         for (Cooldown cooldown : cooldowns.stream().filter(c -> c.getPlayer().equals(player)).collect(Collectors.toSet())) {
             removeCooldown(cooldown);
         }
@@ -64,7 +65,7 @@ public class CooldownManager implements Listener {
     @Getter
     public static class Cooldown {
 
-        private String player;
+        private Player player;
         private String name;
         private long time;
     }
