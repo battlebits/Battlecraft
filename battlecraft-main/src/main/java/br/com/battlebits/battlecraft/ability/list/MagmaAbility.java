@@ -24,11 +24,10 @@ public class MagmaAbility extends AbilityImpl {
 
     @EventHandler
     public void onEntityDamageEvent(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player) {
-            if (isUsing((Player) event.getEntity()) && (event.getCause() == EntityDamageEvent.DamageCause.LAVA || event
-                    .getCause().name().contains("FIRE")) && event.getCause() != EntityDamageEvent.DamageCause.LIGHTNING) {
-                event.setCancelled(true);
-            }
+        if (event.getEntity() instanceof Player && isUsing((Player) event.getEntity()) && (event.getCause() ==
+                EntityDamageEvent.DamageCause.LAVA || event.getCause().name().contains("FIRE")) && event.getCause() !=
+                EntityDamageEvent.DamageCause.LIGHTNING) {
+            event.setCancelled(true);
         }
     }
 
