@@ -1,6 +1,9 @@
 package br.com.battlebits.battlecraft;
 
+import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.battlecraft.listener.*;
+import br.com.battlebits.battlecraft.manager.AbilityManager;
+import br.com.battlebits.battlecraft.manager.CooldownManager;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.manager.WarpManager;
 import br.com.battlebits.battlecraft.warp.WarpLocation;
@@ -39,6 +42,7 @@ public class Battlecraft extends JavaPlugin {
         this.warpManager = new WarpManager(this);
         loadWarps();
         loadListeners();
+        loadManagers();
     }
 
     private void loadWarps() {
@@ -58,5 +62,11 @@ public class Battlecraft extends JavaPlugin {
         manager.registerEvents(new SoupListener(), this);
         manager.registerEvents(new WarpListener(this), this);
         manager.registerEvents(new CombatLogListener(), this);
+    }
+
+    private void loadManagers() {
+        AbilityManager.create();
+        AbilityManager.registerKits();
+        CooldownManager.create();
     }
 }
