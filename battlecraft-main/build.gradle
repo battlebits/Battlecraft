@@ -1,4 +1,5 @@
 plugins {
+    id "io.freefair.lombok" version "4.0.1"
     id 'java'
 }
 
@@ -6,6 +7,8 @@ group 'br.com.battlebits'
 version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
+
+apply plugin: 'java'
 
 repositories {
     maven { url = uri("https://hub.spigotmc.org/nexus/content/groups/public") }
@@ -16,11 +19,24 @@ repositories {
 
 dependencies {
     compile group: 'org.spigotmc', name: 'spigot-api', version: '1.14.4-R0.1-SNAPSHOT'
-    compile group: 'br.com.battlebits', name: 'commons-bukkit', version: '1.0'
+    compile group: 'br.com.battlebits', name: 'commons-bukkit', version: '1.0-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group:  'org.powermock', name: 'powermock-module-junit4', version: '2.0.2'
+    testCompile group:  'org.powermock', name: 'powermock-api-mockito2', version: '2.0.2'
+    testCompile group:  'org.powermock', name: 'powermock-api-easymock', version: '2.0.2'
+
 }
 
-apply plugin: 'java'
+processResources {
+    def fullVersion = version
+    if (System.getenv('BUILD_NUMBER')) {
+        fullVersion = version + '-' + System.getenv('BUILD_NUMBER')
+    }
+    filesMatching('plugin.yml') {
+        expand(["fullVersion":fullVersion])
+    }
+
+}
 
 sourceSets {
     main.java.srcDir "src/main/java"
