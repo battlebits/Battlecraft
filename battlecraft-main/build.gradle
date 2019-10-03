@@ -45,3 +45,28 @@ sourceSets {
     test.java.srcDir "src/test/java"
     test.resources.srcDir "src/test/resources"
 }
+
+publishing {
+    if(!project.hasProperty("nexusUser") || !project.hasProperty("nexusPassword"))
+        return;
+    def nexusUser = "${nexusUser}"
+    def nexusPassword = "${nexusPassword}"
+    publications {
+        mavenBukkit(MavenPublication) {
+            from components.java
+            afterEvaluate {
+                artifactId = 'battlecraft-main'
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = version.endsWith('SNAPSHOT') ? 'https://repo.battlebits.com.br/repository/maven-snapshots/':
+                    'https://repo.battlebits.com.br/repository/maven-releases/'
+            credentials {
+                username nexusUser
+                password nexusPassword
+            }
+        }
+    }
+}
