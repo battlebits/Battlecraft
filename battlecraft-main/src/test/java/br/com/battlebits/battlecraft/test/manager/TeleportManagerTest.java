@@ -19,8 +19,8 @@ import static org.powermock.api.mockito.PowerMockito.when;
 public class TeleportManagerTest {
 
     /*
-     * O problema dessa classe é que não estão sendo feitos testes de unidade e sim testes de integração (que devem
-     * ser feitos mais tarde)
+     * O problema dessa classe é que não estão sendo feitos testes de unidade e
+     * sim testes de integração (que devem ser feitos mais tarde)
      *
      */
 

@@ -1,6 +1,5 @@
 package br.com.battlebits.battlecraft;
 
-import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.battlecraft.listener.*;
 import br.com.battlebits.battlecraft.manager.AbilityManager;
 import br.com.battlebits.battlecraft.manager.CooldownManager;
@@ -62,6 +61,7 @@ public class Battlecraft extends JavaPlugin {
         manager.registerEvents(new SoupListener(), this);
         manager.registerEvents(new WarpListener(this), this);
         manager.registerEvents(new CombatLogListener(), this);
+        manager.registerEvents(new TeleportListener(), this);
     }
 
     private void loadManagers() {
