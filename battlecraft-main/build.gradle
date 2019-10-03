@@ -1,6 +1,7 @@
 plugins {
     id "io.freefair.lombok" version "4.0.1"
     id 'java'
+    id 'maven-publish'
 }
 
 group 'br.com.battlebits'
