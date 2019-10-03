@@ -20,6 +20,8 @@ public class WarpManager {
 
     private String defaultWarp;
 
+    private static final String WARP_META = "warp";
+
     public WarpManager(Plugin plugin) {
         this.plugin = plugin;
         this.warps = new HashMap<>();
@@ -30,8 +32,8 @@ public class WarpManager {
     }
 
     public Warp getPlayerWarp(Player player) {
-        if (player.hasMetadata("warp")) {
-            List<MetadataValue> list = player.getMetadata("warp");
+        if (player.hasMetadata(WARP_META)) {
+            List<MetadataValue> list = player.getMetadata(WARP_META);
             return getWarp(list.size() > 0 ? list.get(0).asString() : null);
         }
         return null;
@@ -49,7 +51,7 @@ public class WarpManager {
         event.setCancelled(cancelled);
         plugin.getServer().getPluginManager().callEvent(event);
         if(!event.isCancelled()) {
-            player.setMetadata("warp", new FixedMetadataValue(plugin, warp.getId()));
+            player.setMetadata(WARP_META, new FixedMetadataValue(plugin, warp.getId()));
             player.teleport(warp.getSpawnLocation());
         }
     }

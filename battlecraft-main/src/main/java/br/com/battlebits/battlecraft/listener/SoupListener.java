@@ -11,6 +11,9 @@ import org.bukkit.inventory.ItemStack;
 
 public class SoupListener implements Listener {
 
+    private final static double HEALTH = 7d;
+    private final static int FOOD = 7;
+
     @EventHandler
     public void onSoup(PlayerInteractEvent event) {
         Player p = event.getPlayer();
@@ -26,13 +29,13 @@ public class SoupListener implements Listener {
             event.setCancelled(true);
             double max_health = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
             if (p.getHealth() < max_health)
-                if (p.getHealth() + 7 <= max_health)
-                    p.setHealth(p.getHealth() + 7);
+                if (p.getHealth() + HEALTH <= max_health)
+                    p.setHealth(p.getHealth() + HEALTH);
                 else
                     p.setHealth(max_health);
             else if (p.getFoodLevel() < 20)
-                if (p.getFoodLevel() + 7 <= 20)
-                    p.setFoodLevel(p.getFoodLevel() + 7);
+                if (p.getFoodLevel() + FOOD <= 20)
+                    p.setFoodLevel(p.getFoodLevel() + FOOD);
                 else
                     p.setFoodLevel(20);
             item.setType(Material.BOWL);

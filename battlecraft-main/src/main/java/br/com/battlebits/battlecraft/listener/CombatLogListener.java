@@ -46,7 +46,7 @@ public class CombatLogListener implements Listener {
         CombatLog log = CombatLogManager.getCombatLog(p);
         if (log == null)
             return;
-        if (System.currentTimeMillis() < log.getTime()) {
+        if (log.isFighting()) {
             Player combatLogger = log.getCombatLogged();
             if (combatLogger != null)
                 if (combatLogger.isOnline())

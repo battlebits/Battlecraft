@@ -8,10 +8,10 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 public class ProtectionManager {
 
-    private static String METADATA_KEY = "protected";
+    private static String PROTECTION_META = "protected";
 
     public static boolean isProtected(Player player) {
-        return player.hasMetadata(METADATA_KEY);
+        return player.hasMetadata(PROTECTION_META);
     }
 
     public static boolean addProtection(Player player) {
@@ -20,7 +20,7 @@ public class ProtectionManager {
         PlayerProtectionReceiveEvent event = new PlayerProtectionReceiveEvent(player);
         Battlecraft.getInstance().getServer().getPluginManager().callEvent(event);
         if(!event.isCancelled())
-            player.setMetadata(METADATA_KEY, new FixedMetadataValue(Battlecraft.getInstance(), true));
+            player.setMetadata(PROTECTION_META, new FixedMetadataValue(Battlecraft.getInstance(), true));
         return !event.isCancelled();
     }
 
@@ -30,7 +30,7 @@ public class ProtectionManager {
         PlayerProtectionRemoveEvent event = new PlayerProtectionRemoveEvent(player);
         Battlecraft.getInstance().getServer().getPluginManager().callEvent(event);
         if(!event.isCancelled())
-            player.removeMetadata(METADATA_KEY, Battlecraft.getInstance());
+            player.removeMetadata(PROTECTION_META, Battlecraft.getInstance());
         return !event.isCancelled();
     }
 
