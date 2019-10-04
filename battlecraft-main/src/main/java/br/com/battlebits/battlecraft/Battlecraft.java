@@ -60,6 +60,7 @@ public class Battlecraft extends JavaPlugin {
     private void loadListeners() {
         PluginManager manager = getServer().getPluginManager();
 
+        manager.registerEvents(new ProtectionListener(), this);
         manager.registerEvents(new MoveListener(), this);
         manager.registerEvents(new PlayerListener(), this);
         manager.registerEvents(new DamageFixListener(), this);
