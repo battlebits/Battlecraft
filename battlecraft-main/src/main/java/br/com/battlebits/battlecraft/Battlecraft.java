@@ -37,6 +37,12 @@ public class Battlecraft extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        Plugin dependency = this.getServer().getPluginManager().getPlugin("Commons");
+        if (dependency == null) {
+            this.getLogger().warning("Commons was not enabled, disabling Battlecraft");
+            this.getPluginLoader().disablePlugin(this);
+            return;
+        }
         instance = this;
         this.warpManager = new WarpManager(this);
         loadWarps();
