@@ -5,6 +5,8 @@ import br.com.battlebits.battlecraft.event.PlayerDamagePlayerEvent;
 import br.com.battlebits.battlecraft.event.RealMoveEvent;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.commons.Commons;
+import br.com.battlebits.commons.CommonsConst;
+import br.com.battlebits.commons.account.BattleAccount;
 import br.com.battlebits.commons.account.Group;
 import br.com.battlebits.commons.bukkit.event.admin.PlayerAdminModeEvent;
 import br.com.battlebits.commons.bukkit.event.admin.PlayerAdminModeEvent.AdminMode;
@@ -24,15 +26,22 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.util.Vector;
 
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.DONATOR_JOIN_FULL;
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.SERVER_FULL;
+import static br.com.battlebits.commons.translate.TranslationCommon.tl;
+
 public class PlayerListener implements Listener {
 
-    private static String NOFALL_TAG = "nofall";
+    private static final String NOFALL_TAG = "nofall";
+    private static final int BATTLECOIN_LOGIN = 10; // TODO Procurar pela melhor quantidade de Battlecoins
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageByEntityEvent event) {
@@ -185,6 +194,26 @@ public class PlayerListener implements Listener {
         if (p.hasMetadata(NOFALL_TAG)) {
             event.setCancelled(true);
             p.removeMetadata(NOFALL_TAG, Battlecraft.getInstance());
+        }
+    }
+
+    @EventHandler
+    public void onLogin(PlayerLoginEvent event) {
+        Player p = event.getPlayer();
+        BattleAccount account = Commons.getAccount(p.getUniqueId());
+        if (Bukkit.getOnlinePlayers().size() >= Bukkit.getMaxPlayers() + br.com.battlebits.commons.bukkit.api.admin.AdminMode.getInstance().playersInAdmin()) {
+            if (account.getBattleCoins() >= BATTLECOIN_LOGIN) {
+                account.removeBattleCoin(BATTLECOIN_LOGIN);
+                p.sendMessage(tl(account.getLanguage(), DONATOR_JOIN_FULL, BATTLECOIN_LOGIN));
+            } else
+                event.disallow(Result.KICK_FULL,
+                        tl(account.getLanguage(), SERVER_FULL, CommonsConst.STORE.toUpperCase()));
+        }
+
+        if (!Bukkit.hasWhitelist() || Bukkit.getWhitelistedPlayers().contains(p)) {
+            event.allow();
+        } else {
+            event.disallow(Result.KICK_WHITELIST, "O servidor esta em manutencao!");
         }
     }
 

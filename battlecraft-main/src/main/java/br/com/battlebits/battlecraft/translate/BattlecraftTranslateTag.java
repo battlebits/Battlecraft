@@ -7,7 +7,9 @@ public enum BattlecraftTranslateTag {
     TELEPORT_ON_AIR("teleport.on-air"),
     TELEPORT_COOLDOWN,
     PROTECTION_TAG,
-    PROTECTION_LOST;
+    PROTECTION_LOST,
+    DONATOR_JOIN_FULL("donator.join-full"),
+    SERVER_FULL("server-full");
 
 
 
