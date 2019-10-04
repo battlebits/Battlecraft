@@ -3,11 +3,13 @@ package br.com.battlebits.battlecraft;
 import br.com.battlebits.battlecraft.listener.*;
 import br.com.battlebits.battlecraft.manager.AbilityManager;
 import br.com.battlebits.battlecraft.manager.CooldownManager;
-import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.manager.WarpManager;
+import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.warp.WarpLocation;
 import br.com.battlebits.battlecraft.warp.WarpSpawn;
 import br.com.battlebits.battlecraft.world.map.VoidMap;
+import br.com.battlebits.commons.backend.properties.PropertiesStorageDataTranslation;
+import br.com.battlebits.commons.translate.TranslationCommon;
 import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -22,7 +24,6 @@ public class Battlecraft extends JavaPlugin {
     @Getter
     private static Battlecraft instance;
     private WarpManager warpManager;
-    private ProtectionManager protectionManager;
 
     @Override
     public void onLoad() {
@@ -44,6 +45,7 @@ public class Battlecraft extends JavaPlugin {
         }
         instance = this;
         this.warpManager = new WarpManager(this);
+        TranslationCommon.addTranslation(new PropertiesStorageDataTranslation(BattlecraftTranslateTag.class));
         loadWarps();
         loadListeners();
         loadManagers();
