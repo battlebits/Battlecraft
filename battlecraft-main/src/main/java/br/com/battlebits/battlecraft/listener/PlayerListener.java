@@ -13,6 +13,7 @@ import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -31,15 +32,26 @@ import org.bukkit.util.Vector;
 
 public class PlayerListener implements Listener {
 
+    private static String NOFALL_TAG = "nofall";
+
     @EventHandler(priority = EventPriority.MONITOR)
     public void onEntityDamage(EntityDamageByEntityEvent event) {
-        if (!(event.getDamager() instanceof Player))
-            return;
         if (!(event.getEntity() instanceof Player))
+            return;
+        Player damager = null;
+        if (event.getDamager() instanceof Player) {
+            damager = (Player) event.getDamager();
+        } else if (event.getDamager() instanceof Projectile) {
+            Projectile pr = (Projectile) event.getDamager();
+            if (pr.getShooter() != null && pr.getShooter() instanceof Player) {
+                damager = (Player) pr.getShooter();
+            }
+        }
+        if (damager == null)
             return;
         if (event.isCancelled())
             return;
-        PlayerDamagePlayerEvent event2 = new PlayerDamagePlayerEvent((Player) event.getDamager(), (Player) event.getEntity(), event.getDamage(), event.getFinalDamage());
+        PlayerDamagePlayerEvent event2 = new PlayerDamagePlayerEvent(damager, (Player) event.getEntity(), event.getDamage(), event.getFinalDamage());
         Bukkit.getPluginManager().callEvent(event2);
         event.setCancelled(event2.isCancelled());
     }
@@ -112,7 +124,6 @@ public class PlayerListener implements Listener {
             }
     }
 
-
     @EventHandler
     public void onPing(ServerListPingEvent event) {
         // TODO Refazer mensagem no Inicio
@@ -147,8 +158,6 @@ public class PlayerListener implements Listener {
             event.setCancelled(true);
         }
     }
-
-    private static String NOFALL_TAG = "nofall";
 
     @EventHandler
     public void onMove(RealMoveEvent event) {
