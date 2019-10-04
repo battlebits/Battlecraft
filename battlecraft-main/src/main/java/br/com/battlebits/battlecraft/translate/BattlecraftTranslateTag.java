@@ -5,7 +5,9 @@ public enum BattlecraftTranslateTag {
     TELEPORT_TAG,
     TELEPORT_IN_PROGRESS("teleport.in-progress"),
     TELEPORT_ON_AIR("teleport.on-air"),
-    TELEPORT_COOLDOWN;
+    TELEPORT_COOLDOWN,
+    PROTECTION_TAG,
+    PROTECTION_LOST;
 
 
 

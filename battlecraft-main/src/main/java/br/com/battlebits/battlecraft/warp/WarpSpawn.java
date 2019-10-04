@@ -6,12 +6,18 @@ import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.world.WorldMap;
+import br.com.battlebits.commons.Commons;
+import br.com.battlebits.commons.translate.Language;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
+
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.PROTECTION_LOST;
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.PROTECTION_TAG;
+import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
 public class WarpSpawn extends WarpLocation {
 
@@ -24,8 +30,10 @@ public class WarpSpawn extends WarpLocation {
         Player p = event.getPlayer();
         if (!isInWarp(p))
             return;
-        ProtectionManager.addProtection(p);
+
         p.sendMessage("Bem vindo a warp '" + getName() + "'");
+        p.sendMessage("addProtection: " + ProtectionManager.addProtection(p));
+        p.sendMessage("isProtected: " + ProtectionManager.isProtected(p));
     }
 
     @EventHandler
@@ -33,7 +41,8 @@ public class WarpSpawn extends WarpLocation {
         Player p = event.getPlayer();
         if (!isInWarp(p))
             return;
-        p.sendMessage("Voce perdeu a proteção de spawn");
+        Language lang = Commons.getLanguage(p.getUniqueId());
+        p.sendMessage(tl(lang, PROTECTION_TAG) + tl(lang, PROTECTION_LOST));
     }
 
     @EventHandler
