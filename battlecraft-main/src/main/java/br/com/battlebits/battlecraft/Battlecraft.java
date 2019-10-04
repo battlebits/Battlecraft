@@ -9,6 +9,8 @@ import br.com.battlebits.battlecraft.warp.WarpLocation;
 import br.com.battlebits.battlecraft.warp.WarpSpawn;
 import br.com.battlebits.battlecraft.world.map.VoidMap;
 import br.com.battlebits.commons.backend.properties.PropertiesStorageDataTranslation;
+import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
+import br.com.battlebits.commons.command.CommandLoader;
 import br.com.battlebits.commons.translate.TranslationCommon;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -46,9 +48,14 @@ public class Battlecraft extends JavaPlugin {
         instance = this;
         this.warpManager = new WarpManager(this);
         TranslationCommon.addTranslation(new PropertiesStorageDataTranslation(BattlecraftTranslateTag.class));
+        loadCommands();
         loadWarps();
         loadListeners();
         loadManagers();
+    }
+
+    private void loadCommands() {
+        new CommandLoader(new BukkitCommandFramework(this)).loadCommandsFromPackage(getFile(), "br.com.battlebits.battlecraft.command");
     }
 
     private void loadWarps() {
@@ -57,6 +64,7 @@ public class Battlecraft extends JavaPlugin {
         WarpLocation warp = new WarpSpawn(spawnLocation, new VoidMap());
         this.warpManager.addWarp(warp);
         this.warpManager.setDefaultWarp(warp);
+
     }
 
     private void loadListeners() {
