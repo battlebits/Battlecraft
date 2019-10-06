@@ -5,24 +5,27 @@ import br.com.battlebits.battlecraft.event.protection.PlayerProtectionRemoveEven
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
+import br.com.battlebits.battlecraft.warp.inventory.MenuWarps;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
+import br.com.battlebits.commons.bukkit.api.item.ActionItemStack;
+import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
+import br.com.battlebits.commons.bukkit.api.title.TitleAPI;
 import br.com.battlebits.commons.translate.Language;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
-import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.PROTECTION_LOST;
-import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.PROTECTION_TAG;
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.*;
 import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
 public class WarpSpawn extends WarpLocation {
 
     public WarpSpawn(Location spawnLocation, WorldMap map) {
-        super("Spawn", new ItemStack(Material.NETHER_STAR), spawnLocation, map);
+        super("Spawn", Material.GRASS_BLOCK, spawnLocation, map);
     }
 
     @EventHandler
@@ -30,10 +33,18 @@ public class WarpSpawn extends WarpLocation {
         Player p = event.getPlayer();
         if (!isInWarp(p))
             return;
-
-        p.sendMessage("Bem vindo a warp '" + getName() + "'");
-        p.sendMessage("addProtection: " + ProtectionManager.addProtection(p));
-        p.sendMessage("isProtected: " + ProtectionManager.isProtected(p));
+        Language l = Commons.getLanguage(p.getUniqueId());
+        ItemBuilder builder =
+                ItemBuilder.create(Material.COMPASS).name(tl(l, WARPS_ITEM_NAME)).lore("", tl(l,
+                        WARPS_ITEM_LORE));
+        ActionItemStack item = new ActionItemStack(builder.build(), (player, itemStack, action) -> {
+            new MenuWarps(l, this).open(p);
+            return false;
+        });
+        PlayerInventory inv = p.getInventory();
+        inv.clear();
+        inv.setItem(2, item.getItemStack());
+        inv.setHeldItemSlot(1);
     }
 
     @EventHandler
@@ -64,7 +75,6 @@ public class WarpSpawn extends WarpLocation {
         Player p = event.getPlayer();
         if (!isInWarp(p))
             return;
-        ProtectionManager.removeProtection(p);
     }
 
 }

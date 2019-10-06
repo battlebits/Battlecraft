@@ -7,11 +7,11 @@ import br.com.battlebits.commons.bukkit.scoreboard.BattleScoreboard;
 import br.com.battlebits.commons.command.CommandClass;
 import lombok.Getter;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,8 @@ import java.util.List;
 public abstract class WarpLocation implements Warp, Listener, CommandClass {
 
     private String name;
-    private ItemStack icon;
+    @Getter
+    private Material material;
     private List<Player> players;
 
     @Getter
@@ -29,9 +30,9 @@ public abstract class WarpLocation implements Warp, Listener, CommandClass {
 
     private WorldMap worldMap;
 
-    public WarpLocation(String name, ItemStack itemStack, Location spawnLocation, WorldMap map) {
+    public WarpLocation(String name, Material material, Location spawnLocation, WorldMap map) {
         this.name = name;
-        this.icon = itemStack;
+        this.material = material;
         this.players = new ArrayList<>();
         this.spawnLocation = spawnLocation;
         this.worldMap = map;
@@ -68,13 +69,21 @@ public abstract class WarpLocation implements Warp, Listener, CommandClass {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoinMonitor(PlayerWarpJoinEvent event) {
-        if(event.isCancelled())
+        if (event.isCancelled())
             players.remove(event.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void removePlayer(PlayerWarpQuitEvent event) {
-        if(event.isCancelled())
+        if (event.isCancelled())
             players.remove(event.getPlayer());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof WarpLocation))
+            return false;
+        WarpLocation compare = (WarpLocation) obj;
+        return compare.getId().equals(this.getId());
     }
 }

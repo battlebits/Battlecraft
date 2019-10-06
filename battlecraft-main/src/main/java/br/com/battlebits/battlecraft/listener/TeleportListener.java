@@ -5,7 +5,9 @@ import br.com.battlebits.battlecraft.event.PlayerDamagePlayerEvent;
 import br.com.battlebits.battlecraft.event.RealMoveEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpTeleportEvent;
 import br.com.battlebits.battlecraft.manager.TeleportManager;
+import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
+import br.com.battlebits.commons.translate.Language;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,6 +19,9 @@ import java.util.Iterator;
 import java.util.Set;
 
 import static br.com.battlebits.battlecraft.manager.TeleportManager.*;
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.TELEPORT_CANCELED;
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.TELEPORT_TAG;
+import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
 public class TeleportListener implements Listener {
 
@@ -71,6 +76,8 @@ public class TeleportListener implements Listener {
     private void checkAndCancelTeleporting(Player player) {
         if (teleporting.contains(player)) {
             TeleportManager.cancelTeleporting(player);
+            Language l = Commons.getLanguage(player.getUniqueId());
+            player.sendMessage(tl(l, TELEPORT_TAG) + tl(l, TELEPORT_CANCELED));
             teleporting.remove(player);
         }
     }

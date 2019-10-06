@@ -9,6 +9,7 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,10 @@ public class WarpManager {
     public WarpManager(Plugin plugin) {
         this.plugin = plugin;
         this.warps = new HashMap<>();
+    }
+
+    public Collection<Warp> getWarps() {
+        return warps.values();
     }
 
     public Warp getWarp(String id) {

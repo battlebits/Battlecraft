@@ -1,6 +1,7 @@
 package br.com.battlebits.battlecraft.warp;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 public interface Warp {
@@ -14,5 +15,7 @@ public interface Warp {
     void onUnload();
 
     Location getSpawnLocation();
+
+    Material getMaterial();
 
 }

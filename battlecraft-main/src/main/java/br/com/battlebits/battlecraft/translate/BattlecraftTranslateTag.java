@@ -2,15 +2,33 @@ package br.com.battlebits.battlecraft.translate;
 
 public enum BattlecraftTranslateTag {
 
+    JOIN_MESSAGE_TITLE,
+    JOIN_MESSAGE_SUBTITLE,
+
     TELEPORT_TAG,
     TELEPORT_IN_PROGRESS("teleport.in-progress"),
     TELEPORT_ON_AIR("teleport.on-air"),
     TELEPORT_COOLDOWN,
+    TELEPORT_CANCELED,
+
     PROTECTION_TAG,
     PROTECTION_LOST,
-    DONATOR_JOIN_FULL("donator.join-full"),
-    SERVER_FULL("server-full");
 
+    DONATOR_JOIN_FULL("donator.join-full"),
+    SERVER_FULL("server-full"),
+
+    WARPS_MENU_TITLE,
+    WARPS_ITEM_NAME,
+    WARPS_ITEM_LORE,
+
+    CURRENTLY_HERE,
+
+    WARP_SPAWN_NAME,
+    WARP_SPAWN_LORE,
+    WARP_LAVACHALLENGE_NAME,
+    WARP_LAVACHALLENGE_LORE,
+    WARP_FPS_NAME,
+    WARP_FPS_LORE;
 
 
 
