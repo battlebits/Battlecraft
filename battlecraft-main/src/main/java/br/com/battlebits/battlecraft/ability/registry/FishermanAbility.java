@@ -1,6 +1,6 @@
 package br.com.battlebits.battlecraft.ability.registry;
 
-import br.com.battlebits.battlecraft.ability.AbilityImpl;
+import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -8,7 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.inventory.ItemFlag;
 
-public class FishermanAbility extends AbilityImpl {
+public class FishermanAbility extends Ability {
 
     public FishermanAbility() {
         super("Fisherman", ItemBuilder.create(Material.FISHING_ROD).build(), 0);

@@ -1,6 +1,6 @@
 package br.com.battlebits.battlecraft.ability.registry;
 
-import br.com.battlebits.battlecraft.ability.AbilityImpl;
+import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -19,7 +19,7 @@ import org.bukkit.util.Vector;
 import java.util.HashSet;
 import java.util.Set;
 
-public class KangarooAbility extends AbilityImpl {
+public class KangarooAbility extends Ability {
 
     private Set<Player> ability;
 

@@ -1,6 +1,6 @@
 package br.com.battlebits.battlecraft.ability.registry;
 
-import br.com.battlebits.battlecraft.ability.AbilityImpl;
+import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import org.bukkit.Bukkit;
@@ -13,7 +13,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.Random;
 
-public class MagmaAbility extends AbilityImpl {
+public class MagmaAbility extends Ability {
 
     private Random random;
 

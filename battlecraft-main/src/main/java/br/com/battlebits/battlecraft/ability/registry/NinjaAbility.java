@@ -1,6 +1,6 @@
 package br.com.battlebits.battlecraft.ability.registry;
 
-import br.com.battlebits.battlecraft.ability.AbilityImpl;
+import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NinjaAbility extends AbilityImpl {
+public class NinjaAbility extends Ability {
 
     private Map<Player, Player> ability;
 

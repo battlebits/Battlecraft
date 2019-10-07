@@ -1,7 +1,7 @@
 package br.com.battlebits.battlecraft.ability.registry;
 
 import br.com.battlebits.battlecraft.Battlecraft;
-import br.com.battlebits.battlecraft.ability.AbilityImpl;
+import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,7 +12,7 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.util.Vector;
 
-public class AnchorAbility extends AbilityImpl {
+public class AnchorAbility extends Ability {
 
     public AnchorAbility() {
         super("Anchor", ItemBuilder.create(Material.ANVIL).build(), 0);

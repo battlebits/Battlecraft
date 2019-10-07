@@ -1,6 +1,6 @@
 package br.com.battlebits.battlecraft.ability.registry;
 
-import br.com.battlebits.battlecraft.ability.AbilityImpl;
+import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.Effect;
 import org.bukkit.Material;
@@ -12,7 +12,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.Random;
 
-public class ViperAbility extends AbilityImpl {
+public class ViperAbility extends Ability {
 
     private Random random;
 

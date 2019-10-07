@@ -2,7 +2,6 @@ package br.com.battlebits.battlecraft.manager;
 
 import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.ability.Ability;
-import br.com.battlebits.battlecraft.ability.AbilityImpl;
 import br.com.battlebits.commons.util.ClassGetter;
 
 import java.lang.reflect.Constructor;
@@ -25,12 +24,12 @@ public class AbilityManager {
     public static void registerKits() {
         List<Class<?>> list = ClassGetter.getClassesForPackage(battlecraft.getClass(), "br.com.battlebits.battlecraft.ability");
         list.forEach(clazz -> {
-            if (clazz != Ability.class && clazz != AbilityImpl.class && Ability.class.isAssignableFrom(clazz)) {
+            if (clazz != Ability.class && Ability.class.isAssignableFrom(clazz)) {
                 try {
                     Constructor<?> constructor = clazz.getConstructor();
                     if (constructor != null) {
                         Ability kit = (Ability) constructor.newInstance();
-                        abilities.put(kit.getName(), kit);
+                        abilities.put(kit.getId(), kit);
                     }
                 } catch (Exception e) {
                     battlecraft.getLogger().warning("Failed to register " + clazz.getSimpleName() + " kit");
