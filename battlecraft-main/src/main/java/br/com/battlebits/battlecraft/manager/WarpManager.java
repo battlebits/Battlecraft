@@ -37,14 +37,14 @@ public class WarpManager {
     public Warp getPlayerWarp(Player player) {
         if (player.hasMetadata(WARP_META)) {
             List<MetadataValue> list = player.getMetadata(WARP_META);
-            return getWarp(list.size() > 0 ? list.get(0).asString() : null);
+            return getWarp(!list.isEmpty() ? list.get(0).asString() : null);
         }
         return null;
     }
 
     public void joinWarp(Player player, Warp warp) {
         leaveWarp(player);
-        if (warp.getPlayers().size() == 0) {
+        if (warp.getPlayers().isEmpty()) {
             plugin.getServer().getPluginManager().registerEvents(warp, plugin);
         }
         PlayerWarpJoinEvent event = new PlayerWarpJoinEvent(player, warp);

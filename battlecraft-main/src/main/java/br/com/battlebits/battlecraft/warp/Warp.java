@@ -77,7 +77,7 @@ public abstract class Warp implements Listener, CommandClass {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onJoinMonitor(PlayerWarpJoinEvent event) {
-        if (players.remove(event.getPlayer()) && players.size() == 0)
+        if (players.remove(event.getPlayer()) && players.isEmpty())
             HandlerList.unregisterAll(this);
     }
 
@@ -85,7 +85,7 @@ public abstract class Warp implements Listener, CommandClass {
     public void removePlayer(PlayerWarpQuitEvent event) {
         if (inWarp(event.getPlayer())) {
             players.remove(event.getPlayer());
-            if (players.size() == 0)
+            if (players.isEmpty())
                 HandlerList.unregisterAll(this);
         }
     }
