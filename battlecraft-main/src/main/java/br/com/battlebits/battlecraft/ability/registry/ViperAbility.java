@@ -23,7 +23,7 @@ public class ViperAbility extends Ability {
 
     @EventHandler
     public void onPlayerDamagePlayerListener(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player && event.getDamager() instanceof Player && isUsing(((Player) event
+        if (event.getEntity() instanceof Player && event.getDamager() instanceof Player && hasAbility(((Player) event
                 .getDamager()).getPlayer()) && random.nextInt(2) == 0) {
             event.getEntity().getLocation().getWorld().playEffect(event.getEntity().getLocation().add(0.0D,
                     0.4D, 0.0D), Effect.STEP_SOUND, 159, (short) 13);
@@ -31,8 +31,4 @@ public class ViperAbility extends Ability {
         }
     }
 
-    @Override
-    public void onReceiveItems(Player player) {
-        //Null
-    }
 }

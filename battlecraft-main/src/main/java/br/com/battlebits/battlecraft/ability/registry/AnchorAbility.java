@@ -25,7 +25,7 @@ public class AnchorAbility extends Ability {
         }
         if (event.getEntity() instanceof Player) {
             final Player player = (Player) event.getEntity();
-            if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK && isUsing(player)) {
+            if (event.getCause() != EntityDamageEvent.DamageCause.ENTITY_ATTACK && hasAbility(player)) {
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Battlecraft.getInstance(), () ->
                         player.setVelocity(new Vector(0D, 0D, 0D)), 1L);
             }
@@ -40,7 +40,7 @@ public class AnchorAbility extends Ability {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             final Player player = (Player) event.getEntity();
             final Player damager = (Player) event.getDamager();
-            if (isUsing(player) || isUsing(damager)) {
+            if (hasAbility(player) || hasAbility(damager)) {
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Battlecraft.getInstance(), () -> {
                     player.setVelocity(new Vector(0D, 0D, 0D));
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, 1.0F, 1.0F);
@@ -49,18 +49,13 @@ public class AnchorAbility extends Ability {
             }
         } else if (event.getEntity() instanceof Player) {
             final Player player = (Player) event.getEntity();
-            if (isUsing(player)) {
+            if (hasAbility(player)) {
                 Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(Battlecraft.getInstance(), () -> {
                     player.setVelocity(new Vector(0D, 0D, 0D));
                     player.playSound(player.getLocation(), Sound.BLOCK_ANVIL_LAND, 1.0F, 1.0F);
                 }, 1L);
             }
         }
-    }
-
-    @Override
-    public void onReceiveItems(Player player) {
-
     }
 
 }

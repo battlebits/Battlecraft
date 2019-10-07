@@ -1,6 +1,7 @@
 package br.com.battlebits.battlecraft.ability.registry;
 
 import br.com.battlebits.battlecraft.ability.Ability;
+import br.com.battlebits.battlecraft.ability.AbilityItem;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -12,7 +13,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Random;
 
-public class MonkAbility extends Ability {
+public class MonkAbility extends Ability implements AbilityItem {
 
     public MonkAbility() {
         super("Monk", ItemBuilder.create(Material.BLAZE_ROD).build(), 0);
@@ -22,11 +23,12 @@ public class MonkAbility extends Ability {
     public void onPlayerInteractEntityEvent(PlayerInteractEntityEvent event) {
         final Player player = event.getPlayer();
         if (event.getRightClicked() instanceof Player && player.getInventory().getItemInMainHand().getType() == Material
-                .BLAZE_ROD && isUsing(player)) {
-            if (hasCooldown(player)) {
-                //Send cooldown message
-                return;
-            }
+                .BLAZE_ROD && hasAbility(player)) {
+//            TODO Remake cooldown
+//            if (hasCooldown(player)) {
+//                //Send cooldown message
+//                return;
+//            }
             Player target = (Player) event.getRightClicked();
             PlayerInventory inv = target.getInventory();
             int slot = new Random().nextInt(35);
@@ -37,7 +39,7 @@ public class MonkAbility extends Ability {
             }
             inv.setItemInMainHand(randomItem);
             inv.setItem(slot, itemInHand);
-            addCooldown(player, 7000);
+//            addCooldown(player, 7000);
             player.sendMessage("§aVocê monkou o jogador!");
             target.sendMessage("§aVocê foi monkado!");
             target.playSound(target.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0F, 1.0F);

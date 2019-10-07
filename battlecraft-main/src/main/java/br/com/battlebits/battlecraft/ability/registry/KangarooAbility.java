@@ -1,6 +1,7 @@
 package br.com.battlebits.battlecraft.ability.registry;
 
 import br.com.battlebits.battlecraft.ability.Ability;
+import br.com.battlebits.battlecraft.ability.AbilityItem;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -19,7 +20,9 @@ import org.bukkit.util.Vector;
 import java.util.HashSet;
 import java.util.Set;
 
-public class KangarooAbility extends Ability {
+import static br.com.battlebits.battlecraft.manager.ProtectionManager.isProtected;
+
+public class KangarooAbility extends Ability implements AbilityItem {
 
     private Set<Player> ability;
 
@@ -33,15 +36,16 @@ public class KangarooAbility extends Ability {
     public void onInteract(PlayerInteractEvent event) {
         final Player player = event.getPlayer();
         if (player.getInventory().getItemInMainHand().getType() == Material.FIREWORK_ROCKET && player.getGameMode() ==
-                GameMode.SURVIVAL && isUsing(player)) {
+                GameMode.SURVIVAL && hasAbility(player)) {
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
                 event.setCancelled(true);
             }
-            if (hasCooldown(player)) {
-                //Send cooldown message
-                player.setVelocity(new Vector(0.0D, -1.0D, 0.0D));
-                return;
-            }
+            // TODO Remake cooldown
+//            if (hasCooldown(player)) {
+//                //Send cooldown message
+//                player.setVelocity(new Vector(0.0D, -1.0D, 0.0D));
+//                return;
+//            }
             if (!this.ability.contains(player)) {
                 Vector v;
                 if (player.isSneaking()) {
@@ -70,7 +74,7 @@ public class KangarooAbility extends Ability {
     public void onEntityDamageEvent(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player) {
             final Player player = (Player) event.getEntity();
-            if (event.getCause() == EntityDamageEvent.DamageCause.FALL && isUsing(player)) {
+            if (event.getCause() == EntityDamageEvent.DamageCause.FALL && hasAbility(player)) {
                 final double damage = event.getDamage();
                 if (damage > 4.0D) {
                     event.setCancelled(true);
@@ -88,7 +92,8 @@ public class KangarooAbility extends Ability {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             final Player player = (Player) event.getEntity();
             if (!isProtected(player)) {
-                addCooldown(player, 6000);
+                // COoldown
+                //CooldownManager.addCooldown(player, 6000);
             }
         }
     }

@@ -39,7 +39,7 @@ public abstract class Ability implements Listener {
         return valueOf("ABILITY_" + getId().toUpperCase() + "_DESCRIPTION");
     }
 
-    public boolean hasKit(Player player) {
+    public boolean hasAbility(Player player) {
         return players.contains(player);
     }
 

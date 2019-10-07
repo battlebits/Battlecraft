@@ -3,7 +3,6 @@ package br.com.battlebits.battlecraft.ability.registry;
 import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.Material;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -12,6 +11,8 @@ import org.bukkit.event.player.PlayerToggleSneakEvent;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import static br.com.battlebits.battlecraft.manager.ProtectionManager.isProtected;
 
 public class NinjaAbility extends Ability {
 
@@ -34,7 +35,7 @@ public class NinjaAbility extends Ability {
                 return;
             }
             //Check protect status
-            if (isUsing(damager)) {
+            if (hasAbility(damager)) {
                 this.ability.put(damager, player);
             }
         }
@@ -53,7 +54,7 @@ public class NinjaAbility extends Ability {
     @EventHandler
     public void onPlayerToggleSneakEvent(PlayerToggleSneakEvent event) {
         final Player player = event.getPlayer();
-        if (!event.isSneaking() && this.ability.containsKey(player) && !isProtected(player) && isUsing(player)) {
+        if (!event.isSneaking() && this.ability.containsKey(player) && !isProtected(player) && hasAbility(player)) {
             final Player target = this.ability.get(player);
             //Check protect status
             if (target.isOnline() && !isProtected(target)) {
@@ -62,20 +63,17 @@ public class NinjaAbility extends Ability {
                     return;
                 }
                 //Check gladiator
-                if(!hasCooldown(player)) {
-                    player.teleport(target.getLocation());
-                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0F, 1.0F);
-                    ability.remove(player);
-                    addCooldown(player, 4000);
-                } else {
-                    //Send cooldown message
-                }
+//                TODO Cooldown
+//                if(!hasCooldown(player)) {
+//                    player.teleport(target.getLocation());
+//                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0F, 1.0F);
+//                    ability.remove(player);
+//                    addCooldown(player, 4000);
+//                } else {
+//                    //Send cooldown message
+//                }
             }
         }
     }
 
-    @Override
-    public void onReceiveItems(Player player) {
-        //Null
-    }
 }

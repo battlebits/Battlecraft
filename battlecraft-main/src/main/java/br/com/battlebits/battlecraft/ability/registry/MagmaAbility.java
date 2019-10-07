@@ -24,7 +24,7 @@ public class MagmaAbility extends Ability {
 
     @EventHandler
     public void onEntityDamageEvent(EntityDamageEvent event) {
-        if (event.getEntity() instanceof Player && isUsing((Player) event.getEntity()) && (event.getCause() ==
+        if (event.getEntity() instanceof Player && hasAbility((Player) event.getEntity()) && (event.getCause() ==
                 EntityDamageEvent.DamageCause.LAVA || event.getCause().name().contains("FIRE")) && event.getCause() !=
                 EntityDamageEvent.DamageCause.LIGHTNING) {
             event.setCancelled(true);
@@ -41,7 +41,7 @@ public class MagmaAbility extends Ability {
         }
         final Player player = (Player) event.getEntity();
         final Player damager = (Player) event.getDamager();
-        if (isUsing(damager) && random.nextInt(100) <= 25) {
+        if (hasAbility(damager) && random.nextInt(100) <= 25) {
             player.setFireTicks(Math.max(player.getFireTicks(), 90));
         }
     }
@@ -50,15 +50,11 @@ public class MagmaAbility extends Ability {
     public void onUpdate(UpdateEvent event) {
         if (event.getType() == UpdateEvent.UpdateType.SECOND) {
             for (Player player : Bukkit.getOnlinePlayers()) {
-                if (isUsing(player) && player.getLocation().getBlock().getType().name().contains("WATER")) {
+                if (hasAbility(player) && player.getLocation().getBlock().getType().name().contains("WATER")) {
                     player.damage(2);
                 }
             }
         }
     }
 
-    @Override
-    public void onReceiveItems(Player player) {
-        //Null
-    }
 }
