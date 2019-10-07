@@ -17,8 +17,9 @@ public class WarpManager {
 
     private static final String WARP_META = "warp";
     private Plugin plugin;
+
     private Map<String, Warp> warps;
-    private String defaultWarp;
+    private Warp defaultWarp;
 
     public WarpManager(Plugin plugin) {
         this.plugin = plugin;
@@ -42,12 +43,7 @@ public class WarpManager {
     }
 
     public void joinWarp(Player player, Warp warp) {
-        Warp lastWarp = getPlayerWarp(player);
-        boolean cancelled = false;
-        if (lastWarp != null) {
-            PlayerWarpQuitEvent event = new PlayerWarpQuitEvent(player, lastWarp);
-            plugin.getServer().getPluginManager().callEvent(event);
-        }
+        leaveWarp(player);
         if (warp.getPlayers().size() == 0) {
             plugin.getServer().getPluginManager().registerEvents(warp, plugin);
         }
@@ -70,10 +66,10 @@ public class WarpManager {
     }
 
     public Warp getDefaultWarp() {
-        return getWarp(defaultWarp);
+        return defaultWarp;
     }
 
     public void setDefaultWarp(Warp warp) {
-        this.defaultWarp = warp.getId();
+        this.defaultWarp = warp;
     }
 }
