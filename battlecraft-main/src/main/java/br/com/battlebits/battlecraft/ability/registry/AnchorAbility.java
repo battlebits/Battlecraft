@@ -1,4 +1,4 @@
-package br.com.battlebits.battlecraft.ability.list;
+package br.com.battlebits.battlecraft.ability.registry;
 
 import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.ability.AbilityImpl;

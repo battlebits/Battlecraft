@@ -1,4 +1,4 @@
-package br.com.battlebits.battlecraft.ability.list;
+package br.com.battlebits.battlecraft.ability.registry;
 
 import br.com.battlebits.battlecraft.ability.AbilityImpl;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
@@ -12,12 +12,12 @@ import org.bukkit.potion.PotionEffectType;
 
 import java.util.Random;
 
-public class ViperAbility extends AbilityImpl {
+public class SnailAbility extends AbilityImpl {
 
     private Random random;
 
-    public ViperAbility() {
-        super("Viper", ItemBuilder.create(Material.SPIDER_EYE).build(), 0);
+    public SnailAbility() {
+        super("Snail", ItemBuilder.create(Material.STRING).build(), 0);
         random = new Random();
     }
 
@@ -27,7 +27,7 @@ public class ViperAbility extends AbilityImpl {
                 .getDamager()).getPlayer()) && random.nextInt(2) == 0) {
             event.getEntity().getLocation().getWorld().playEffect(event.getEntity().getLocation().add(0.0D,
                     0.4D, 0.0D), Effect.STEP_SOUND, 159, (short) 13);
-            ((Player) event.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.POISON, 100, 0));
+            ((Player) event.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 0));
         }
     }
 
