@@ -5,14 +5,17 @@ import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 
+/**
+ *  Usado para alterar as kills/deaths da warp
+ */
+
+@Getter
 public class PlayerWarpDeathEvent extends PlayerWarpEvent {
 
-    public static HandlerList handlers = new HandlerList();
     @Getter
+    public static HandlerList handlerList = new HandlerList();
     private Player killer;
-    @Getter
     private String kitName;
-    @Getter
     private Warp warp;
 
     public PlayerWarpDeathEvent(Player p, Player killer, Warp warp) {
@@ -27,11 +30,8 @@ public class PlayerWarpDeathEvent extends PlayerWarpEvent {
     }
 
     public HandlerList getHandlers() {
-        return handlers;
+        return handlerList;
     }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
 
 }
