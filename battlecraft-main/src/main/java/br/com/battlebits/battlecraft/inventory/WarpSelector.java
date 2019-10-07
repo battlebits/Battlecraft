@@ -14,7 +14,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.*;
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.CURRENTLY_HERE;
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.WARPS_MENU_TITLE;
 import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
 public class WarpSelector extends MenuInventory {
@@ -33,20 +34,21 @@ public class WarpSelector extends MenuInventory {
         for (Warp warp : manager.getWarps()) {
 //
             builder =
-                    ItemBuilder.create(warp.getMaterial()).name(ChatColor.AQUA + "" + ChatColor.BOLD + tl(l,
-                            valueOf("WARP_" + warp.getId().toUpperCase() + "_NAME"))).lore(ChatColor.GRAY + tl(l,
-                            valueOf("WARP_" + warp.getId().toUpperCase() + "_LORE")));
+                    ItemBuilder.create(warp.getMaterial())
+                            .name(ChatColor.AQUA + "" + ChatColor.BOLD +
+                                    tl(l, warp.getNameTag())).lore(ChatColor.GRAY + tl(l,
+                            warp.getDescriptionTag()));
             if (currentWarp == warp) {
-                builder = builder.glow().lore(ChatColor.GRAY + tl(l,
-                        valueOf("WARP_" + warp.getId().toUpperCase() + "_LORE")), "", tl(l,
-                        CURRENTLY_HERE));
+                builder = builder.glow().lore(ChatColor.GRAY + tl(l, warp.getNameTag()), "",
+                        tl(l, CURRENTLY_HERE));
                 setItem(slot++, builder.build());
                 continue;
             }
-            menuItem = new MenuItem(builder.build(), (player, inventory, clickType, itemStack, i) -> {
-                player.closeInventory();
-                TeleportManager.teleport(player, warp);
-            });
+            menuItem = new MenuItem(builder.build(),
+                    (player, inventory, clickType, itemStack, i) -> {
+                        player.closeInventory();
+                        TeleportManager.teleport(player, warp);
+                    });
             setItem(slot++, menuItem);
         }
     }

@@ -2,6 +2,7 @@ package br.com.battlebits.battlecraft.warp;
 
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
+import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.bukkit.scoreboard.BattleScoreboard;
 import br.com.battlebits.commons.command.CommandClass;
@@ -16,6 +17,8 @@ import org.bukkit.event.Listener;
 
 import java.util.HashSet;
 import java.util.Set;
+
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.valueOf;
 
 @Getter
 public abstract class Warp implements Listener, CommandClass {
@@ -41,6 +44,14 @@ public abstract class Warp implements Listener, CommandClass {
 
     public String getId() {
         return this.name.toLowerCase().trim().replace(" ", ".");
+    }
+
+    public BattlecraftTranslateTag getNameTag() {
+        return valueOf("WARP_" + getId().toUpperCase() + "_NAME");
+    }
+
+    public BattlecraftTranslateTag getDescriptionTag() {
+        return valueOf("WARP_" + getId().toUpperCase() + "_DESCRIPTION");
     }
 
     public void onLoad() {
