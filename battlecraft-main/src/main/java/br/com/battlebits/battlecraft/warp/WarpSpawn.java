@@ -4,8 +4,8 @@ import br.com.battlebits.battlecraft.event.RealMoveEvent;
 import br.com.battlebits.battlecraft.event.protection.PlayerProtectionRemoveEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
+import br.com.battlebits.battlecraft.inventory.WarpSelector;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
-import br.com.battlebits.battlecraft.warp.inventory.MenuWarps;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.bukkit.api.item.ActionItemStack;
@@ -37,7 +37,7 @@ public class WarpSpawn extends Warp {
                 ItemBuilder.create(Material.COMPASS).name(tl(l, WARPS_ITEM_NAME)).lore("", tl(l,
                         WARPS_ITEM_LORE));
         ActionItemStack item = new ActionItemStack(builder.build(), (player, itemStack, action) -> {
-            new MenuWarps(l, this).open(p);
+            new WarpSelector(l, this).open(p);
             return false;
         });
         PlayerInventory inv = p.getInventory();
