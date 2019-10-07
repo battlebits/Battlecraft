@@ -11,11 +11,11 @@ import java.util.*;
 public class AbilityManager {
 
     private static Battlecraft battlecraft;
-    private static Set<Ability> abilities;
+    private static Map<String, Ability> abilities;
 
     private AbilityManager() {
         battlecraft = Battlecraft.getInstance();
-        abilities = new HashSet<>();
+        abilities = new HashMap<>();
     }
 
     public static void create() {
@@ -30,7 +30,7 @@ public class AbilityManager {
                     Constructor<?> constructor = clazz.getConstructor();
                     if (constructor != null) {
                         Ability kit = (Ability) constructor.newInstance();
-                        abilities.add(kit);
+                        abilities.put(kit.getName(), kit);
                     }
                 } catch (Exception e) {
                     battlecraft.getLogger().warning("Failed to register " + clazz.getSimpleName() + " kit");
@@ -38,19 +38,16 @@ public class AbilityManager {
                 }
             }
         });
-        abilities.forEach(ability -> battlecraft.getServer().getPluginManager().registerEvents(ability, battlecraft));
+        abilities.values().forEach(ability -> battlecraft.getServer().getPluginManager().registerEvents(ability, battlecraft));
     }
 
     public static Ability getAbilityByName(String name) {
-        return abilities.stream().filter(ability -> ability.getName().equals(name)).findFirst().orElse(null);
+        return abilities.getOrDefault(name, null);
     }
 
     public static Ability getRandomKit() {
         int index = new Random().nextInt(abilities.size());
-        Iterator<Ability> iterator = abilities.iterator();
-        for (int i = 0; i < index; i++) {
-            iterator.next();
-        }
-        return iterator.next();
+        List<Ability> keysAsArray = new ArrayList<>(abilities.values());
+        return keysAsArray.get(index);
     }
 }
