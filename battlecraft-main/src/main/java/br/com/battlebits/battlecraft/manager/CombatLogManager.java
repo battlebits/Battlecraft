@@ -40,7 +40,6 @@ public class CombatLogManager {
     }
 
     public static CombatLog getCombatLog(Player player) {
-        Battlecraft plugin = Battlecraft.getInstance();
         String playerName = "";
         long time = 0L;
         if (player.hasMetadata(COMBATLOG_PLAYER))
