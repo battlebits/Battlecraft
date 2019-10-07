@@ -12,7 +12,7 @@ public class CombatLogManager {
     private final static String COMBATLOG_PLAYER = "combatlog.player";
     private final static String COMBATLOG_EXPIRE = "combatlog.time";
 
-    private final static long COMBATLOG_TIME = 10000l; // Miliseconds
+    private final static long COMBATLOG_TIME = 10000L; // Miliseconds
 
     public static void newCombatLog(Player damager, Player damaged) {
         setCombatLog(damager, damaged);
@@ -42,7 +42,7 @@ public class CombatLogManager {
     public static CombatLog getCombatLog(Player player) {
         Battlecraft plugin = Battlecraft.getInstance();
         String playerName = "";
-        long time = 0l;
+        long time = 0L;
         if (player.hasMetadata(COMBATLOG_PLAYER))
             playerName = player.getMetadata(COMBATLOG_PLAYER).get(0).asString();
         if (player.hasMetadata(COMBATLOG_EXPIRE))

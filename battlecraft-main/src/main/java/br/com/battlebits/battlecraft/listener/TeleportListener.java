@@ -27,6 +27,7 @@ public class TeleportListener implements Listener {
 
     private Set<Player> teleporting = new HashSet<>();
 
+    @EventHandler
     public void onTeleportProcess(PlayerWarpTeleportEvent event) {
         teleporting.add(event.getPlayer());
     }
@@ -45,7 +46,6 @@ public class TeleportListener implements Listener {
                 if (process.canTeleport()) {
                     Battlecraft.getInstance().getWarpManager().joinWarp(player, process.getWarp());
                     iterator.remove();
-                    continue;
                 }
             }
         }
@@ -59,7 +59,7 @@ public class TeleportListener implements Listener {
     @EventHandler
     public void onDamage(PlayerDamagePlayerEvent event) {
         checkAndCancelTeleporting(event.getDamaged());
-        checkAndCancelTeleporting(event.getDamager());
+        checkAndCancelTeleporting(event.getPlayer());
     }
 
     @EventHandler

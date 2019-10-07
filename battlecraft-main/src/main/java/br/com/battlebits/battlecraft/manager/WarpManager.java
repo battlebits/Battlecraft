@@ -3,7 +3,6 @@ package br.com.battlebits.battlecraft.manager;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.warp.Warp;
-import br.com.battlebits.battlecraft.warp.WarpLocation;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
@@ -16,12 +15,10 @@ import java.util.Map;
 
 public class WarpManager {
 
+    private static final String WARP_META = "warp";
     private Plugin plugin;
     private Map<String, Warp> warps;
-
     private String defaultWarp;
-
-    private static final String WARP_META = "warp";
 
     public WarpManager(Plugin plugin) {
         this.plugin = plugin;
@@ -47,38 +44,36 @@ public class WarpManager {
     public void joinWarp(Player player, Warp warp) {
         Warp lastWarp = getPlayerWarp(player);
         boolean cancelled = false;
-        if(lastWarp != null) {
+        if (lastWarp != null) {
             PlayerWarpQuitEvent event = new PlayerWarpQuitEvent(player, lastWarp);
             plugin.getServer().getPluginManager().callEvent(event);
-            cancelled = event.isCancelled();
+        }
+        if (warp.getPlayers().size() == 0) {
+            plugin.getServer().getPluginManager().registerEvents(warp, plugin);
         }
         PlayerWarpJoinEvent event = new PlayerWarpJoinEvent(player, warp);
-        event.setCancelled(cancelled);
+        player.setMetadata(WARP_META, new FixedMetadataValue(plugin, warp.getId()));
+        player.teleport(warp.getSpawnLocation());
         plugin.getServer().getPluginManager().callEvent(event);
-        if(!event.isCancelled()) {
-            player.setMetadata(WARP_META, new FixedMetadataValue(plugin, warp.getId()));
-            player.teleport(warp.getSpawnLocation());
-        }
     }
 
     public void leaveWarp(Player p) {
         Warp lastWarp = getPlayerWarp(p);
-        if(lastWarp == null)
+        if (lastWarp == null)
             return;
         PlayerWarpQuitEvent event = new PlayerWarpQuitEvent(p, lastWarp);
         plugin.getServer().getPluginManager().callEvent(event);
     }
 
-    public void addWarp(WarpLocation warp) {
+    public void addWarp(Warp warp) {
         warps.put(warp.getId(), warp);
-        this.plugin.getServer().getPluginManager().registerEvents(warp, plugin);
-    }
-
-    public void setDefaultWarp(Warp warp) {
-        this.defaultWarp = warp.getId();
     }
 
     public Warp getDefaultWarp() {
         return getWarp(defaultWarp);
+    }
+
+    public void setDefaultWarp(Warp warp) {
+        this.defaultWarp = warp.getId();
     }
 }

@@ -20,7 +20,8 @@ public class CooldownManager implements Listener {
 
     private CooldownManager() {
         cooldowns = new HashSet<>();
-        Battlecraft.getInstance().getServer().getPluginManager().registerEvents(this, Battlecraft.getInstance());
+        Battlecraft.getInstance().getServer().getPluginManager().registerEvents(this,
+                Battlecraft.getInstance());
     }
 
     public static void create() {
@@ -47,7 +48,8 @@ public class CooldownManager implements Listener {
     }
 
     public static void removeAllCooldowns(Player player) {
-        for (Cooldown cooldown : cooldowns.stream().filter(c -> c.getPlayer().equals(player)).collect(Collectors.toSet())) {
+        for (Cooldown cooldown :
+                cooldowns.stream().filter(c -> c.getPlayer().equals(player)).collect(Collectors.toSet())) {
             removeCooldown(cooldown);
         }
     }
@@ -55,7 +57,8 @@ public class CooldownManager implements Listener {
     @EventHandler
     public void onUpdateEvent(UpdateEvent event) {
         if (event.getType() == UpdateEvent.UpdateType.SECOND) {
-            for (Cooldown cooldown : cooldowns.stream().filter(c -> c.getTime() < System.currentTimeMillis())
+            for (Cooldown cooldown :
+                    cooldowns.stream().filter(c -> c.getTime() < System.currentTimeMillis())
                     .collect(Collectors.toSet())) {
                 removeCooldown(cooldown);
             }

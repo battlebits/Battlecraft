@@ -13,6 +13,9 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 public class DamageFixListener implements Listener {
+
+    private final static double ENCHANTMENT_MULTIPLIER = 1d;
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamageEvent(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player))
@@ -39,15 +42,15 @@ public class DamageFixListener implements Listener {
         if (!sword.getEnchantments().isEmpty()) {
             if (sword.containsEnchantment(Enchantment.DAMAGE_ARTHROPODS) && isArthropod(event.getEntityType())) {
                 damage = damage - (1.5 * sword.getEnchantmentLevel(Enchantment.DAMAGE_ARTHROPODS));
-                damage += 1 * sword.getEnchantmentLevel(Enchantment.DAMAGE_ARTHROPODS);
+                damage += ENCHANTMENT_MULTIPLIER * sword.getEnchantmentLevel(Enchantment.DAMAGE_ARTHROPODS);
             }
             if (sword.containsEnchantment(Enchantment.DAMAGE_UNDEAD) && isUndead(event.getEntityType())) {
                 damage = damage - (1.5 * sword.getEnchantmentLevel(Enchantment.DAMAGE_UNDEAD));
-                damage += 1 * sword.getEnchantmentLevel(Enchantment.DAMAGE_UNDEAD);
+                damage += ENCHANTMENT_MULTIPLIER * sword.getEnchantmentLevel(Enchantment.DAMAGE_UNDEAD);
             }
             if (sword.containsEnchantment(Enchantment.DAMAGE_ALL)) {
                 damage = damage - 1.25 * sword.getEnchantmentLevel(Enchantment.DAMAGE_ALL);
-                damage += 1 * sword.getEnchantmentLevel(Enchantment.DAMAGE_ALL);
+                damage += ENCHANTMENT_MULTIPLIER * sword.getEnchantmentLevel(Enchantment.DAMAGE_ALL);
             }
         }
         if (isCrital(p)) {
@@ -57,7 +60,6 @@ public class DamageFixListener implements Listener {
         event.setDamage(damage);
     }
 
-    @SuppressWarnings("deprecation")
     private boolean isCrital(Player p) {
         return p.getFallDistance() > 0 && !p.isOnGround() && !p.hasPotionEffect(PotionEffectType.BLINDNESS);
     }
@@ -65,31 +67,23 @@ public class DamageFixListener implements Listener {
     private boolean isArthropod(EntityType type) {
         switch (type) {
             case CAVE_SPIDER:
-                return true;
             case SPIDER:
-                return true;
             case SILVERFISH:
                 return true;
             default:
-                break;
+                return false;
         }
-        return false;
     }
 
     private boolean isUndead(EntityType type) {
         switch (type) {
             case SKELETON:
-                return true;
             case ZOMBIE:
-                return true;
             case WITHER_SKULL:
-                return true;
             case PIG_ZOMBIE:
-                return true;
             default:
-                break;
+                return false;
         }
-        return false;
     }
 
     private double getDamage(Material type) {

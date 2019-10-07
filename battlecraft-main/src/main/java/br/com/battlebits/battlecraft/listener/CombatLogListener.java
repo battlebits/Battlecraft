@@ -16,7 +16,7 @@ public class CombatLogListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDamage(PlayerDamagePlayerEvent e) {
-        Player damager = e.getDamager();
+        Player damager = e.getPlayer();
         Player damaged = e.getDamaged();
         CombatLogManager.newCombatLog(damaged, damager);
     }
@@ -44,8 +44,6 @@ public class CombatLogListener implements Listener {
 
     private void checkCombatLog(Player p) {
         CombatLog log = CombatLogManager.getCombatLog(p);
-        if (log == null)
-            return;
         if (log.isFighting()) {
             Player combatLogger = log.getCombatLogged();
             if (combatLogger != null)

@@ -21,7 +21,7 @@ public class ProtectionListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDamage(PlayerDamagePlayerEvent event) {
-        if (ProtectionManager.isProtected(event.getDamaged()) || ProtectionManager.isProtected(event.getDamager()))
+        if (ProtectionManager.isProtected(event.getDamaged()) || ProtectionManager.isProtected(event.getPlayer()))
             event.setCancelled(true);
     }
 

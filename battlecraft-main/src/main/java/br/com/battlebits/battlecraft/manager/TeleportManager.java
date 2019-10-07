@@ -19,7 +19,7 @@ public class TeleportManager {
     private final static String IN_PROGRESS_META = "teleport.in_progress";
     private final static String WARP_META = "teleport.warp";
 
-    private final static long COOLDOWN_TIME = 5000l;
+    private final static long COOLDOWN_TIME = 5000L;
 
     public static void teleport(Player player, Warp to) {
         Language language = Commons.getLanguage(player.getUniqueId());
@@ -34,9 +34,6 @@ public class TeleportManager {
 
         PlayerWarpTeleportEvent event = new PlayerWarpTeleportEvent(player, to);
         Battlecraft.getInstance().getServer().getPluginManager().callEvent(event);
-
-        if (event.isCancelled())
-            return;
 
         if (!ProtectionManager.isProtected(player) && CombatLogManager.getCombatLog(player).isFighting()) {
             player.setMetadata(IN_PROGRESS_META, new FixedMetadataValue(Battlecraft.getInstance(), System.currentTimeMillis()));
