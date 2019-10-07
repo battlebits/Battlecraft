@@ -1,9 +1,7 @@
 package br.com.battlebits.battlecraft;
 
 import br.com.battlebits.battlecraft.listener.*;
-import br.com.battlebits.battlecraft.manager.AbilityManager;
-import br.com.battlebits.battlecraft.manager.CooldownManager;
-import br.com.battlebits.battlecraft.manager.WarpManager;
+import br.com.battlebits.battlecraft.manager.*;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.warp.Warp;
 import br.com.battlebits.battlecraft.warp.WarpSpawn;
@@ -13,8 +11,10 @@ import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
 import br.com.battlebits.commons.command.CommandLoader;
 import br.com.battlebits.commons.translate.TranslationCommon;
 import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -55,6 +55,16 @@ public class Battlecraft extends JavaPlugin {
         loadWarps();
         loadListeners();
         loadManagers();
+
+
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            // Clear some data
+            CombatLogManager.removeCombatLog(player);
+            TeleportManager.cancelTeleporting(player);
+
+            // When reloading teleport back to Spawn
+            warpManager.joinWarp(player, warpManager.getDefaultWarp());
+        }
     }
 
     private void loadCommands() {
