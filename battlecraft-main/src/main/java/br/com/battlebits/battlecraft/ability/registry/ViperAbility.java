@@ -27,7 +27,8 @@ public class ViperAbility extends Ability {
                 .getDamager()).getPlayer()) && random.nextInt(2) == 0) {
             event.getEntity().getLocation().getWorld().playEffect(event.getEntity().getLocation().add(0.0D,
                     0.4D, 0.0D), Effect.STEP_SOUND, 159, (short) 13);
-            ((Player) event.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.POISON, 100, 0));
+            ((Player) event.getEntity()).addPotionEffect(new PotionEffect(PotionEffectType.POISON
+                    , 100, 0));
         }
     }
 

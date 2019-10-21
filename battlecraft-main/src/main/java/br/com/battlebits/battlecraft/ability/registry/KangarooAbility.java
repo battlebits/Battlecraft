@@ -100,6 +100,7 @@ public class KangarooAbility extends Ability implements AbilityItem {
 
     @Override
     public void onReceiveItems(Player player) {
-        player.getInventory().addItem(ItemBuilder.create(Material.FIREWORK_ROCKET).name("§aKangaroo").build());
+        player.getInventory().addItem(ItemBuilder.create(Material.FIREWORK_ROCKET).name(
+                "§aKangaroo").build());
     }
 }
