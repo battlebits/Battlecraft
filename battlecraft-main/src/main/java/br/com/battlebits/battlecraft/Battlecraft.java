@@ -92,6 +92,7 @@ public class Battlecraft extends JavaPlugin {
         manager.registerEvents(new SoupListener(), this);
         manager.registerEvents(new WarpListener(), this);
         manager.registerEvents(new CombatLogListener(), this);
+        manager.registerEvents(new CooldownListener(), this);
         manager.registerEvents(new TeleportListener(), this);
     }
 
