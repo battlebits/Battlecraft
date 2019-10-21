@@ -66,7 +66,8 @@ public class NinjaAbility extends Ability {
 //                TODO Cooldown
 //                if(!hasCooldown(player)) {
 //                    player.teleport(target.getLocation());
-//                    player.getWorld().playSound(player.getLocation(), Sound.ENTITY_ENDER_DRAGON_FLAP, 1.0F, 1.0F);
+//                    player.getWorld().playSound(player.getLocation(), Sound
+//                    .ENTITY_ENDER_DRAGON_FLAP, 1.0F, 1.0F);
 //                    ability.remove(player);
 //                    addCooldown(player, 4000);
 //                } else {
