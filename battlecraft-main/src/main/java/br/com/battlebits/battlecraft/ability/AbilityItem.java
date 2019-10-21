@@ -9,6 +9,13 @@ import org.bukkit.event.Listener;
  */
 public interface AbilityItem extends Listener {
 
+    /**
+     * Ao receber items, tome cuidado ao setar items em slots
+     * <p>
+     * Tente sempre adicionar os items ao inventário.
+     *
+     * @param player Jogador com o kit
+     */
     void onReceiveItems(Player player);
 
 }
