@@ -11,17 +11,13 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * Gerenciador de Cooldown das habilidades
+ * Favor não utilizar para qualquer outro countdown
+ */
 public class CooldownManager {
 
-    private static Set<Cooldown> cooldowns;
-
-    private CooldownManager() {
-        cooldowns = new HashSet<>();
-    }
-
-    public static void create() {
-        new CooldownManager();
-    }
+    private static Set<Cooldown> cooldowns = new HashSet<>();
 
     public static void addCooldown(Cooldown cooldown) {
         Objects.requireNonNull(cooldown, "cooldown can't be null.");

@@ -55,6 +55,7 @@ public abstract class Ability implements Listener {
      */
     public void unregisterPlayer(Player player) {
         players.remove(player);
+        CooldownManager.removeAllCooldowns(player);
         if (players.isEmpty() && !Disableable.class.isAssignableFrom(getClass()))
             HandlerList.unregisterAll(this);
     }
