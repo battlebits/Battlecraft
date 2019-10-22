@@ -12,20 +12,11 @@ import java.util.Map;
 
 public class AbilityManager {
 
-    private static Battlecraft battlecraft;
-    private static Map<String, Ability> abilities;
-
-    private AbilityManager() {
-        battlecraft = Battlecraft.getInstance();
-        abilities = new HashMap<>();
-    }
-
-    public static void create() {
-        new AbilityManager();
-    }
+    private static Map<String, Ability> abilities = new HashMap<>();
 
     public static void registerKits() {
-        List<Class<?>> list = ClassGetter.getClassesForPackage(battlecraft.getClass(), "br.com" +
+        List<Class<?>> list =
+                ClassGetter.getClassesForPackage(Battlecraft.getInstance().getClass(), "br.com" +
                 ".battlebits.battlecraft.ability.registry");
         list.forEach(clazz -> {
             if (clazz != Ability.class && Ability.class.isAssignableFrom(clazz)) {
@@ -35,16 +26,16 @@ public class AbilityManager {
                         Ability kit = (Ability) constructor.newInstance();
                         abilities.put(kit.getId(), kit);
                         if (Disableable.class.isAssignableFrom(clazz)) {
-                            battlecraft.getServer().getPluginManager().registerEvents(kit, battlecraft);
+                            Battlecraft.getInstance().getServer().getPluginManager().registerEvents(kit, Battlecraft.getInstance());
                         }
                     }
                 } catch (Exception e) {
-                    battlecraft.getLogger().warning("Failed to register " + clazz.getSimpleName() + " kit");
+                    Battlecraft.getInstance().getLogger().warning("Failed to register " + clazz.getSimpleName() + " kit");
                     e.printStackTrace();
                 }
             }
         });
-        abilities.values().forEach(ability -> battlecraft.getServer().getPluginManager().registerEvents(ability, battlecraft));
+        abilities.values().forEach(ability -> Battlecraft.getInstance().getServer().getPluginManager().registerEvents(ability, Battlecraft.getInstance()));
     }
 
     public static Ability getAbilityByName(String name) {

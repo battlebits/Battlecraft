@@ -96,7 +96,6 @@ public class Battlecraft extends JavaPlugin {
     }
 
     private void loadManagers() {
-        AbilityManager.create();
         AbilityManager.registerKits();
         CooldownManager.create();
     }
