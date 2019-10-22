@@ -24,6 +24,7 @@ import static br.com.battlebits.battlecraft.manager.ProtectionManager.isProtecte
 
 public class KangarooAbility extends Ability implements AbilityItem {
 
+    private static final String JUMP_COOLDOWN = "jump";
     private Set<Player> ability;
 
     public KangarooAbility() {
@@ -40,12 +41,10 @@ public class KangarooAbility extends Ability implements AbilityItem {
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
                 event.setCancelled(true);
             }
-            // TODO Remake cooldown
-//            if (hasCooldown(player)) {
-//                //Send cooldown message
-//                player.setVelocity(new Vector(0.0D, -1.0D, 0.0D));
-//                return;
-//            }
+            if (hasCooldown(player, JUMP_COOLDOWN)) {
+                player.setVelocity(new Vector(0.0D, -1.0D, 0.0D));
+                return;
+            }
             if (!this.ability.contains(player)) {
                 Vector v;
                 if (player.isSneaking()) {
@@ -92,8 +91,7 @@ public class KangarooAbility extends Ability implements AbilityItem {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             final Player player = (Player) event.getEntity();
             if (!isProtected(player)) {
-                // COoldown
-                //CooldownManager.addCooldown(player, 6000);
+                addCooldown(player, JUMP_COOLDOWN, 6000);
             }
         }
     }

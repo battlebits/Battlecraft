@@ -1,6 +1,8 @@
 package br.com.battlebits.battlecraft.ability;
 
 import br.com.battlebits.battlecraft.Battlecraft;
+import br.com.battlebits.battlecraft.manager.CooldownManager;
+import br.com.battlebits.battlecraft.manager.CooldownManager.Cooldown;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -53,8 +55,37 @@ public abstract class Ability implements Listener {
      */
     public void unregisterPlayer(Player player) {
         players.remove(player);
+        CooldownManager.removeAllCooldowns(player);
         if (players.isEmpty() && !Disableable.class.isAssignableFrom(getClass()))
             HandlerList.unregisterAll(this);
+    }
+
+    /**
+     * Checka se o jogador possui o cooldown
+     *
+     * @param player
+     * @param cooldown
+     * @return if player has the cooldown
+     */
+    protected boolean hasCooldown(Player player, String cooldown) {
+        return CooldownManager.hasCooldown(player, cooldown);
+    }
+
+    /**
+     * Adiciona um cooldown ao jogador
+     * Caso ele já possua esse Cooldown, atualiza o tempo
+     *
+     * @param player
+     * @param cooldownName
+     * @param time
+     */
+    protected void addCooldown(Player player, String cooldownName, long time) {
+        if (CooldownManager.hasCooldown(player, cooldownName)) {
+            CooldownManager.removeCooldown(player, cooldownName);
+        }
+        CooldownManager.addCooldown(new Cooldown(player, cooldownName,
+                System.currentTimeMillis() + time));
+
     }
 
 }

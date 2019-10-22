@@ -3,6 +3,7 @@ package br.com.battlebits.battlecraft.ability.registry;
 import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -15,6 +16,8 @@ import java.util.Map;
 import static br.com.battlebits.battlecraft.manager.ProtectionManager.isProtected;
 
 public class NinjaAbility extends Ability {
+
+    private static final String NINJA_COOLDOWN = "ninja";
 
     private Map<Player, Player> ability;
 
@@ -63,16 +66,15 @@ public class NinjaAbility extends Ability {
                     return;
                 }
                 //Check gladiator
-//                TODO Cooldown
-//                if(!hasCooldown(player)) {
-//                    player.teleport(target.getLocation());
-//                    player.getWorld().playSound(player.getLocation(), Sound
-//                    .ENTITY_ENDER_DRAGON_FLAP, 1.0F, 1.0F);
-//                    ability.remove(player);
-//                    addCooldown(player, 4000);
-//                } else {
-//                    //Send cooldown message
-//                }
+                if (!hasCooldown(player, NINJA_COOLDOWN)) {
+                    player.teleport(target.getLocation());
+                    player.getWorld().playSound(player.getLocation(), Sound
+                            .ENTITY_ENDER_DRAGON_FLAP, 1.0F, 1.0F);
+                    ability.remove(player);
+                    addCooldown(player, NINJA_COOLDOWN, 4000);
+                } else {
+                    //Send cooldown message
+                }
             }
         }
     }
