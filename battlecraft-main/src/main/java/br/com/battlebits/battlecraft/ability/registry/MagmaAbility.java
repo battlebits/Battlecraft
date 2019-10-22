@@ -18,7 +18,6 @@ public class MagmaAbility extends Ability {
     private Random random;
 
     public MagmaAbility() {
-        super("Magma", ItemBuilder.create(Material.MAGMA_CREAM).build(), 0);
         random = new Random();
     }
 

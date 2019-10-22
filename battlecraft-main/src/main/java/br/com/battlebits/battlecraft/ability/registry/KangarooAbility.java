@@ -28,8 +28,6 @@ public class KangarooAbility extends Ability implements AbilityItem {
     private Set<Player> ability;
 
     public KangarooAbility() {
-        super("Kangaroo", ItemBuilder.create(Material.FIREWORK_ROCKET).build(), 0);
-
         ability = new HashSet<>();
     }
 

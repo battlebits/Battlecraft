@@ -13,10 +13,6 @@ import static br.com.battlebits.battlecraft.manager.ProtectionManager.isProtecte
 
 public class FishermanAbility extends Ability implements AbilityItem {
 
-    public FishermanAbility() {
-        super("Fisherman", ItemBuilder.create(Material.FISHING_ROD).build(), 0);
-    }
-
     @EventHandler
     public void onPlayerFishListener(PlayerFishEvent event) {
         if (event.getState() == PlayerFishEvent.State.CAUGHT_ENTITY) {

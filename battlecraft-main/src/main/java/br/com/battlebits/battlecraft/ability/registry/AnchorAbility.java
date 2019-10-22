@@ -14,10 +14,6 @@ import org.bukkit.util.Vector;
 
 public class AnchorAbility extends Ability {
 
-    public AnchorAbility() {
-        super("Anchor", ItemBuilder.create(Material.ANVIL).build(), 0);
-    }
-
     @EventHandler
     public void onEntityDamageEvent(EntityDamageEvent event) {
         if (event.isCancelled()) {

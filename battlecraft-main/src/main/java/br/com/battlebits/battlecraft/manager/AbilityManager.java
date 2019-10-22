@@ -23,10 +23,10 @@ public class AbilityManager {
                 try {
                     Constructor<?> constructor = clazz.getConstructor();
                     if (constructor != null) {
-                        Ability kit = (Ability) constructor.newInstance();
-                        abilities.put(kit.getId(), kit);
+                        Ability ability = (Ability) constructor.newInstance();
+                        abilities.put(clazz.getSimpleName(), ability);
                         if (Disableable.class.isAssignableFrom(clazz)) {
-                            Battlecraft.getInstance().getServer().getPluginManager().registerEvents(kit, Battlecraft.getInstance());
+                            Battlecraft.getInstance().getServer().getPluginManager().registerEvents(ability, Battlecraft.getInstance());
                         }
                     }
                 } catch (Exception e) {
@@ -35,11 +35,14 @@ public class AbilityManager {
                 }
             }
         });
-        abilities.values().forEach(ability -> Battlecraft.getInstance().getServer().getPluginManager().registerEvents(ability, Battlecraft.getInstance()));
     }
 
     public static Ability getAbilityByName(String name) {
         return abilities.getOrDefault(name, null);
+    }
+
+    public static Ability getAbilityByClass(Class<? extends Ability> clazz) {
+        return getAbilityByName(clazz.getSimpleName());
     }
 
 }

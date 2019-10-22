@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,15 +17,8 @@ public abstract class Ability implements Listener {
 
     private Set<Player> players;
 
-    private String id;
-    private ItemStack icon;
-    private int price;
-
-    public Ability(String id, ItemStack icon, int price) {
+    public Ability() {
         this.players = new HashSet<>();
-        this.id = id.toLowerCase().trim().replace(" ", ".");
-        this.icon = icon;
-        this.price = price;
     }
 
     protected boolean hasAbility(Player player) {
@@ -36,7 +28,7 @@ public abstract class Ability implements Listener {
     /**
      * Register player in the ability listener
      *
-     * @param player
+     * @param player jogador que vai poder usar as habilidades
      */
     public void registerPlayer(Player player) {
         if (players.isEmpty() && !Disableable.class.isAssignableFrom(getClass()))
