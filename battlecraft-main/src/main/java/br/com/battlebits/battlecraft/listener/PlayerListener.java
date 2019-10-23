@@ -144,12 +144,9 @@ public class PlayerListener implements Listener {
         ItemStack item = drop.getItemStack();
         if (item.hasItemMeta()) {
             event.setCancelled(true);
-            return;
         } else if (item.toString().contains("SWORD") || item.toString().contains("AXE")) {
             event.setCancelled(true);
-            return;
         }
-        // TODO Cancel kit items
     }
 
     @EventHandler(priority = EventPriority.LOWEST)

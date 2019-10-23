@@ -6,8 +6,10 @@ import br.com.battlebits.battlecraft.manager.CooldownManager.Cooldown;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerDropItemEvent;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -25,6 +27,15 @@ public abstract class Ability implements Listener {
         return players.contains(player);
     }
 
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent event) {
+        if (this instanceof AbilityItem) {
+            AbilityItem giveItem = (AbilityItem) this;
+            if (giveItem.getItems().contains(event.getItemDrop().getItemStack()))
+                event.setCancelled(true);
+        }
+    }
+
     /**
      * Register player in the ability listener
      *
@@ -34,10 +45,6 @@ public abstract class Ability implements Listener {
         if (players.isEmpty() && !Disableable.class.isAssignableFrom(getClass()))
             Bukkit.getPluginManager().registerEvents(this, Battlecraft.getInstance());
         players.add(player);
-        if (this instanceof AbilityItem) {
-            AbilityItem giveItem = (AbilityItem) this;
-            giveItem.onReceiveItems(player);
-        }
     }
 
     /**

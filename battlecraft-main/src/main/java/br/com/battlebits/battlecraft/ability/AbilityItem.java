@@ -2,6 +2,9 @@ package br.com.battlebits.battlecraft.ability;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.List;
 
 /**
  * Use this if an ability has items
@@ -10,12 +13,9 @@ import org.bukkit.event.Listener;
 public interface AbilityItem extends Listener {
 
     /**
-     * Ao receber items, tome cuidado ao setar items em slots
-     * <p>
-     * Tente sempre adicionar os items ao inventário.
-     *
-     * @param player Jogador com o kit
+     * Usado por habilidades que possuem items
+     * @return lista de items do kit
      */
-    void onReceiveItems(Player player);
+    List<ItemStack> getItems();
 
 }
