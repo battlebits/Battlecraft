@@ -94,6 +94,10 @@ public abstract class Warp implements Listener, CommandClass {
         }
     }
 
+    protected boolean isWarpKit(Kit kit) {
+        return this.kits.contains(kit);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof Warp))
