@@ -1,5 +1,9 @@
 package br.com.battlebits.battlecraft.warp;
 
+import br.com.battlebits.battlecraft.ability.Ability;
+import br.com.battlebits.battlecraft.ability.Kit;
+import br.com.battlebits.battlecraft.ability.registry.KangarooAbility;
+import br.com.battlebits.battlecraft.ability.registry.NinjaAbility;
 import br.com.battlebits.battlecraft.event.RealMoveEvent;
 import br.com.battlebits.battlecraft.event.protection.PlayerProtectionRemoveEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
@@ -16,8 +20,12 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.Set;
+
+import static br.com.battlebits.battlecraft.manager.AbilityManager.getAbilityByClass;
 import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.*;
 import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
@@ -25,6 +33,7 @@ public class WarpSpawn extends Warp {
 
     public WarpSpawn(Location spawnLocation, WorldMap map) {
         super("Spawn", Material.GRASS_BLOCK, spawnLocation, map);
+        createKits();
     }
 
     @EventHandler
@@ -77,4 +86,14 @@ public class WarpSpawn extends Warp {
         // TODO Remove kit
     }
 
+    private void createKits() {
+        int DEFAULT_PRICE = 2000;
+        Set<Ability> abilities = Set.of(getAbilityByClass(NinjaAbility.class));
+        ItemStack icon = new ItemStack(Material.NETHER_STAR);
+        this.kits.add(new Kit("ninja", abilities, icon, DEFAULT_PRICE));
+
+        abilities = Set.of(getAbilityByClass(KangarooAbility.class));
+        icon = new ItemStack(Material.FIREWORK_ROCKET);
+        this.kits.add(new Kit("kangaroo", abilities, icon, DEFAULT_PRICE));
+    }
 }

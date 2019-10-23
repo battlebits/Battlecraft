@@ -1,5 +1,6 @@
 package br.com.battlebits.battlecraft.warp;
 
+import br.com.battlebits.battlecraft.ability.Kit;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
@@ -29,6 +30,8 @@ public abstract class Warp implements Listener, CommandClass {
     private Set<Player> players;
 
     @Getter
+    protected Set<Kit> kits;
+    @Getter
     private Location spawnLocation;
     private BattleScoreboard scoreboard;
 
@@ -38,6 +41,7 @@ public abstract class Warp implements Listener, CommandClass {
         this.name = name;
         this.material = material;
         this.players = new HashSet<>();
+        this.kits = new HashSet<>();
         this.spawnLocation = spawnLocation;
         this.worldMap = map;
     }
@@ -97,4 +101,5 @@ public abstract class Warp implements Listener, CommandClass {
         Warp compare = (Warp) obj;
         return compare.getId().equals(this.getId());
     }
+
 }
