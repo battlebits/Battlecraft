@@ -119,6 +119,6 @@ public class WarpSpawn extends Warp {
 
         abilities = Set.of(getAbilityByClass(KangarooAbility.class));
         icon = new ItemStack(Material.FIREWORK_ROCKET);
-        this.kits.add(new Kit("kangaroo", abilities, icon, DEFAULT_PRICE));
+        this.kits.add(new Kit("Kangaroo", abilities, icon, DEFAULT_PRICE));
     }
 }
