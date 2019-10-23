@@ -37,6 +37,9 @@ public class KitManager {
         playerKits.put(player, kit);
         kit.getAbilities().forEach(ability -> ability.registerPlayer(player));
         PlayerInventory inv = player.getInventory();
+        for (ItemStack is : kit.getItems()) {
+            inv.addItem(is);
+        }
         for (ItemStack is : inv.getContents()) {
             if (is == null)
                 inv.addItem(new ItemStack(Material.MUSHROOM_STEW));
