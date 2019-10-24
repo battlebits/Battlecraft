@@ -17,9 +17,27 @@ public enum BattlecraftTranslateTag {
     DONATOR_JOIN_FULL("donator.join-full"),
     SERVER_FULL("server-full"),
 
-    WARPS_MENU_TITLE,
-    WARPS_ITEM_NAME,
-    WARPS_ITEM_LORE,
+    WARP_MENU_TITLE,
+    WARPSELECTOR_ITEM_NAME,
+    WARPSELECTOR_ITEM_LORE,
+
+    KITSELECTOR_ITEM_NAME,
+    KITSELECTOR_ITEM_LORE,
+
+
+    KIT_MENU_TITLE,
+    KIT_MENU_ERROR,
+    KIT_MENU_PREVIOUS_PAGE("kit.menu.previous-page"),
+    KIT_MENU_PREVIOUS_LORE("kit.menu.previous-lore"),
+    KIT_MENU_NO_PREVIOUS_PAGE("kit.menu.no-previous-page"),
+    KIT_MENU_NEXT_PAGE("kit.menu.next-page"),
+    KIT_MENU_NEXT_LORE("kit.menu.next-lore"),
+    KIT_MENU_NO_NEXT_PAGE("kit.menu.no-next-page"),
+    KIT_ITEM_NOT_ENABLED("kit.item.not-enabled"),
+
+    KIT_KANGAROO_DESCRIPTION,
+    KIT_NINJA_DESCRIPTION,
+    KIT_PVP_DESCRIPTION,
 
     CURRENTLY_HERE,
 
