@@ -28,6 +28,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static br.com.battlebits.battlecraft.manager.AbilityManager.getAbilityByClass;
 import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.*;
@@ -113,12 +115,12 @@ public class WarpSpawn extends Warp {
 
     private void createKits() {
         int DEFAULT_PRICE = 2000;
-        Set<Ability> abilities = Set.of(getAbilityByClass(NinjaAbility.class));
+        Stream<Ability> abilities = Stream.of(getAbilityByClass(NinjaAbility.class));
         ItemStack icon = new ItemStack(Material.NETHER_STAR);
-        this.kits.add(new Kit("ninja", abilities, icon, DEFAULT_PRICE));
+        this.kits.add(new Kit("ninja", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
 
-        abilities = Set.of(getAbilityByClass(KangarooAbility.class));
+        abilities = Stream.of(getAbilityByClass(NinjaAbility.class));
         icon = new ItemStack(Material.FIREWORK_ROCKET);
-        this.kits.add(new Kit("Kangaroo", abilities, icon, DEFAULT_PRICE));
+        this.kits.add(new Kit("Kangaroo", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
     }
 }
