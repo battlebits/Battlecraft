@@ -6,12 +6,9 @@ import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -19,52 +16,74 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static br.com.battlebits.battlecraft.manager.ProtectionManager.isProtected;
 
 public class KangarooAbility extends Ability implements AbilityItem {
 
     private static final String JUMP_COOLDOWN = "jump";
-    private Set<Player> ability;
+    private static final double MAX_FALL_DAMAGE = 7.0;
+    private static final long COOLDOWN_TIME = 6000;
+
+    public static final float JUMP_MULTIPLY_NORMAL = 1F;
+    public static final float JUMP_MULTIPLY_NERFED = 0.3F;
+    public static final float JUMP_Y_SNEAKING = 0.65F;
+    public static final float JUMP_Y_GROUND = 0.9F;
+    public static final float JUMP_Y_AIR = 0.85F;
+
+    private Set<Player> doubleJump;
 
     public KangarooAbility() {
-        ability = new HashSet<>();
+        doubleJump = new HashSet<>();
     }
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        final Player player = event.getPlayer();
-        if (player.getInventory().getItemInMainHand().getType() == Material.FIREWORK_ROCKET && player.getGameMode() ==
-                GameMode.SURVIVAL && hasAbility(player)) {
-            if (event.getAction() == Action.RIGHT_CLICK_BLOCK || event.getAction() == Action.RIGHT_CLICK_AIR) {
-                event.setCancelled(true);
-            }
+        Player player = event.getPlayer();
+        if (player.getInventory().getItemInMainHand().getType() == Material.FIREWORK_ROCKET && hasAbility(player)) {
             if (hasCooldown(player, JUMP_COOLDOWN)) {
-                player.setVelocity(new Vector(0.0D, -1.0D, 0.0D));
                 return;
             }
-            if (!this.ability.contains(player)) {
-                Vector v;
-                if (player.isSneaking()) {
-                    v = player.getEyeLocation().getDirection().multiply(1.75f).setY(0.4f);
+            if (player.isOnGround()) {
+                Vector vector = player.getEyeLocation().getDirection();
+                if (!player.isSneaking()) {
+                    vector.multiply(JUMP_MULTIPLY_NERFED);
+                    vector.setY(JUMP_Y_GROUND);
                 } else {
-                    v = player.getEyeLocation().getDirection().multiply(0.2f).setY(0.8f);
+                    vector.multiply(JUMP_MULTIPLY_NERFED);
+                    vector.setY(JUMP_Y_SNEAKING);
                 }
-                player.setVelocity(v);
-                this.ability.add(player);
+                player.setVelocity(vector);
+                doubleJump.remove(player);
+            } else {
+                if (!doubleJump.contains(player)) {
+                    Vector vector = player.getEyeLocation().getDirection();
+                    if (!player.isSneaking()) {
+                        vector.multiply(JUMP_MULTIPLY_NERFED);
+                        vector.setY(JUMP_Y_AIR);
+                        player.setVelocity(vector);
+                        doubleJump.add(player);
+                    } else {
+                        vector.multiply(JUMP_MULTIPLY_NORMAL);
+                        vector.setY(JUMP_Y_SNEAKING);
+                        player.setVelocity(vector);
+                        doubleJump.add(player);
+                    }
+                }
             }
+            event.setCancelled(true);
         }
     }
 
     @EventHandler
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
-        if (this.ability.contains(player)) {
-            Block b = player.getLocation().getBlock();
-            if (b.getType() != Material.AIR || b.getRelative(BlockFace.DOWN).getType() != Material.AIR) {
-                this.ability.remove(player);
-            }
+        if (this.doubleJump.contains(player) && player.isOnGround()) {
+            this.doubleJump.remove(player);
         }
     }
 
@@ -74,9 +93,8 @@ public class KangarooAbility extends Ability implements AbilityItem {
             final Player player = (Player) event.getEntity();
             if (event.getCause() == EntityDamageEvent.DamageCause.FALL && hasAbility(player)) {
                 final double damage = event.getDamage();
-                if (damage > 4.0D) {
-                    event.setCancelled(true);
-                    event.setDamage(4.0D);
+                if (damage > MAX_FALL_DAMAGE) {
+                    event.setDamage(MAX_FALL_DAMAGE);
                 }
             }
         }
@@ -90,13 +108,9 @@ public class KangarooAbility extends Ability implements AbilityItem {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             final Player player = (Player) event.getEntity();
             if (!isProtected(player)) {
-                addCooldown(player, JUMP_COOLDOWN, 6000);
+                addCooldown(player, JUMP_COOLDOWN, COOLDOWN_TIME);
             }
         }
-    }
-
-    public void onReceiveItems(Player player) {
-        player.getInventory().addItem();
     }
 
     @Override
