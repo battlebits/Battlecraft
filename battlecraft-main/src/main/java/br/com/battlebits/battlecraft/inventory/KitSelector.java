@@ -29,5 +29,6 @@ public class KitSelector extends MenuInventory {
         MenuItem menuItem;
         int slot = 0;
         List<Kit> warpList = new ArrayList<>(warp.getKits());
+        
     }
 }
