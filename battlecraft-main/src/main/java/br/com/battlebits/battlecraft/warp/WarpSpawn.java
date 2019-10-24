@@ -38,6 +38,8 @@ import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
 public class WarpSpawn extends Warp {
 
+    private Kit defaultKit;
+
     public WarpSpawn(Location spawnLocation, WorldMap map) {
         super("Spawn", Material.GRASS_BLOCK, spawnLocation, map);
         createKits();
@@ -51,7 +53,6 @@ public class WarpSpawn extends Warp {
         PlayerInventory inv = p.getInventory();
         inv.clear();
         Language l = Commons.getLanguage(p.getUniqueId());
-
         ItemBuilder builder =
                 ItemBuilder.create(Material.ENDER_CHEST).name(tl(l, KITSELECTOR_ITEM_NAME)).lore("", tl(l,
                         KITSELECTOR_ITEM_LORE));
@@ -69,6 +70,7 @@ public class WarpSpawn extends Warp {
         });
         inv.setItem(2, item.getItemStack());
         inv.setHeldItemSlot(1);
+        ProtectionManager.addProtection(p);
     }
 
     @EventHandler
@@ -99,6 +101,9 @@ public class WarpSpawn extends Warp {
             return;
         Language lang = Commons.getLanguage(p.getUniqueId());
         p.sendMessage(tl(lang, PROTECTION_TAG) + tl(lang, PROTECTION_LOST));
+        if (!KitManager.containsKit(p)) {
+            KitManager.giveKit(p, defaultKit);
+        }
     }
 
     @EventHandler
@@ -125,14 +130,16 @@ public class WarpSpawn extends Warp {
 
     private void createKits() {
         int DEFAULT_PRICE = 2000;
+        ItemStack icon = new ItemStack(Material.DIAMOND_SWORD);
+        defaultKit = new Kit("pvp", new HashSet<>(), icon, DEFAULT_PRICE);
+        this.kits.add(defaultKit);
+
         Stream<Ability> abilities = Stream.of(getAbilityByClass(NinjaAbility.class));
-        ItemStack icon = new ItemStack(Material.NETHER_STAR);
+        icon = new ItemStack(Material.NETHER_STAR);
         this.kits.add(new Kit("ninja", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
 
         abilities = Stream.of(getAbilityByClass(KangarooAbility.class));
         icon = new ItemStack(Material.FIREWORK_ROCKET);
         this.kits.add(new Kit("kangaroo", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
-        icon = new ItemStack(Material.DIAMOND_SWORD);
-        this.kits.add(new Kit("pvp", new HashSet<>(), icon, DEFAULT_PRICE));
     }
 }
