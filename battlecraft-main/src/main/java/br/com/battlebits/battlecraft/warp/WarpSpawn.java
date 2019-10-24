@@ -2,7 +2,6 @@ package br.com.battlebits.battlecraft.warp;
 
 import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.battlecraft.ability.Kit;
-import br.com.battlebits.battlecraft.ability.registry.KangarooAbility;
 import br.com.battlebits.battlecraft.ability.registry.NinjaAbility;
 import br.com.battlebits.battlecraft.event.PlayerKitEvent;
 import br.com.battlebits.battlecraft.event.RealMoveEvent;
@@ -10,6 +9,7 @@ import br.com.battlebits.battlecraft.event.protection.PlayerProtectionRemoveEven
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpDeathEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
+import br.com.battlebits.battlecraft.inventory.KitSelector;
 import br.com.battlebits.battlecraft.inventory.WarpSelector;
 import br.com.battlebits.battlecraft.manager.KitManager;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
@@ -27,7 +27,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,16 +47,25 @@ public class WarpSpawn extends Warp {
         Player p = event.getPlayer();
         if (!inWarp(p))
             return;
+        PlayerInventory inv = p.getInventory();
+        inv.clear();
         Language l = Commons.getLanguage(p.getUniqueId());
+
         ItemBuilder builder =
-                ItemBuilder.create(Material.COMPASS).name(tl(l, WARPS_ITEM_NAME)).lore("", tl(l,
-                        WARPS_ITEM_LORE));
-        ActionItemStack item = new ActionItemStack(builder.build(), (player, itemStack, action) -> {
+                ItemBuilder.create(Material.ENDER_CHEST).name(tl(l, KITSELECTOR_ITEM_NAME)).lore("", tl(l,
+                        KITSELECTOR_ITEM_LORE));
+        ActionItemStack  item = new ActionItemStack(builder.build(), (player, itemStack, action) -> {
+            new KitSelector(l, this).open(p);
+            return false;
+        });
+        inv.setItem(1, item.getItemStack());
+        builder =
+                ItemBuilder.create(Material.COMPASS).name(tl(l, WARPSELECTOR_ITEM_NAME)).lore("", tl(l,
+                        WARPSELECTOR_ITEM_LORE));
+        item = new ActionItemStack(builder.build(), (player, itemStack, action) -> {
             new WarpSelector(l, this).open(p);
             return false;
         });
-        PlayerInventory inv = p.getInventory();
-        inv.clear();
         inv.setItem(2, item.getItemStack());
         inv.setHeldItemSlot(1);
     }
@@ -121,6 +130,8 @@ public class WarpSpawn extends Warp {
 
         abilities = Stream.of(getAbilityByClass(NinjaAbility.class));
         icon = new ItemStack(Material.FIREWORK_ROCKET);
-        this.kits.add(new Kit("Kangaroo", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+        this.kits.add(new Kit("kangaroo", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+        icon = new ItemStack(Material.DIAMOND_SWORD);
+        this.kits.add(new Kit("pvp", new HashSet<>(), icon, DEFAULT_PRICE));
     }
 }
