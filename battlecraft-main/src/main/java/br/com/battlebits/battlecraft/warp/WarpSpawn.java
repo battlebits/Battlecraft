@@ -2,6 +2,7 @@ package br.com.battlebits.battlecraft.warp;
 
 import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.battlecraft.ability.Kit;
+import br.com.battlebits.battlecraft.ability.registry.KangarooAbility;
 import br.com.battlebits.battlecraft.ability.registry.NinjaAbility;
 import br.com.battlebits.battlecraft.event.PlayerKitEvent;
 import br.com.battlebits.battlecraft.event.RealMoveEvent;
@@ -128,7 +129,7 @@ public class WarpSpawn extends Warp {
         ItemStack icon = new ItemStack(Material.NETHER_STAR);
         this.kits.add(new Kit("ninja", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
 
-        abilities = Stream.of(getAbilityByClass(NinjaAbility.class));
+        abilities = Stream.of(getAbilityByClass(KangarooAbility.class));
         icon = new ItemStack(Material.FIREWORK_ROCKET);
         this.kits.add(new Kit("kangaroo", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
         icon = new ItemStack(Material.DIAMOND_SWORD);

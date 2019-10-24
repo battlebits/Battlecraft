@@ -37,7 +37,7 @@ public class KitSelector extends MenuInventory {
     }
 
     public KitSelector(Language l, Warp warp, int page) {
-        this(l, warp, page, warp.getKits().size() / ITEMS_PER_PAGE + 1);
+        this(l, warp, page, (warp.getKits().size() / ITEMS_PER_PAGE) + 1);
     }
 
 
@@ -84,14 +84,16 @@ public class KitSelector extends MenuInventory {
                             .build(), (player, arg1, arg2, arg3, arg4) -> new KitSelector(l, warp, page - 1).open(player)), PREVIOUS_PAGE_SLOT);
         }
 
-        if (items.size() / ITEMS_PER_PAGE + 1 > page) {
+        System.out.println((items.size() / ITEMS_PER_PAGE) + 1 > page);
+
+        if ((items.size() / ITEMS_PER_PAGE) + 1 <= page) {
             setItem(ItemBuilder.create(Material.BLACK_DYE).name(l.tl(KIT_MENU_NO_NEXT_PAGE)).build(), NEXT_PAGE_SLOT);
         } else {
             setItem(new MenuItem(
                     ItemBuilder.create(Material.CYAN_DYE)
                             .name(l.tl(KIT_MENU_NEXT_PAGE))
                             .lore(l.tl(KIT_MENU_NEXT_LORE))
-                            .build(), (player, arg1, arg2, arg3, arg4) -> new KitSelector(l, warp, page - 1).open(player)), NEXT_PAGE_SLOT);
+                            .build(), (player, arg1, arg2, arg3, arg4) -> new KitSelector(l, warp, page + 1).open(player)), NEXT_PAGE_SLOT);
         }
 
         int kitSlot = 19;
@@ -115,6 +117,10 @@ public class KitSelector extends MenuInventory {
 //                setItem(nullItem, i);
 //        }
 
+    }
+
+    public static void main(String[] args) {
+        System.out.println((3 / ITEMS_PER_PAGE) + 1);
     }
 
     private static final boolean RIGHT_CLICK_ENABLED = false;

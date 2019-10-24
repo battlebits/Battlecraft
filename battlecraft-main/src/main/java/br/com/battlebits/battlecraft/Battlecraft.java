@@ -51,10 +51,10 @@ public class Battlecraft extends JavaPlugin {
         instance = this;
         this.warpManager = new WarpManager(this);
         TranslationCommon.addTranslation(new PropertiesStorageDataTranslation(BattlecraftTranslateTag.class));
+        loadManagers();
         loadCommands();
         loadWarps();
         loadListeners();
-        loadManagers();
 
 
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -97,6 +97,6 @@ public class Battlecraft extends JavaPlugin {
     }
 
     private void loadManagers() {
-        AbilityManager.registerKits();
+        AbilityManager.registerAbilities();
     }
 }

@@ -9,7 +9,7 @@ import org.bukkit.event.player.PlayerEvent;
 @Getter
 public class RealMoveEvent extends PlayerEvent {
 	@Getter
-	public static HandlerList handlersList = new HandlerList();
+	public static HandlerList handlerList = new HandlerList();
 	private Location from;
 	private Location to;
 
@@ -22,7 +22,7 @@ public class RealMoveEvent extends PlayerEvent {
 
 
 	public HandlerList getHandlers() {
-		return handlersList;
+		return handlerList;
 	}
 
 

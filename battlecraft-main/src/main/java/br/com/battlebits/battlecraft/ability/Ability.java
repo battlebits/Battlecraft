@@ -42,8 +42,9 @@ public abstract class Ability implements Listener {
      * @param player jogador que vai poder usar as habilidades
      */
     public void registerPlayer(Player player) {
-        if (players.isEmpty() && !Disableable.class.isAssignableFrom(getClass()))
+        if (players.isEmpty() && !Disableable.class.isAssignableFrom(getClass())) {
             Bukkit.getPluginManager().registerEvents(this, Battlecraft.getInstance());
+        }
         players.add(player);
     }
 

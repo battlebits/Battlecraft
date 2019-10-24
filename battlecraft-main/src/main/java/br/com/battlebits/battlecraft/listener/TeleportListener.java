@@ -69,8 +69,7 @@ public class TeleportListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        if (teleporting.contains(event.getPlayer()))
-            teleporting.remove(event.getPlayer());
+        teleporting.remove(event.getPlayer());
     }
 
     private void checkAndCancelTeleporting(Player player) {
