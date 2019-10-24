@@ -75,7 +75,7 @@ public class KitSelector extends MenuInventory {
         }
 
         if (page == 1) {
-            setItem(ItemBuilder.create(Material.BLACK_DYE).name(l.tl(KIT_MENU_NO_PREVIOUS_PAGE)).build(), PREVIOUS_PAGE_SLOT);
+            setItem(ItemBuilder.create(Material.GRAY_DYE).name(l.tl(KIT_MENU_NO_PREVIOUS_PAGE)).build(), PREVIOUS_PAGE_SLOT);
         } else {
             setItem(new MenuItem(
                     ItemBuilder.create(Material.CYAN_DYE)
@@ -84,10 +84,8 @@ public class KitSelector extends MenuInventory {
                             .build(), (player, arg1, arg2, arg3, arg4) -> new KitSelector(l, warp, page - 1).open(player)), PREVIOUS_PAGE_SLOT);
         }
 
-        System.out.println((items.size() / ITEMS_PER_PAGE) + 1 > page);
-
         if ((items.size() / ITEMS_PER_PAGE) + 1 <= page) {
-            setItem(ItemBuilder.create(Material.BLACK_DYE).name(l.tl(KIT_MENU_NO_NEXT_PAGE)).build(), NEXT_PAGE_SLOT);
+            setItem(ItemBuilder.create(Material.GRAY_DYE).name(l.tl(KIT_MENU_NO_NEXT_PAGE)).build(), NEXT_PAGE_SLOT);
         } else {
             setItem(new MenuItem(
                     ItemBuilder.create(Material.CYAN_DYE)
@@ -117,10 +115,6 @@ public class KitSelector extends MenuInventory {
 //                setItem(nullItem, i);
 //        }
 
-    }
-
-    public static void main(String[] args) {
-        System.out.println((3 / ITEMS_PER_PAGE) + 1);
     }
 
     private static final boolean RIGHT_CLICK_ENABLED = false;
