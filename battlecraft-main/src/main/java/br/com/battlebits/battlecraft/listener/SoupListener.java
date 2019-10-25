@@ -32,7 +32,6 @@ public class SoupListener implements Listener {
         int MAX_FOOD_LEVEL = 20;
         if (p.getHealth() < MAX_HEALTH || p.getFoodLevel() < MAX_FOOD_LEVEL) {
             event.setCancelled(true);
-            p.sendMessage(event.useItemInHand() + "");
             if (p.getHealth() < MAX_HEALTH)
                 p.setHealth(Math.min(p.getHealth() + HEALTH, MAX_HEALTH));
             else if (p.getFoodLevel() < MAX_FOOD_LEVEL)

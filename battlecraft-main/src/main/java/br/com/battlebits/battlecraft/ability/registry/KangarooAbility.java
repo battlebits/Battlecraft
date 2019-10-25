@@ -46,8 +46,21 @@ public class KangarooAbility extends Ability implements AbilityItem {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        if(event.getAction().name().contains("RIGHT"))
-            event.setCancelled(kangaroo(event.getPlayer(), event.getItem()));
+        if(event.getAction().name().contains("RIGHT")) {
+            Player player = event.getPlayer();
+            ItemStack item = event.getItem();
+            ItemStack itemInMainHand = player.getInventory().getItemInMainHand();
+            boolean cancel = false;
+            if (itemInMainHand.getType() == Material.AIR) {
+                cancel = kangaroo(player, player.getInventory().getItemInOffHand());
+            } else if (event.getItem() != null && player.getInventory().getItemInMainHand().getType() == event.getItem().getType()) {
+                cancel = kangaroo(player, itemInMainHand);
+                if (!cancel && event.useItemInHand() != Event.Result.DENY) {
+                    cancel = kangaroo(player, player.getInventory().getItemInOffHand());
+                }
+            }
+            event.setCancelled(cancel);
+        }
     }
 
     @EventHandler
@@ -59,8 +72,6 @@ public class KangarooAbility extends Ability implements AbilityItem {
 
     private boolean kangaroo(Player player, ItemStack item) {
         if (item!= null && item.getType() == Material.FIREWORK_ROCKET && hasAbility(player)) {
-            player.sendMessage("MainHand: " + player.getInventory().getItemInMainHand().getType().name());
-            player.sendMessage("OffHand: " + player.getInventory().getItemInOffHand().getType().name());
             if (hasCooldown(player, JUMP_COOLDOWN)) {
                 return false;
             }
