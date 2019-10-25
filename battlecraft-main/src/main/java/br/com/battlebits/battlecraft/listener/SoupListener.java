@@ -2,8 +2,10 @@ package br.com.battlebits.battlecraft.listener;
 
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -14,7 +16,7 @@ public class SoupListener implements Listener {
     private final static double HEALTH = 7d;
     private final static int FOOD = 7;
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onSoup(PlayerInteractEvent event) {
         Player p = event.getPlayer();
         ItemStack item = event.getItem();
@@ -25,19 +27,16 @@ public class SoupListener implements Listener {
             return;
         if (!a.toString().contains("RIGHT_CLICK"))
             return;
-        if (p.getHealth() < 20 || p.getFoodLevel() < 20) {
+        AttributeInstance attribute = p.getAttribute(Attribute.GENERIC_MAX_HEALTH);
+        double MAX_HEALTH = attribute != null ? attribute.getValue() : 20.0d;
+        int MAX_FOOD_LEVEL = 20;
+        if (p.getHealth() < MAX_HEALTH || p.getFoodLevel() < MAX_FOOD_LEVEL) {
             event.setCancelled(true);
-            double max_health = p.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue();
-            if (p.getHealth() < max_health)
-                if (p.getHealth() + HEALTH <= max_health)
-                    p.setHealth(p.getHealth() + HEALTH);
-                else
-                    p.setHealth(max_health);
-            else if (p.getFoodLevel() < 20)
-                if (p.getFoodLevel() + FOOD <= 20)
-                    p.setFoodLevel(p.getFoodLevel() + FOOD);
-                else
-                    p.setFoodLevel(20);
+            p.sendMessage(event.useItemInHand() + "");
+            if (p.getHealth() < MAX_HEALTH)
+                p.setHealth(Math.min(p.getHealth() + HEALTH, MAX_HEALTH));
+            else if (p.getFoodLevel() < MAX_FOOD_LEVEL)
+                p.setFoodLevel(Math.min(p.getFoodLevel() + FOOD, MAX_FOOD_LEVEL));
             item.setType(Material.BOWL);
         }
     }

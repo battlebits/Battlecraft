@@ -49,7 +49,7 @@ public class TeleportManager {
         return player.hasMetadata(IN_PROGRESS_META);
     }
 
-    public static void cancelTeleporting(Player player) {
+    public static void removeTeleporting(Player player) {
         Battlecraft plugin = Battlecraft.getInstance();
 
         if (player.hasMetadata(IN_PROGRESS_META))

@@ -20,11 +20,10 @@ public class PlayerWarpDeathEvent extends PlayerWarpEvent {
 
     public PlayerWarpDeathEvent(Player p, Player killer, Warp warp) {
         super(p, warp);
-        if (killer != null) {
-            this.killer = killer;
-        }
+        this.killer = killer;
         this.warp = warp;
     }
+
     public boolean hasKiller() {
         return killer != null;
     }

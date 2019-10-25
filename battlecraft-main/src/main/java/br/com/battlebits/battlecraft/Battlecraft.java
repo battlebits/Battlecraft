@@ -35,7 +35,6 @@ public class Battlecraft extends JavaPlugin {
             this.getLogger()
                     .warning("Commons was not found, disabling Battlecraft");
             this.getPluginLoader().disablePlugin(this);
-            return;
         }
     }
 
@@ -60,7 +59,7 @@ public class Battlecraft extends JavaPlugin {
         for (Player player : Bukkit.getOnlinePlayers()) {
             // Clear some data
             CombatLogManager.removeCombatLog(player);
-            TeleportManager.cancelTeleporting(player);
+            TeleportManager.removeTeleporting(player);
 
             // When reloading teleport back to Spawn
             warpManager.joinWarp(player, warpManager.getDefaultWarp());
@@ -89,6 +88,7 @@ public class Battlecraft extends JavaPlugin {
         manager.registerEvents(new MoveListener(), this);
         manager.registerEvents(new PlayerListener(), this);
         manager.registerEvents(new DamageFixListener(), this);
+        manager.registerEvents(new DeathListener(), this);
         manager.registerEvents(new SoupListener(), this);
         manager.registerEvents(new WarpListener(), this);
         manager.registerEvents(new CombatLogListener(), this);

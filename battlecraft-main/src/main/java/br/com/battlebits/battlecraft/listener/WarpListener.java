@@ -8,6 +8,7 @@ import br.com.battlebits.commons.bukkit.api.title.TitleAPI;
 import br.com.battlebits.commons.translate.Language;
 import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -28,10 +29,6 @@ public class WarpListener implements Listener {
         WarpManager manager = Battlecraft.getInstance().getWarpManager();
         Warp defaultWarp = manager.getDefaultWarp();
         manager.joinWarp(player, defaultWarp);
-        player.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20.0);
-        player.setHealth(20.0);
-        player.setFoodLevel(20);
-        player.setGameMode(GameMode.ADVENTURE);
         Language l = Commons.getLanguage(player.getUniqueId());
         TitleAPI.setTitle(player, tl(l, JOIN_MESSAGE_TITLE), tl(l, JOIN_MESSAGE_SUBTITLE)
                 , 30, 20, 30,

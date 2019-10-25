@@ -52,7 +52,6 @@ public class KitManager {
      */
     public static void removeKit(Player player) {
         player.closeInventory();
-        InventoryUtils.clearInventory(player);
         Kit kit = playerKits.remove(player);
         if(kit != null)
             kit.getAbilities().forEach(ability -> ability.unregisterPlayer(player));

@@ -7,7 +7,6 @@ import br.com.battlebits.battlecraft.ability.registry.NinjaAbility;
 import br.com.battlebits.battlecraft.event.PlayerKitEvent;
 import br.com.battlebits.battlecraft.event.RealMoveEvent;
 import br.com.battlebits.battlecraft.event.protection.PlayerProtectionRemoveEvent;
-import br.com.battlebits.battlecraft.event.warp.PlayerWarpDeathEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.inventory.KitSelector;
@@ -37,6 +36,8 @@ import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.*;
 import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
 public class WarpSpawn extends Warp {
+
+    private static final double SPAWN_RADIUS = 10;
 
     private Kit defaultKit;
 
@@ -89,12 +90,6 @@ public class WarpSpawn extends Warp {
     }
 
     @EventHandler
-    public void onDeathWarp(PlayerWarpDeathEvent event) {
-        if (inWarp(event.getPlayer()))
-            KitManager.removeKit(event.getPlayer());
-    }
-
-    @EventHandler
     public void onRemoveProtection(PlayerProtectionRemoveEvent event) {
         Player p = event.getPlayer();
         if (!inWarp(p))
@@ -115,7 +110,11 @@ public class WarpSpawn extends Warp {
             return;
         Location to = event.getTo();
         Block above = to.clone().subtract(0, 0.1, 0).getBlock();
-        if (above.getType() == Material.GRASS_BLOCK) {
+        double distX = to.getX() - getSpawnLocation().getX();
+        double distZ = to.getZ() - getSpawnLocation().getZ();
+
+        double distance = Math.sqrt((distX * distX) + (distZ * distZ));
+        if (above.getType() == Material.GRASS_BLOCK || distance > SPAWN_RADIUS) {
             ProtectionManager.removeProtection(p);
         }
     }

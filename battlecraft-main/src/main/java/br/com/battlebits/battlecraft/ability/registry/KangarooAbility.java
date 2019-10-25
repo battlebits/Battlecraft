@@ -7,10 +7,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.player.PlayerAnimationEvent;
+import org.bukkit.event.player.PlayerAnimationType;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
@@ -43,10 +46,23 @@ public class KangarooAbility extends Ability implements AbilityItem {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-        if (player.getInventory().getItemInMainHand().getType() == Material.FIREWORK_ROCKET && hasAbility(player)) {
+        if(event.getAction().name().contains("RIGHT"))
+            event.setCancelled(kangaroo(event.getPlayer(), event.getItem()));
+    }
+
+    @EventHandler
+    public void onAnimation(PlayerAnimationEvent event) {
+        if(event.getAnimationType() == PlayerAnimationType.ARM_SWING && event.getPlayer().getGameMode() == GameMode.ADVENTURE) {
+            kangaroo(event.getPlayer(), event.getPlayer().getInventory().getItemInMainHand());
+        }
+    }
+
+    private boolean kangaroo(Player player, ItemStack item) {
+        if (item!= null && item.getType() == Material.FIREWORK_ROCKET && hasAbility(player)) {
+            player.sendMessage("MainHand: " + player.getInventory().getItemInMainHand().getType().name());
+            player.sendMessage("OffHand: " + player.getInventory().getItemInOffHand().getType().name());
             if (hasCooldown(player, JUMP_COOLDOWN)) {
-                return;
+                return false;
             }
             if (player.isOnGround()) {
                 Vector vector = player.getEyeLocation().getDirection();
@@ -75,8 +91,9 @@ public class KangarooAbility extends Ability implements AbilityItem {
                     }
                 }
             }
-            event.setCancelled(true);
+            return true;
         }
+        return false;
     }
 
     @EventHandler

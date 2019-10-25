@@ -3,6 +3,7 @@ package br.com.battlebits.battlecraft.listener;
 import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.event.PlayerDamagePlayerEvent;
 import br.com.battlebits.battlecraft.event.RealMoveEvent;
+import br.com.battlebits.battlecraft.event.warp.PlayerWarpDeathEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpTeleportEvent;
 import br.com.battlebits.battlecraft.manager.TeleportManager;
 import br.com.battlebits.commons.Commons;
@@ -44,6 +45,7 @@ public class TeleportListener implements Listener {
                 }
                 TeleportProcess process = getTeleportProcess(player);
                 if (process.canTeleport()) {
+                    TeleportManager.removeTeleporting(player);
                     Battlecraft.getInstance().getWarpManager().joinWarp(player, process.getWarp());
                     iterator.remove();
                 }
@@ -68,13 +70,18 @@ public class TeleportListener implements Listener {
     }
 
     @EventHandler
+    public void onDamage(PlayerWarpDeathEvent event) {
+        checkAndCancelTeleporting(event.getPlayer());
+    }
+
+    @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         teleporting.remove(event.getPlayer());
     }
 
     private void checkAndCancelTeleporting(Player player) {
         if (teleporting.contains(player)) {
-            TeleportManager.cancelTeleporting(player);
+            TeleportManager.removeTeleporting(player);
             Language l = Commons.getLanguage(player.getUniqueId());
             player.sendMessage(tl(l, TELEPORT_TAG) + tl(l, TELEPORT_CANCELED));
             teleporting.remove(player);
