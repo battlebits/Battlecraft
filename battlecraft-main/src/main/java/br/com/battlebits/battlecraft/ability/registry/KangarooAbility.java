@@ -3,6 +3,7 @@ package br.com.battlebits.battlecraft.ability.registry;
 import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.battlecraft.ability.AbilityItem;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,10 +16,10 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 import static br.com.battlebits.battlecraft.manager.ProtectionManager.isProtected;
 
@@ -28,8 +29,6 @@ public class KangarooAbility extends Ability implements AbilityItem {
     private Set<Player> ability;
 
     public KangarooAbility() {
-        super("Kangaroo", ItemBuilder.create(Material.FIREWORK_ROCKET).build(), 0);
-
         ability = new HashSet<>();
     }
 
@@ -96,9 +95,13 @@ public class KangarooAbility extends Ability implements AbilityItem {
         }
     }
 
-    @Override
     public void onReceiveItems(Player player) {
-        player.getInventory().addItem(ItemBuilder.create(Material.FIREWORK_ROCKET).name(
-                "§aKangaroo").build());
+        player.getInventory().addItem();
+    }
+
+    @Override
+    public List<ItemStack> getItems() {
+        return Collections.singletonList(ItemBuilder.create(Material.FIREWORK_ROCKET).name(
+                ChatColor.GOLD + "Kangaroo Boost").build());
     }
 }

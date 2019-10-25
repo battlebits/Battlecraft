@@ -6,8 +6,4 @@ import org.bukkit.Material;
 
 public class StomperAbility extends Ability {
 
-    public StomperAbility() {
-        super("Stomper", ItemBuilder.create(Material.DIAMOND_BOOTS).build(), 0);
-    }
-
 }

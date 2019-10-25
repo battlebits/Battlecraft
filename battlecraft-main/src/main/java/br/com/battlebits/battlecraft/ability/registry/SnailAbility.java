@@ -17,7 +17,6 @@ public class SnailAbility extends Ability {
     private Random random;
 
     public SnailAbility() {
-        super("Snail", ItemBuilder.create(Material.STRING).build(), 0);
         random = new Random();
     }
 

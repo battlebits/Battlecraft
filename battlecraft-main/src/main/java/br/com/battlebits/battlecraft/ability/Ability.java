@@ -6,9 +6,10 @@ import br.com.battlebits.battlecraft.manager.CooldownManager.Cooldown;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.player.PlayerDropItemEvent;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,34 +19,32 @@ public abstract class Ability implements Listener {
 
     private Set<Player> players;
 
-    private String id;
-    private ItemStack icon;
-    private int price;
-
-    public Ability(String id, ItemStack icon, int price) {
+    public Ability() {
         this.players = new HashSet<>();
-        this.id = id.toLowerCase().trim().replace(" ", ".");
-        this.icon = icon;
-        this.price = price;
     }
 
     protected boolean hasAbility(Player player) {
         return players.contains(player);
     }
 
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent event) {
+        if (this instanceof AbilityItem) {
+            AbilityItem giveItem = (AbilityItem) this;
+            if (giveItem.getItems().contains(event.getItemDrop().getItemStack()))
+                event.setCancelled(true);
+        }
+    }
+
     /**
      * Register player in the ability listener
      *
-     * @param player
+     * @param player jogador que vai poder usar as habilidades
      */
     public void registerPlayer(Player player) {
         if (players.isEmpty() && !Disableable.class.isAssignableFrom(getClass()))
             Bukkit.getPluginManager().registerEvents(this, Battlecraft.getInstance());
         players.add(player);
-        if (this instanceof AbilityItem) {
-            AbilityItem giveItem = (AbilityItem) this;
-            giveItem.onReceiveItems(player);
-        }
     }
 
     /**

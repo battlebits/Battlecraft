@@ -144,12 +144,9 @@ public class PlayerListener implements Listener {
         ItemStack item = drop.getItemStack();
         if (item.hasItemMeta()) {
             event.setCancelled(true);
-            return;
         } else if (item.toString().contains("SWORD") || item.toString().contains("AXE")) {
             event.setCancelled(true);
-            return;
         }
-        // TODO Cancel kit items
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
@@ -179,7 +176,7 @@ public class PlayerListener implements Listener {
             double yvel = 3.0D;
             double zvel = 0.0D;
             p.setVelocity(new Vector(xvel, yvel, zvel));
-            p.playSound(p.getLocation(), Sound.ENTITY_HORSE_JUMP, 10.0f, 1.0f);
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10.0f, 1.0f);
             p.setMetadata(NOFALL_TAG, new FixedMetadataValue(Battlecraft.getInstance(), true));
         }
     }

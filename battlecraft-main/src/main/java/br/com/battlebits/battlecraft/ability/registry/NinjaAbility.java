@@ -22,7 +22,6 @@ public class NinjaAbility extends Ability {
     private Map<Player, Player> ability;
 
     public NinjaAbility() {
-        super("Ninja", ItemBuilder.create(Material.EMERALD).build(), 0);
         ability = new HashMap<>();
     }
 

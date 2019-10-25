@@ -1,10 +1,17 @@
 package br.com.battlebits.battlecraft.warp;
 
+import br.com.battlebits.battlecraft.ability.Ability;
+import br.com.battlebits.battlecraft.ability.Kit;
+import br.com.battlebits.battlecraft.ability.registry.KangarooAbility;
+import br.com.battlebits.battlecraft.ability.registry.NinjaAbility;
+import br.com.battlebits.battlecraft.event.PlayerKitEvent;
 import br.com.battlebits.battlecraft.event.RealMoveEvent;
 import br.com.battlebits.battlecraft.event.protection.PlayerProtectionRemoveEvent;
+import br.com.battlebits.battlecraft.event.warp.PlayerWarpDeathEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.inventory.WarpSelector;
+import br.com.battlebits.battlecraft.manager.KitManager;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
@@ -14,10 +21,17 @@ import br.com.battlebits.commons.translate.Language;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static br.com.battlebits.battlecraft.manager.AbilityManager.getAbilityByClass;
 import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.*;
 import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
@@ -25,6 +39,7 @@ public class WarpSpawn extends Warp {
 
     public WarpSpawn(Location spawnLocation, WorldMap map) {
         super("Spawn", Material.GRASS_BLOCK, spawnLocation, map);
+        createKits();
     }
 
     @EventHandler
@@ -44,6 +59,27 @@ public class WarpSpawn extends Warp {
         inv.clear();
         inv.setItem(2, item.getItemStack());
         inv.setHeldItemSlot(1);
+    }
+
+    @EventHandler
+    public void onKit(PlayerKitEvent event) {
+        if(!isWarpKit(event.getKit()))
+            return;
+        PlayerInventory inv = event.getPlayer().getInventory();
+        inv.setHelmet(new ItemStack(Material.IRON_HELMET));
+        inv.setChestplate(new ItemStack(Material.IRON_CHESTPLATE));
+        inv.setLeggings(new ItemStack(Material.IRON_LEGGINGS));
+        inv.setBoots(new ItemStack(Material.IRON_BOOTS));
+        ItemStack diamond = new ItemStack(Material.DIAMOND_SWORD);
+        diamond.addEnchantment(Enchantment.DAMAGE_ALL, 1);
+        inv.setItem(0, diamond);
+        // TODO Criar tipos de kits para espadas diferentes
+    }
+
+    @EventHandler
+    public void onDeathWarp(PlayerWarpDeathEvent event) {
+        if (inWarp(event.getPlayer()))
+            KitManager.removeKit(event.getPlayer());
     }
 
     @EventHandler
@@ -74,7 +110,17 @@ public class WarpSpawn extends Warp {
         Player p = event.getPlayer();
         if (!inWarp(p))
             return;
-        // TODO Remove kit
+        KitManager.removeKit(event.getPlayer());
     }
 
+    private void createKits() {
+        int DEFAULT_PRICE = 2000;
+        Stream<Ability> abilities = Stream.of(getAbilityByClass(NinjaAbility.class));
+        ItemStack icon = new ItemStack(Material.NETHER_STAR);
+        this.kits.add(new Kit("ninja", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+
+        abilities = Stream.of(getAbilityByClass(NinjaAbility.class));
+        icon = new ItemStack(Material.FIREWORK_ROCKET);
+        this.kits.add(new Kit("Kangaroo", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+    }
 }

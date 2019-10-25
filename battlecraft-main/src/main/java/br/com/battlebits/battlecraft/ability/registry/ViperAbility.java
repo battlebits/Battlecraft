@@ -17,7 +17,6 @@ public class ViperAbility extends Ability {
     private Random random;
 
     public ViperAbility() {
-        super("Viper", ItemBuilder.create(Material.SPIDER_EYE).build(), 0);
         random = new Random();
     }
 
