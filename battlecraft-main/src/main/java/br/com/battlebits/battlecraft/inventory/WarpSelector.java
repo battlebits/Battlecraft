@@ -15,13 +15,13 @@ import java.util.Comparator;
 import java.util.List;
 
 import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.CURRENTLY_HERE;
-import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.WARPS_MENU_TITLE;
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.WARP_MENU_TITLE;
 import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
 public class WarpSelector extends MenuInventory {
 
     public WarpSelector(Language l, Warp currentWarp) {
-        super(l.tl(WARPS_MENU_TITLE), 1);
+        super(l.tl(WARP_MENU_TITLE), 1);
 
         WarpManager manager = Battlecraft.getInstance().getWarpManager();
         ItemBuilder builder;

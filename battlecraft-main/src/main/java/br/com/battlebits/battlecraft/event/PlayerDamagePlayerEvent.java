@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerEvent;
 @Getter
 public class PlayerDamagePlayerEvent extends PlayerEvent implements Cancellable {
     @Getter
-    public static final HandlerList handlersList = new HandlerList();
+    public static final HandlerList handlerList = new HandlerList();
     private Player damaged;
     private double damage;
     private double finalDamage;
@@ -25,7 +25,7 @@ public class PlayerDamagePlayerEvent extends PlayerEvent implements Cancellable 
     }
 
     public HandlerList getHandlers() {
-        return handlersList;
+        return handlerList;
     }
 
 }

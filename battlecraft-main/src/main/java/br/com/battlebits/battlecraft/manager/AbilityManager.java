@@ -14,7 +14,7 @@ public class AbilityManager {
 
     private static Map<String, Ability> abilities = new HashMap<>();
 
-    public static void registerKits() {
+    public static void registerAbilities() {
         List<Class<?>> list =
                 ClassGetter.getClassesForPackage(Battlecraft.getInstance().getClass(), "br.com" +
                 ".battlebits.battlecraft.ability.registry");
@@ -28,6 +28,7 @@ public class AbilityManager {
                         if (Disableable.class.isAssignableFrom(clazz)) {
                             Battlecraft.getInstance().getServer().getPluginManager().registerEvents(ability, Battlecraft.getInstance());
                         }
+                        Battlecraft.getInstance().getLogger().info("Registered ability " + clazz.getSimpleName() + ".");
                     }
                 } catch (Exception e) {
                     Battlecraft.getInstance().getLogger().warning("Failed to register " + clazz.getSimpleName() + " kit");

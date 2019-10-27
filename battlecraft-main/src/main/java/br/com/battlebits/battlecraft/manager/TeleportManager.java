@@ -32,10 +32,9 @@ public class TeleportManager {
             return;
         }
 
-        PlayerWarpTeleportEvent event = new PlayerWarpTeleportEvent(player, to);
-        Battlecraft.getInstance().getServer().getPluginManager().callEvent(event);
-
         if (!ProtectionManager.isProtected(player) && CombatLogManager.getCombatLog(player).isFighting()) {
+            PlayerWarpTeleportEvent event = new PlayerWarpTeleportEvent(player, to);
+            Battlecraft.getInstance().getServer().getPluginManager().callEvent(event);
             player.setMetadata(IN_PROGRESS_META, new FixedMetadataValue(Battlecraft.getInstance(), System.currentTimeMillis()));
             player.setMetadata(WARP_META, new FixedMetadataValue(Battlecraft.getInstance(), to.getId()));
 
@@ -50,7 +49,7 @@ public class TeleportManager {
         return player.hasMetadata(IN_PROGRESS_META);
     }
 
-    public static void cancelTeleporting(Player player) {
+    public static void removeTeleporting(Player player) {
         Battlecraft plugin = Battlecraft.getInstance();
 
         if (player.hasMetadata(IN_PROGRESS_META))
