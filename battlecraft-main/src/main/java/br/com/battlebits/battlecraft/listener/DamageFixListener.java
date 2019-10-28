@@ -1,5 +1,6 @@
 package br.com.battlebits.battlecraft.listener;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -8,6 +9,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -16,10 +20,16 @@ public class DamageFixListener implements Listener {
 
     private final static double ENCHANTMENT_MULTIPLIER = 1d;
 
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        event.getPlayer().setMaximumNoDamageTicks(5);
+    }
+
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamageEvent(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player))
             return;
+
         Player p = (Player) event.getDamager();
         ItemStack sword = p.getInventory().getItemInMainHand();
         double damage = event.getDamage();
@@ -53,11 +63,20 @@ public class DamageFixListener implements Listener {
                 damage += ENCHANTMENT_MULTIPLIER * sword.getEnchantmentLevel(Enchantment.DAMAGE_ALL);
             }
         }
-        if (isCrital(p)) {
+        boolean critical = isCrital(p);
+        if (critical) {
+            // Redução do dano de critico
             damage = damage - (danoEspada / 2);
+        }
+        if (event.getDamage(DamageModifier.BLOCKING) < 0) {
+            // Calcula o dano pré critico
+            event.setDamage(DamageModifier.BLOCKING, -(damage * 0.25));
+        }
+        if (critical) {
+            // Aumenta o dano pós redução do escudo
             damage += (danoEspada / 3);
         }
-        event.setDamage(damage);
+        event.setDamage(DamageModifier.BASE, damage);
     }
 
     private boolean isCrital(Player p) {
