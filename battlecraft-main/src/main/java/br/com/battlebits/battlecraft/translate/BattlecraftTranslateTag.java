@@ -36,6 +36,8 @@ public enum BattlecraftTranslateTag {
     KIT_ITEM_NOT_ENABLED("kit.item.not-enabled"),
 
     KIT_KANGAROO_DESCRIPTION,
+    KIT_FISHERMAN_TAG,
+    KIT_FISHERMAN_CAUGHT,
     KIT_NINJA_DESCRIPTION,
     KIT_PVP_DESCRIPTION,
 
