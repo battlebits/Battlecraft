@@ -25,7 +25,6 @@ import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.server.ServerListPingEvent;
@@ -174,12 +173,12 @@ public class PlayerListener implements Listener {
         if (!p.isOnGround())
             return;
         Location standBlock = p.getLocation().clone().add(0, -0.00001, 0);
-        if (standBlock.getBlock().getType() == Material.END_PORTAL_FRAME) {
+        if (standBlock.getBlock().getType() == Material.ENDER_PORTAL_FRAME) {
             double xvel = 0.0D;
             double yvel = 3.0D;
             double zvel = 0.0D;
             p.setVelocity(new Vector(xvel, yvel, zvel));
-            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMAN_TELEPORT, 10.0f, 1.0f);
+            p.playSound(p.getLocation(), Sound.ENTITY_ENDERMEN_TELEPORT, 10.0f, 1.0f);
             p.setMetadata(NOFALL_TAG, new FixedMetadataValue(Battlecraft.getInstance(), true));
         }
     }

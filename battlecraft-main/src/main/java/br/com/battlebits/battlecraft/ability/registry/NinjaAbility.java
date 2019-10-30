@@ -1,8 +1,6 @@
 package br.com.battlebits.battlecraft.ability.registry;
 
 import br.com.battlebits.battlecraft.ability.Ability;
-import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -68,7 +66,7 @@ public class NinjaAbility extends Ability {
                 if (!hasCooldown(player, NINJA_COOLDOWN)) {
                     player.teleport(target.getLocation());
                     player.getWorld().playSound(player.getLocation(), Sound
-                            .ENTITY_ENDER_DRAGON_FLAP, 1.0F, 1.0F);
+                            .ENTITY_ENDERDRAGON_FLAP, 1.0F, 1.0F);
                     ability.remove(player);
                     addCooldown(player, NINJA_COOLDOWN, 4000);
                 } else {

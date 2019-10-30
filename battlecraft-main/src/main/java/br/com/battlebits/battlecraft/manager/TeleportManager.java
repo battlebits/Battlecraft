@@ -39,7 +39,7 @@ public class TeleportManager {
             player.setMetadata(WARP_META, new FixedMetadataValue(Battlecraft.getInstance(), to.getId()));
 
             player.sendMessage(tl(language,TELEPORT_TAG) + tl(language, TELEPORT_COOLDOWN));
-            player.playSound(player.getLocation(), Sound.ENTITY_IRON_GOLEM_STEP, 1.0f, 1.0f);
+            player.playSound(player.getLocation(), Sound.ENTITY_IRONGOLEM_STEP, 1.0f, 1.0f);
             return;
         }
         Battlecraft.getInstance().getWarpManager().joinWarp(player, to);

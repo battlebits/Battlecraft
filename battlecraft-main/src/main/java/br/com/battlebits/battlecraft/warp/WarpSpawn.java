@@ -42,7 +42,7 @@ public class WarpSpawn extends Warp {
     private Kit defaultKit;
 
     public WarpSpawn(Location spawnLocation, WorldMap map) {
-        super("Spawn", Material.GRASS_BLOCK, spawnLocation, map);
+        super("Spawn", Material.GRASS, spawnLocation, map);
         createKits();
     }
 
@@ -114,7 +114,7 @@ public class WarpSpawn extends Warp {
         double distZ = to.getZ() - getSpawnLocation().getZ();
 
         double distance = Math.sqrt((distX * distX) + (distZ * distZ));
-        if (above.getType() == Material.GRASS_BLOCK || distance > SPAWN_RADIUS) {
+        if (above.getType() == Material.GRASS || distance > SPAWN_RADIUS) {
             ProtectionManager.removeProtection(p);
         }
     }
@@ -138,7 +138,7 @@ public class WarpSpawn extends Warp {
         this.kits.add(new Kit("ninja", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
 
         abilities = Stream.of(getAbilityByClass(KangarooAbility.class));
-        icon = new ItemStack(Material.FIREWORK_ROCKET);
+        icon = new ItemStack(Material.FIREWORK);
         this.kits.add(new Kit("kangaroo", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
     }
 }
