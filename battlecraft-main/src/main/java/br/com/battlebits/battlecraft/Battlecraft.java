@@ -1,7 +1,10 @@
 package br.com.battlebits.battlecraft;
 
 import br.com.battlebits.battlecraft.listener.*;
-import br.com.battlebits.battlecraft.manager.*;
+import br.com.battlebits.battlecraft.manager.AbilityManager;
+import br.com.battlebits.battlecraft.manager.CombatLogManager;
+import br.com.battlebits.battlecraft.manager.TeleportManager;
+import br.com.battlebits.battlecraft.manager.WarpManager;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.warp.Warp;
 import br.com.battlebits.battlecraft.warp.WarpSpawn;

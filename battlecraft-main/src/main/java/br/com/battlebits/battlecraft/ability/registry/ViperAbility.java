@@ -1,9 +1,7 @@
 package br.com.battlebits.battlecraft.ability.registry;
 
 import br.com.battlebits.battlecraft.ability.Ability;
-import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.Effect;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;

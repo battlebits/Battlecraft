@@ -57,7 +57,7 @@ public class KitSelector extends MenuInventory {
                                 .lore(ChatColor.DARK_GRAY + l.tl(kit.getDescriptionTag()))
                                 .build(), new KitSelectHandler(kit)));
             } else {
-                ItemStack item = ItemBuilder.create(Material.GRAY_STAINED_GLASS)//
+                ItemStack item = ItemBuilder.create(Material.STAINED_GLASS_PANE).durability(14)//
                         .name(ChatColor.GREEN + "Kit " + NameUtils.formatString(kit.getName()))
                         .lore(Collections.singletonList(ChatColor.DARK_GRAY + l.tl(kit.getDescriptionTag(), "", l.tl(KIT_ITEM_NOT_ENABLED)))).build();
                 items.add(new MenuItem(item, new KitSelectHandler(kit)));
@@ -75,20 +75,20 @@ public class KitSelector extends MenuInventory {
         }
 
         if (page == 1) {
-            setItem(ItemBuilder.create(Material.GRAY_DYE).name(l.tl(KIT_MENU_NO_PREVIOUS_PAGE)).build(), PREVIOUS_PAGE_SLOT);
+            setItem(ItemBuilder.create(Material.INK_SACK).durability(8).name(l.tl(KIT_MENU_NO_PREVIOUS_PAGE)).build(), PREVIOUS_PAGE_SLOT);
         } else {
             setItem(new MenuItem(
-                    ItemBuilder.create(Material.CYAN_DYE)
+                    ItemBuilder.create(Material.INK_SACK).durability(10)
                             .name(l.tl(KIT_MENU_PREVIOUS_PAGE))
                             .lore(l.tl(KIT_MENU_PREVIOUS_LORE))
                             .build(), (player, arg1, arg2, arg3, arg4) -> new KitSelector(l, warp, page - 1).open(player)), PREVIOUS_PAGE_SLOT);
         }
 
         if ((items.size() / ITEMS_PER_PAGE) + 1 <= page) {
-            setItem(ItemBuilder.create(Material.GRAY_DYE).name(l.tl(KIT_MENU_NO_NEXT_PAGE)).build(), NEXT_PAGE_SLOT);
+            setItem(ItemBuilder.create(Material.INK_SACK).durability(8).name(l.tl(KIT_MENU_NO_NEXT_PAGE)).build(), NEXT_PAGE_SLOT);
         } else {
             setItem(new MenuItem(
-                    ItemBuilder.create(Material.CYAN_DYE)
+                    ItemBuilder.create(Material.INK_SACK).durability(10)
                             .name(l.tl(KIT_MENU_NEXT_PAGE))
                             .lore(l.tl(KIT_MENU_NEXT_LORE))
                             .build(), (player, arg1, arg2, arg3, arg4) -> new KitSelector(l, warp, page + 1).open(player)), NEXT_PAGE_SLOT);

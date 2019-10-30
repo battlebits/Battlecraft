@@ -2,9 +2,7 @@ package br.com.battlebits.battlecraft.ability.registry;
 
 import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.ability.Ability;
-import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

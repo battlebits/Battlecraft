@@ -5,8 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
@@ -40,12 +38,7 @@ public class InventoryUtils {
      * @param item item
      */
     public static void repairItem(ItemStack item) {
-        if (item != null) {
-            ItemMeta meta = item.getItemMeta();
-            if(meta != null) {
-                ((Damageable)meta).setDamage(0);
-            }
-        }
+        item.setDurability((short)0);
     }
 
     /**

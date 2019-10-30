@@ -71,7 +71,7 @@ public class KangarooAbility extends Ability implements AbilityItem {
     }
 
     private boolean kangaroo(Player player, ItemStack item) {
-        if (item!= null && item.getType() == Material.FIREWORK_ROCKET && hasAbility(player)) {
+        if (item!= null && item.getType() == Material.FIREWORK && hasAbility(player)) {
             if (hasCooldown(player, JUMP_COOLDOWN)) {
                 return false;
             }
@@ -143,7 +143,7 @@ public class KangarooAbility extends Ability implements AbilityItem {
 
     @Override
     public List<ItemStack> getItems() {
-        return Collections.singletonList(ItemBuilder.create(Material.FIREWORK_ROCKET).name(
+        return Collections.singletonList(ItemBuilder.create(Material.FIREWORK).name(
                 ChatColor.GOLD + "Kangaroo Boost").build());
     }
 }
