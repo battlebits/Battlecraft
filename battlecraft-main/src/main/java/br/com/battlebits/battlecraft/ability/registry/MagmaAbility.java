@@ -4,14 +4,16 @@ import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.battlecraft.event.PlayerDamagePlayerEvent;
 import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
-import static br.com.battlebits.battlecraft.manager.ProtectionManager.isProtected;
 
 import java.util.Arrays;
+
+import static br.com.battlebits.battlecraft.manager.ProtectionManager.isProtected;
 
 public class MagmaAbility extends Ability {
 
