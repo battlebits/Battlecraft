@@ -53,11 +53,13 @@ public class KangarooAbility extends Ability implements AbilityItem {
             boolean cancel = false;
             if (itemInMainHand.getType() == Material.AIR) {
                 cancel = kangaroo(player, player.getInventory().getItemInOffHand());
-            } else if (event.getItem() != null && player.getInventory().getItemInMainHand().getType() == event.getItem().getType()) {
+            } else if (item != null && player.getInventory().getItemInMainHand().getType() == item.getType()) {
                 cancel = kangaroo(player, itemInMainHand);
                 if (!cancel && event.useItemInHand() != Event.Result.DENY) {
                     cancel = kangaroo(player, player.getInventory().getItemInOffHand());
                 }
+            } else if (item != null && item.getType() == player.getInventory().getItemInOffHand().getType() && item.getType() == Material.FIREWORK) {
+                cancel = true;
             }
             event.setCancelled(cancel);
         }
