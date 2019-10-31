@@ -77,7 +77,7 @@ public class NinjaAbility extends Ability {
                     ability.remove(player);
 
                     player.getWorld().playSound(player.getLocation().add(0.0, 0.5, 0.0), Sound
-                            .ENTITY_ENDERDRAGON_FLAP, 1.0F, 1.0F);
+                            .ENTITY_ENDERDRAGON_FLAP, 0.3F, 1.0F);
                 } else {
                     Language language = Commons.getLanguage(player.getUniqueId());
 
