@@ -14,6 +14,9 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.CraftItemEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.HashMap;
@@ -46,6 +49,27 @@ public class Warp1v1 extends Warp {
             return;
         event.setCancelled(true);
     }
+
+    @EventHandler
+    public void onTeleport(PlayerTeleportEvent event) {
+        handleQuit(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        handleQuit(event.getPlayer());
+    }
+
+    @EventHandler
+    public void onKick(PlayerKickEvent event) {
+        handleQuit(event.getPlayer());
+    }
+
+    public void handleQuit(Player p) {
+        challenges.remove(p);
+    }
+
+
 
     @EventHandler
     public void onWarpTeleport(PlayerWarpJoinEvent event) {
