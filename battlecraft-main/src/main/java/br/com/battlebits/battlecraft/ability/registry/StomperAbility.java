@@ -1,5 +1,6 @@
 package br.com.battlebits.battlecraft.ability.registry;
 
+import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.ability.Ability;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -25,7 +26,7 @@ public class StomperAbility extends Ability {
                 if (hasAbility(damager) && !isProtected(damager)) {
                     damager.getWorld().playSound(damager.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.15F, 1.0F);
 
-                    getPlayers().stream()
+                    Battlecraft.getInstance().getWarpManager().getPlayerWarp(damager).getPlayers().stream()
                             .filter(target -> !target.equals(damager)
                                     && damager.getLocation().distance(target.getLocation()) <= STOMPER_DISTANCE
                                     && !isProtected(target))
