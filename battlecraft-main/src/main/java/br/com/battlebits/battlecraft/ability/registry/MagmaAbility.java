@@ -3,7 +3,6 @@ package br.com.battlebits.battlecraft.ability.registry;
 import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.battlecraft.event.PlayerDamagePlayerEvent;
 import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,10 +47,8 @@ public class MagmaAbility extends Ability {
     @EventHandler
     public void onUpdate(UpdateEvent event) {
         if (event.getType() == UpdateEvent.UpdateType.SECOND) {
-            Bukkit.getOnlinePlayers().stream()
-                    .filter(p -> p.getLocation().getBlock().getType() == Material.WATER)
-                    .filter(p -> hasAbility(p))
-                    .filter(p -> !isProtected(p))
+            getPlayers().stream()
+                    .filter(p -> !isProtected(p) && p.getLocation().getBlock().getType() == Material.WATER)
                     .forEach(p -> p.damage(WATER_DAMAGE));
         }
     }
