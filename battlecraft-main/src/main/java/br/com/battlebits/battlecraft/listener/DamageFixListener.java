@@ -19,12 +19,7 @@ import org.bukkit.potion.PotionEffectType;
 public class DamageFixListener implements Listener {
 
     private final static double ENCHANTMENT_MULTIPLIER = 1d;
-
-    @EventHandler
-    public void onJoin(PlayerJoinEvent event) {
-        event.getPlayer().setMaximumNoDamageTicks(5);
-    }
-
+    
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamageEvent(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player))
