@@ -113,8 +113,8 @@ public class WarpSpawn extends Warp {
         double distX = to.getX() - getSpawnLocation().getX();
         double distZ = to.getZ() - getSpawnLocation().getZ();
 
-        double distance = Math.sqrt((distX * distX) + (distZ * distZ));
-        if (above.getType() == Material.GRASS || distance > SPAWN_RADIUS) {
+        double distance = (distX * distX) + (distZ * distZ);
+        if (above.getType() == Material.GRASS || distance > (SPAWN_RADIUS * SPAWN_RADIUS)) {
             ProtectionManager.removeProtection(p);
         }
     }
