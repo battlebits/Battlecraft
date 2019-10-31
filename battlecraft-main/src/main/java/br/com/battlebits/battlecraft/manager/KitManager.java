@@ -42,7 +42,7 @@ public class KitManager {
         }
         for (ItemStack is : inv.getContents()) {
             if (is == null)
-                inv.addItem(new ItemStack(Material.MUSHROOM_STEW));
+                inv.addItem(new ItemStack(Material.MUSHROOM_SOUP));
         }
     }
 

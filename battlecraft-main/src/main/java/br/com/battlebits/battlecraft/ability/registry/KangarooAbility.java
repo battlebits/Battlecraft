@@ -53,11 +53,13 @@ public class KangarooAbility extends Ability implements AbilityItem {
             boolean cancel = false;
             if (itemInMainHand.getType() == Material.AIR) {
                 cancel = kangaroo(player, player.getInventory().getItemInOffHand());
-            } else if (event.getItem() != null && player.getInventory().getItemInMainHand().getType() == event.getItem().getType()) {
+            } else if (item != null && player.getInventory().getItemInMainHand().getType() == item.getType()) {
                 cancel = kangaroo(player, itemInMainHand);
                 if (!cancel && event.useItemInHand() != Event.Result.DENY) {
                     cancel = kangaroo(player, player.getInventory().getItemInOffHand());
                 }
+            } else if (item != null && item.getType() == player.getInventory().getItemInOffHand().getType() && item.getType() == Material.FIREWORK) {
+                cancel = true;
             }
             event.setCancelled(cancel);
         }
@@ -71,7 +73,7 @@ public class KangarooAbility extends Ability implements AbilityItem {
     }
 
     private boolean kangaroo(Player player, ItemStack item) {
-        if (item!= null && item.getType() == Material.FIREWORK_ROCKET && hasAbility(player)) {
+        if (item!= null && item.getType() == Material.FIREWORK && hasAbility(player)) {
             if (hasCooldown(player, JUMP_COOLDOWN)) {
                 return false;
             }
@@ -143,7 +145,7 @@ public class KangarooAbility extends Ability implements AbilityItem {
 
     @Override
     public List<ItemStack> getItems() {
-        return Collections.singletonList(ItemBuilder.create(Material.FIREWORK_ROCKET).name(
+        return Collections.singletonList(ItemBuilder.create(Material.FIREWORK).name(
                 ChatColor.GOLD + "Kangaroo Boost").build());
     }
 }

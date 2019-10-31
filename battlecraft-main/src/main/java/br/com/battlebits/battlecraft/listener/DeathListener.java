@@ -94,7 +94,7 @@ public class DeathListener implements Listener {
         Player p = e.getPlayer();
         p.setNoDamageTicks(100);
         if (e.hasKiller()) {
-            e.getKiller().playSound(p.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 0.5F, 1.0F);
+            e.getKiller().playSound(p.getLocation(), Sound.ENTITY_ENDERDRAGON_GROWL, 0.5F, 1.0F);
         }
         InventoryUtils.dropItems(p, p.getLocation());
         AttributeInstance attribute = p.getAttribute(Attribute.GENERIC_MAX_HEALTH);
@@ -117,7 +117,7 @@ public class DeathListener implements Listener {
             warp = warpManager.getDefaultWarp();
         }
         warpManager.joinWarp(p, warp);
-        p.playSound(p.getLocation(), Sound.ENTITY_ENDER_DRAGON_GROWL, 0.5F, 1.0F);
+        p.playSound(p.getLocation(), Sound.ENTITY_ENDERDRAGON_GROWL, 0.5F, 1.0F);
         p.setNoDamageTicks(1);
     }
 

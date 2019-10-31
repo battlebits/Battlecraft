@@ -23,7 +23,7 @@ public class SoupListener implements Listener {
         Action a = event.getAction();
         if (item == null)
             return;
-        if (item.getType() != Material.MUSHROOM_STEW)
+        if (item.getType() != Material.MUSHROOM_SOUP)
             return;
         if (!a.toString().contains("RIGHT_CLICK"))
             return;

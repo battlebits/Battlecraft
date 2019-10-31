@@ -1,7 +1,6 @@
 package br.com.battlebits.battlecraft.event;
 
 import br.com.battlebits.battlecraft.ability.Kit;
-import br.com.battlebits.battlecraft.event.protection.PlayerProtectionEvent;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
