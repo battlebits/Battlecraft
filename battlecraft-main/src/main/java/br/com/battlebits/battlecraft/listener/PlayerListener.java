@@ -200,7 +200,7 @@ public class PlayerListener implements Listener {
     public void onLogin(PlayerLoginEvent event) {
         Player p = event.getPlayer();
         BattleAccount account = Commons.getAccount(p.getUniqueId());
-        if (Bukkit.getOnlinePlayers().size() >= Bukkit.getMaxPlayers() + br.com.battlebits.commons.bukkit.api.admin.AdminMode.getInstance().playersInAdmin()) {
+        if (Bukkit.getOnlinePlayers().size() >= Bukkit.getMaxPlayers() + br.com.battlebits.commons.bukkit.api.admin.AdminMode.playersInAdmin()) {
             if (account.getBattleCoins() >= BATTLECOIN_LOGIN) {
                 account.removeBattleCoin(BATTLECOIN_LOGIN);
                 p.sendMessage(tl(account.getLanguage(), DONATOR_JOIN_FULL, BATTLECOIN_LOGIN));

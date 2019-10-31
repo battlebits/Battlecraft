@@ -15,7 +15,6 @@ import br.com.battlebits.battlecraft.manager.KitManager;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
-import br.com.battlebits.commons.bukkit.api.item.ActionItemStack;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import br.com.battlebits.commons.translate.Language;
 import org.bukkit.Location;
@@ -57,20 +56,18 @@ public class WarpSpawn extends Warp {
         Language l = Commons.getLanguage(p.getUniqueId());
         ItemBuilder builder =
                 ItemBuilder.create(Material.ENDER_CHEST).name(tl(l, KITSELECTOR_ITEM_NAME)).lore("", tl(l,
-                        KITSELECTOR_ITEM_LORE));
-        ActionItemStack  item = new ActionItemStack(builder.build(), (player, itemStack, action) -> {
-            new KitSelector(l, this).open(p);
-            return false;
-        });
-        inv.setItem(1, item.getItemStack());
+                        KITSELECTOR_ITEM_LORE)).interact((player, player1, itemStack, itemAction) -> {
+                            new KitSelector(l, this).open(p);
+                            return false;
+                });
+        inv.setItem(1, builder.build());
         builder =
                 ItemBuilder.create(Material.COMPASS).name(tl(l, WARPSELECTOR_ITEM_NAME)).lore("", tl(l,
-                        WARPSELECTOR_ITEM_LORE));
-        item = new ActionItemStack(builder.build(), (player, itemStack, action) -> {
-            new WarpSelector(l, this).open(p);
-            return false;
-        });
-        inv.setItem(2, item.getItemStack());
+                        WARPSELECTOR_ITEM_LORE)).interact((player, player1, itemStack, itemAction) -> {
+                            new WarpSelector(l, this).open(p);
+                            return false;
+                });
+        inv.setItem(2, builder.build());
         inv.setHeldItemSlot(1);
         ProtectionManager.addProtection(p);
     }

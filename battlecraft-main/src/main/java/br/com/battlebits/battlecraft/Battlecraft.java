@@ -7,6 +7,7 @@ import br.com.battlebits.battlecraft.manager.TeleportManager;
 import br.com.battlebits.battlecraft.manager.WarpManager;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.warp.Warp;
+import br.com.battlebits.battlecraft.warp.Warp1v1;
 import br.com.battlebits.battlecraft.warp.WarpSpawn;
 import br.com.battlebits.battlecraft.world.map.VoidMap;
 import br.com.battlebits.commons.backend.properties.PropertiesStorageDataTranslation;
@@ -81,7 +82,8 @@ public class Battlecraft extends JavaPlugin {
         Warp warp = new WarpSpawn(spawnLocation, new VoidMap());
         this.warpManager.addWarp(warp);
         this.warpManager.setDefaultWarp(warp);
-
+        warp = new Warp1v1(spawnLocation, new VoidMap());
+        this.warpManager.addWarp(warp);
     }
 
     private void loadListeners() {
