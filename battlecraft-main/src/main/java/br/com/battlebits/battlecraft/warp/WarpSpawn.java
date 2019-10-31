@@ -38,6 +38,7 @@ import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 public class WarpSpawn extends Warp {
 
     private static final double SPAWN_RADIUS = 10;
+    private static final double SPAWN_RADIUS_SQUARED = SPAWN_RADIUS * SPAWN_RADIUS;
 
     private Kit defaultKit;
 
@@ -114,7 +115,7 @@ public class WarpSpawn extends Warp {
         double distZ = to.getZ() - getSpawnLocation().getZ();
 
         double distance = (distX * distX) + (distZ * distZ);
-        if (above.getType() == Material.GRASS || distance > (SPAWN_RADIUS * SPAWN_RADIUS)) {
+        if (above.getType() == Material.GRASS || distance > SPAWN_RADIUS_SQUARED) {
             ProtectionManager.removeProtection(p);
         }
     }
