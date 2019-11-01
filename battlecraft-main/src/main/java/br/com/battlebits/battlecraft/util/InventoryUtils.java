@@ -5,7 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
@@ -38,7 +37,8 @@ public class InventoryUtils {
      * @param item item
      */
     public static void repairItem(ItemStack item) {
-        item.setDurability((short)0);
+        if (item != null)
+            item.setDurability((short)0);
     }
 
     /**

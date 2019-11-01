@@ -15,6 +15,8 @@ import br.com.battlebits.battlecraft.manager.KitManager;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
+import br.com.battlebits.commons.bukkit.api.item.ActionItemStack;
+import br.com.battlebits.commons.bukkit.api.item.ActionItemStack.InteractHandler;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import br.com.battlebits.commons.translate.Language;
 import org.bukkit.Location;
@@ -23,6 +25,7 @@ import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
@@ -41,9 +44,23 @@ public class WarpSpawn extends Warp {
 
     private Kit defaultKit;
 
+    private InteractHandler kitSelectorHandler = (player, player1, itemStack, itemAction) -> {
+        if (itemAction.name().contains("RIGHT"))
+            new KitSelector(Commons.getLanguage(player.getUniqueId()), this).open(player);
+        return false;
+    };
+
+    private InteractHandler warpSelectorHandler = (player, player1, itemStack, itemAction) -> {
+        if (itemAction.name().contains("RIGHT"))
+            new WarpSelector(Commons.getLanguage(player.getUniqueId()), this).open(player);
+        return false;
+    };
+
     public WarpSpawn(Location spawnLocation, WorldMap map) {
         super("Spawn", Material.GRASS, spawnLocation, map);
         createKits();
+        ActionItemStack.register(kitSelectorHandler);
+        ActionItemStack.register(warpSelectorHandler);
     }
 
     @EventHandler
@@ -56,20 +73,29 @@ public class WarpSpawn extends Warp {
         Language l = Commons.getLanguage(p.getUniqueId());
         ItemBuilder builder =
                 ItemBuilder.create(Material.ENDER_CHEST).name(tl(l, KITSELECTOR_ITEM_NAME)).lore("", tl(l,
-                        KITSELECTOR_ITEM_LORE)).interact((player, player1, itemStack, itemAction) -> {
-                            new KitSelector(l, this).open(p);
-                            return false;
-                });
+                        KITSELECTOR_ITEM_LORE)).interact(kitSelectorHandler);
         inv.setItem(1, builder.build());
         builder =
                 ItemBuilder.create(Material.COMPASS).name(tl(l, WARPSELECTOR_ITEM_NAME)).lore("", tl(l,
-                        WARPSELECTOR_ITEM_LORE)).interact((player, player1, itemStack, itemAction) -> {
-                            new WarpSelector(l, this).open(p);
-                            return false;
-                });
+                        WARPSELECTOR_ITEM_LORE)).interact(warpSelectorHandler);
         inv.setItem(2, builder.build());
         inv.setHeldItemSlot(1);
         ProtectionManager.addProtection(p);
+    }
+
+    /**
+     * Insta kill when player in Spawn takes void damage
+     */
+    @EventHandler
+    public void onVoidDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player))
+            return;
+        if (event.getCause() != EntityDamageEvent.DamageCause.VOID)
+            return;
+        Player player = (Player) event.getEntity();
+        if (!inWarp(player))
+            return;
+        event.setDamage(Double.MAX_VALUE);
     }
 
     @EventHandler

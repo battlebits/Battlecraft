@@ -6,6 +6,8 @@ import br.com.battlebits.battlecraft.warp.fight.Challenge;
 import br.com.battlebits.battlecraft.warp.fight.ChallengeType;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
+import br.com.battlebits.commons.bukkit.api.item.ActionItemStack;
+import br.com.battlebits.commons.bukkit.api.item.ActionItemStack.InteractHandler;
 import br.com.battlebits.commons.bukkit.api.item.ItemAction;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import br.com.battlebits.commons.translate.Language;
@@ -32,10 +34,42 @@ public class Warp1v1 extends Warp {
     private Map<Player, Map<ChallengeType, Map<Player, Challenge>>> challenges;
     private Set<Player> playersIn1v1;
 
+    private InteractHandler challenge1v1 = (player, target, itemStack, itemAction) -> {
+        if(itemAction != ItemAction.RIGHT_CLICK_PLAYER)
+            return false;
+        if (target == null)
+            return false;
+        Language l = Commons.getLanguage(player.getUniqueId());
+        if (in1v1(target)) {
+            player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(PLAYER_IN_1V1));
+            return false;
+        }
+
+        if (hasChallenge(target, player, ChallengeType.NORMAL)) {
+            Challenge challenge = getChallenge(target, player, ChallengeType.NORMAL);
+            if (!challenge.isExpired()) {
+                player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(YOU_ACCEPTED_CHALLENGE, target.getName()));
+                target.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(PLAYER_ACCEPTED_CHALLENGE, player.getName()));
+                // TODO FIGHT
+                return false;
+            }
+        }
+        if (hasChallenge(player, target, ChallengeType.NORMAL)) {
+            Challenge challenge = getChallenge(player, target, ChallengeType.NORMAL);
+            if (!challenge.isExpired()) {
+                player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WAIT_TO_SEND_AGAIN));
+                return false;
+            }
+        }
+        newChallenge(target, player, new Challenge(player, target));
+        return false;
+    };
+
     public Warp1v1(Location spawnLocation, WorldMap map) {
         super("1v1", Material.BLAZE_ROD, spawnLocation, map);
         challenges = new HashMap<>();
         playersIn1v1 = new HashSet<>();
+        ActionItemStack.register(challenge1v1);
     }
 
     // Remove o crafing para quem está na warp
@@ -81,35 +115,7 @@ public class Warp1v1 extends Warp {
         Language language = Commons.getLanguage(p.getUniqueId());
         ItemBuilder builder =
                 ItemBuilder.create(Material.BLAZE_ROD).name(tl(language, FAST_1V1_ITEM_NAME)).lore("", tl(language,
-                        FAST_1V1_ITEM_LORE)).interact((player, target, itemStack, itemAction) -> {
-                            if(itemAction != ItemAction.RIGHT_CLICK_PLAYER)
-                                return false;
-
-                            Language l = Commons.getLanguage(player.getUniqueId());
-                            if (in1v1(target)) {
-                               player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(PLAYER_IN_1V1));
-                               return false;
-                            }
-
-                            if (hasChallenge(target, player, ChallengeType.NORMAL)) {
-                                Challenge challenge = getChallenge(target, player, ChallengeType.NORMAL);
-                                if (!challenge.isExpired()) {
-                                    player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(YOU_ACCEPTED_CHALLENGE, target.getName()));
-                                    target.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(PLAYER_ACCEPTED_CHALLENGE, player.getName()));
-                                    // TODO FIGHT
-                                    return false;
-                                }
-                            }
-                            if (hasChallenge(player, target, ChallengeType.NORMAL)) {
-                                Challenge challenge = getChallenge(player, target, ChallengeType.NORMAL);
-                                if (!challenge.isExpired()) {
-                                    player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WAIT_TO_SEND_AGAIN));
-                                    return false;
-                                }
-                            }
-                            newChallenge(target, player, new Challenge(player, target));
-                            return false;
-                });
+                        FAST_1V1_ITEM_LORE)).interact(challenge1v1);
         inv.setItem(4, builder.build());
         ProtectionManager.addProtection(event.getPlayer());
     }

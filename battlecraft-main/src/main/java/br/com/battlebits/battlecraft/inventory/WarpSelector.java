@@ -32,14 +32,13 @@ public class WarpSelector extends MenuInventory {
         warpList.sort(Comparator.comparing(Warp::getId));
 
         for (Warp warp : manager.getWarps()) {
-//
             builder =
                     ItemBuilder.create(warp.getMaterial())
                             .name(ChatColor.AQUA + "" + ChatColor.BOLD +
                                     tl(l, warp.getNameTag())).lore(ChatColor.GRAY + tl(l,
                             warp.getDescriptionTag()));
             if (currentWarp == warp) {
-                builder = builder.glow().lore(ChatColor.GRAY + tl(l, warp.getNameTag()), "",
+                builder = builder.glow().lore(ChatColor.GRAY + tl(l, warp.getDescriptionTag()), "",
                         tl(l, CURRENTLY_HERE));
                 setItem(slot++, builder.build());
                 continue;
