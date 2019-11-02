@@ -2,6 +2,8 @@ package br.com.battlebits.battlecraft.translate;
 
 public enum BattlecraftTranslateTag {
 
+    MOTD,
+
     JOIN_MESSAGE_TITLE,
     JOIN_MESSAGE_SUBTITLE,
 
@@ -24,14 +26,15 @@ public enum BattlecraftTranslateTag {
     KITSELECTOR_ITEM_NAME,
     KITSELECTOR_ITEM_LORE,
 
-    FAST_1V1_ITEM_NAME,
-    FAST_1V1_ITEM_LORE,
-
+    WARP_1V1_NAME,
+    WARP_1V1_DESCRIPTION,
     WARP_1V1_TAG,
-    PLAYER_IN_1V1,
-    YOU_ACCEPTED_CHALLENGE,
-    PLAYER_ACCEPTED_CHALLENGE,
-    WAIT_TO_SEND_AGAIN,
+    WARP_1V1_PLAYER_IN_COMBAT("warp.1v1.player-in-combat"),
+    WARP_1V1_DIRECT_NAME,
+    WARP_1V1_DIRECT_LORE,
+    WARP_1V1_CHALLENGE_ACCEPTED("warp.1v1.challenge-accepted"),
+    WARP_1V1_YOUR_CHALLENGE_ACCEPTED("warp.1v1.your-challenge-accepted"),
+    WARP_1V1_WAIT_TIME("warp.1v1.wait-time"),
 
     KIT_MENU_TITLE,
     KIT_MENU_ERROR,
@@ -56,12 +59,16 @@ public enum BattlecraftTranslateTag {
 
     WARP_SPAWN_NAME,
     WARP_SPAWN_DESCRIPTION,
-    WARP_1V1_NAME,
-    WARP_1V1_DESCRIPTION,
     WARP_LAVACHALLENGE_NAME,
     WARP_LAVACHALLENGE_DESCRIPTION,
     WARP_FPS_NAME,
-    WARP_FPS_DESCRIPTION;
+    WARP_FPS_DESCRIPTION,
+
+    ITEM_FRAME_SOUP("item-frame.soup"),
+    ITEM_FRAME_RED("item-frame.red"),
+    ITEM_FRAME_BROWN("item-frame.brown"),
+    ITEM_FRAME_BOWL("item-frame.bowl"),
+    ITEM_FRAME_DEFAULT("item-frame.default");
 
 
 

@@ -3,7 +3,7 @@ package br.com.battlebits.battlecraft.warp.fight;
 public enum ArmorType {
     DIAMOND,
     IRON,
-    CHAIN,
+    CHAINMAIL,
     LEATHER,
     NONE
 }

@@ -1,10 +1,13 @@
 package br.com.battlebits.battlecraft.warp;
 
+import br.com.battlebits.battlecraft.event.fight.PlayerFightStartEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.warp.fight.Challenge;
 import br.com.battlebits.battlecraft.warp.fight.ChallengeType;
+import br.com.battlebits.battlecraft.warp.fight.Fight1v1;
 import br.com.battlebits.battlecraft.world.WorldMap;
+import br.com.battlebits.battlecraft.world.map.OneVsOneMap;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.bukkit.api.item.ActionItemStack;
 import br.com.battlebits.commons.bukkit.api.item.ActionItemStack.InteractHandler;
@@ -13,6 +16,7 @@ import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import br.com.battlebits.commons.translate.Language;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.CraftItemEvent;
@@ -21,18 +25,17 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.*;
 import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
 public class Warp1v1 extends Warp {
 
+    private Random random = new Random();
     private Map<Player, Map<ChallengeType, Map<Player, Challenge>>> challenges;
     private Set<Player> playersIn1v1;
+    private List<OneVsOneMap> maps;
 
     private InteractHandler challenge1v1 = (player, target, itemStack, itemAction) -> {
         if(itemAction != ItemAction.RIGHT_CLICK_PLAYER)
@@ -41,27 +44,27 @@ public class Warp1v1 extends Warp {
             return false;
         Language l = Commons.getLanguage(player.getUniqueId());
         if (in1v1(target)) {
-            player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(PLAYER_IN_1V1));
+            player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_PLAYER_IN_COMBAT));
             return false;
         }
 
         if (hasChallenge(target, player, ChallengeType.NORMAL)) {
             Challenge challenge = getChallenge(target, player, ChallengeType.NORMAL);
             if (!challenge.isExpired()) {
-                player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(YOU_ACCEPTED_CHALLENGE, target.getName()));
-                target.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(PLAYER_ACCEPTED_CHALLENGE, player.getName()));
-                // TODO FIGHT
+                player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_CHALLENGE_ACCEPTED, target.getName()));
+                target.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_YOUR_CHALLENGE_ACCEPTED, player.getName()));
+                new Fight1v1(player, target, challenge);
                 return false;
             }
         }
         if (hasChallenge(player, target, ChallengeType.NORMAL)) {
             Challenge challenge = getChallenge(player, target, ChallengeType.NORMAL);
             if (!challenge.isExpired()) {
-                player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WAIT_TO_SEND_AGAIN));
+                player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_WAIT_TIME));
                 return false;
             }
         }
-        newChallenge(target, player, new Challenge(player, target));
+        newChallenge(target, player, new Challenge(player, target, maps.get(random.nextInt(maps.size()))));
         return false;
     };
 
@@ -69,17 +72,21 @@ public class Warp1v1 extends Warp {
         super("1v1", Material.BLAZE_ROD, spawnLocation, map);
         challenges = new HashMap<>();
         playersIn1v1 = new HashSet<>();
+        maps = new ArrayList<>();
         ActionItemStack.register(challenge1v1);
+        World world = spawnLocation.getWorld();
+        Location first = new Location(world, 150.5, 67.5, 138.5);
+        Location second = new Location(world, 150.5, 67.5, 162.5, 180f, 0f);
+        maps.add(new OneVsOneMap(first, second));
     }
 
     // Remove o crafing para quem está na warp
-    // TODO Rever caso esteja com recraft
     @EventHandler
     public void onCraft(CraftItemEvent event) {
         if (!(event.getWhoClicked() instanceof Player))
             return;
         Player p = (Player) event.getWhoClicked();
-        if (!inWarp(p))
+        if (!inWarp(p) || in1v1(p))
             return;
         event.setCancelled(true);
     }
@@ -103,7 +110,15 @@ public class Warp1v1 extends Warp {
         challenges.remove(p);
     }
 
-
+    @EventHandler
+    public void onFightStart(PlayerFightStartEvent event) {
+        this.playersIn1v1.addAll(Arrays.asList(event.getPlayers()));
+        for(Player player : event.getPlayers())
+            ProtectionManager.removeProtection(player);
+        OneVsOneMap map = event.getChallenge().getMap();
+        event.getPlayers()[0].teleport(map.getFirstLocation());
+        event.getPlayers()[1].teleport(map.getSecondLocation());
+    }
 
     @EventHandler
     public void onWarpTeleport(PlayerWarpJoinEvent event) {
@@ -114,13 +129,12 @@ public class Warp1v1 extends Warp {
         inv.clear();
         Language language = Commons.getLanguage(p.getUniqueId());
         ItemBuilder builder =
-                ItemBuilder.create(Material.BLAZE_ROD).name(tl(language, FAST_1V1_ITEM_NAME)).lore("", tl(language,
-                        FAST_1V1_ITEM_LORE)).interact(challenge1v1);
+                ItemBuilder.create(Material.BLAZE_ROD).name(tl(language, WARP_1V1_DIRECT_NAME)).lore("", tl(language,
+                        WARP_1V1_DIRECT_LORE)).interact(challenge1v1);
         inv.setItem(4, builder.build());
         ProtectionManager.addProtection(event.getPlayer());
     }
 
-    // TODO
     private boolean in1v1(Player player) {
         return playersIn1v1.contains(player);
     }
