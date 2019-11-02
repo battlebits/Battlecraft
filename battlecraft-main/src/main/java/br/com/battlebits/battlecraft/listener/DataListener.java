@@ -13,11 +13,12 @@ import br.com.battlebits.commons.bukkit.scoreboard.BattleScoreboard;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.util.UUID;
 
-public class DataListener {
+public class DataListener implements Listener {
 
     @EventHandler
     public void onPlayerWarpDeathEvent(PlayerWarpDeathEvent event) {
