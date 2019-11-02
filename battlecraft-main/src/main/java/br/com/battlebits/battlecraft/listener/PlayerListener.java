@@ -19,25 +19,27 @@ import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerLoginEvent.Result;
 import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.metadata.FixedMetadataValue;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.Set;
 
-import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.DONATOR_JOIN_FULL;
-import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.SERVER_FULL;
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.*;
 import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
 public class PlayerListener implements Listener {
@@ -137,7 +139,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPing(ServerListPingEvent event) {
-        // TODO Refazer mensagem no Inicio
+        event.setMotd(tl(MOTD));
     }
 
     @EventHandler
@@ -216,33 +218,92 @@ public class PlayerListener implements Listener {
         }
     }
 
+    @EventHandler
+    public void onPlayerInteractListener(PlayerInteractEvent e) {
+        if ((e.getPlayer().getGameMode() != GameMode.CREATIVE)
+                && (e.getAction() == Action.PHYSICAL && e.getClickedBlock() != null
+                && e.getClickedBlock().getType() != Material.STONE_PLATE
+                && e.getClickedBlock().getType() != Material.WOOD_PLATE)
+                || (e.getAction() == Action.RIGHT_CLICK_BLOCK && e.getClickedBlock() != null
+                && (e.getClickedBlock().getType() == Material.ENCHANTMENT_TABLE
+                || e.getClickedBlock().getType() == Material.CHEST
+                || e.getClickedBlock().getType() == Material.ENDER_CHEST))) {
+            e.setCancelled(true);
+        }
+    }
+
+
     private Set<Player> shielded = new HashSet<>();
 
     @EventHandler
     public void onChangeHand(PlayerItemHeldEvent event) {
-        PlayerInventory inv = event.getPlayer().getInventory();
-        ItemStack item = inv.getItem(event.getNewSlot());
-        if (item != null && item.getType().name().contains("SWORD")) {
-            if (inv.getItemInOffHand().getType() == Material.AIR && !shielded.contains(event.getPlayer())) {
-                // TODO Adicionar descrição de escudo sobre sacar espada e escudo
-                // TODO Ver botão de troca de mãos (provavelmente tem bug)
-                inv.setItemInOffHand(new ItemStack(Material.SHIELD));
+        checkShield(event.getPlayer(), event.getPlayer().getInventory().getItem(event.getNewSlot()));
+    }
+
+    @EventHandler
+    public void onChange(PlayerSwapHandItemsEvent event) {
+        ItemStack item = event.getMainHandItem();
+        if (item.getType().name().contains("SWORD")) {
+            if (event.getOffHandItem().getType() == Material.AIR && !shielded.contains(event.getPlayer())) {
+                event.setOffHandItem(new ItemStack(Material.SHIELD));
                 shielded.add(event.getPlayer());
             }
-        } else if (shielded.remove(event.getPlayer())) {
-            inv.setItemInOffHand(null);
+        } else if (shielded.contains(event.getPlayer())) {
+            event.setMainHandItem(null);
+            shielded.remove(event.getPlayer());
         }
     }
+
+    private static final int OFF_HAND_SLOT = 40;
 
     @EventHandler
     public void onInventory(InventoryClickEvent event) {
         if(event.getWhoClicked() instanceof  Player) {
-            Player p = (Player)event.getWhoClicked();
-            // TODO Se o jogador trocar o item da segunda mão por outro -> Permitir
-            // TODO Se o jogador tirar o item da segunda mão e tiver com a espada na mão -> Adicionar escudo
+            Player p = (Player) event.getWhoClicked();
             ItemStack item = event.getCurrentItem();
-            if(item != null && item.getType() == Material.SHIELD && shielded.contains(p))
-                event.setCancelled(true);
+            if(item == null)
+                return;
+            if(event.getInventory().getType() != InventoryType.CRAFTING)
+                return;
+            if (event.getSlot() == OFF_HAND_SLOT && shielded.contains(p)) {
+                if(event.getCursor().getType() != Material.AIR) {
+                    event.setCurrentItem(null);
+                    shielded.remove(p);
+                    return;
+                } else
+                    event.setCancelled(true);
+            }
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    checkShield(p, p.getInventory().getItemInMainHand());
+                }
+            }.runTask(Battlecraft.getInstance());
+        }
+    }
+
+    @EventHandler
+    public void onPickup(EntityPickupItemEvent event) {
+        if (!(event.getEntity() instanceof Player))
+            return;
+        Player player = (Player) event.getEntity();
+        checkShield(player, player.getInventory().getItemInMainHand());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+    public void onSwordDrop(PlayerDropItemEvent event) {
+        checkShield(event.getPlayer(), event.getPlayer().getInventory().getItemInMainHand());
+    }
+
+    private void checkShield(Player player, ItemStack item) {
+        PlayerInventory inv = player.getInventory();
+        if (item != null && item.getType().name().contains("SWORD")) {
+            if (inv.getItemInOffHand().getType() == Material.AIR && !shielded.contains(player)) {
+                inv.setItemInOffHand(new ItemStack(Material.SHIELD));
+                shielded.add(player);
+            }
+        } else if (shielded.remove(player)) {
+            inv.setItemInOffHand(null);
         }
     }
 
