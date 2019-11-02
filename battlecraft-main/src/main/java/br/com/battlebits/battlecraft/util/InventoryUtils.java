@@ -49,7 +49,7 @@ public class InventoryUtils {
     public static void dropItems(Player p, Location l) {
         List<ItemStack> itens = new ArrayList<>();
         for (ItemStack item : p.getInventory().getContents()) {
-            if (item != null && item.getType() != Material.AIR) {
+            if (item != null && item.getType() != Material.AIR && item.getType() != Material.SHIELD) {
                 itens.add(item.clone());
             }
         }
