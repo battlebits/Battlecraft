@@ -10,12 +10,12 @@ public class PlayerFightFinishEvent extends Event {
     @Getter
     public static final HandlerList handlerList = new HandlerList();
 
-    private Player[] players;
     private Player winner;
+    private Player loser;
 
-    public PlayerFightFinishEvent(Player loser, Player winner) {
-        this.players = new Player[] { loser, winner };
+    public PlayerFightFinishEvent(Player winner, Player loser) {
         this.winner = winner;
+        this.loser = loser;
     }
 
     public HandlerList getHandlers() {

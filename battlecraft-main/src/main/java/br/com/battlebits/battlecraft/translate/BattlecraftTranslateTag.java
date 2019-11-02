@@ -35,6 +35,9 @@ public enum BattlecraftTranslateTag {
     WARP_1V1_CHALLENGE_ACCEPTED("warp.1v1.challenge-accepted"),
     WARP_1V1_YOUR_CHALLENGE_ACCEPTED("warp.1v1.your-challenge-accepted"),
     WARP_1V1_WAIT_TIME("warp.1v1.wait-time"),
+    WARP_1V1_LEFT,
+    WARP_1V1_WON,
+    WARP_1V1_LOST,
 
     KIT_MENU_TITLE,
     KIT_MENU_ERROR,

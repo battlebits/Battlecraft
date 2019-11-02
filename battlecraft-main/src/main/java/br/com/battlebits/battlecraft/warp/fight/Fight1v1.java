@@ -5,8 +5,10 @@ import br.com.battlebits.battlecraft.event.fight.PlayerFightFinishEvent;
 import br.com.battlebits.battlecraft.event.fight.PlayerFightStartEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpDeathEvent;
 import br.com.battlebits.battlecraft.util.InventoryUtils;
+import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.bukkit.api.vanish.VanishAPI;
 import br.com.battlebits.commons.bukkit.event.vanish.PlayerShowToPlayerEvent;
+import br.com.battlebits.commons.translate.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,6 +18,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.WARP_1V1_LEFT;
+import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.WARP_1V1_TAG;
 
 public class Fight1v1 implements Listener {
 
@@ -68,6 +73,13 @@ public class Fight1v1 implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onQuit(PlayerQuitEvent event) {
+        Player winner;
+        if(event.getPlayer() == player)
+            winner = target;
+        else
+            winner = player;
+        Language l = Commons.getLanguage(winner.getUniqueId());
+        winner.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_LEFT, event.getPlayer().getName()));
         handleDeath(event.getPlayer());
     }
 
@@ -91,7 +103,7 @@ public class Fight1v1 implements Listener {
         else
             killer = this.target;
         destroy();
-        Bukkit.getPluginManager().callEvent(new PlayerFightFinishEvent(dead, killer));
+        Bukkit.getPluginManager().callEvent(new PlayerFightFinishEvent(killer, dead));
         InventoryUtils.clearInventory(dead);
         InventoryUtils.clearInventory(killer);
         dead.setHealth(20D);

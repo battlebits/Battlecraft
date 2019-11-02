@@ -6,6 +6,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,12 @@ public class InventoryUtils {
         player.getInventory().setArmorContents(null);
         player.getInventory().clear();
         player.setItemOnCursor(null);
+        for (PotionEffect potion : player.getActivePotionEffects()) {
+            player.removePotionEffect(potion.getType());
+        }
+        player.setFireTicks(0);
+        player.setVelocity(new Vector());
+
     }
 
     /**

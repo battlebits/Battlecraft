@@ -13,6 +13,7 @@ import br.com.battlebits.battlecraft.inventory.KitSelector;
 import br.com.battlebits.battlecraft.inventory.WarpSelector;
 import br.com.battlebits.battlecraft.manager.KitManager;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
+import br.com.battlebits.battlecraft.util.InventoryUtils;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.bukkit.api.item.ActionItemStack;
@@ -68,8 +69,8 @@ public class WarpSpawn extends Warp {
         Player p = event.getPlayer();
         if (!inWarp(p))
             return;
+        InventoryUtils.clearInventory(p);
         PlayerInventory inv = p.getInventory();
-        inv.clear();
         Language l = Commons.getLanguage(p.getUniqueId());
         ItemBuilder builder =
                 ItemBuilder.create(Material.ENDER_CHEST).name(tl(l, KITSELECTOR_ITEM_NAME)).lore("", tl(l,

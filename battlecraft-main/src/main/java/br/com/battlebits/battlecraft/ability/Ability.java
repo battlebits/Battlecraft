@@ -3,6 +3,7 @@ package br.com.battlebits.battlecraft.ability;
 import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.manager.CooldownManager;
 import br.com.battlebits.battlecraft.manager.CooldownManager.Cooldown;
+import br.com.battlebits.commons.bukkit.api.cooldown.CooldownAPI;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -83,6 +84,10 @@ public abstract class Ability implements Listener {
         if (CooldownManager.hasCooldown(player, cooldownName)) {
             CooldownManager.removeCooldown(player, cooldownName);
         }
+        if(CooldownAPI.hasCooldown(player, cooldownName)) {
+            CooldownAPI.removeCooldown(player, cooldownName);
+        }
+        CooldownAPI.addCooldown(player, new br.com.battlebits.commons.bukkit.api.cooldown.types.Cooldown(cooldownName, time));
         CooldownManager.addCooldown(new Cooldown(player, cooldownName,
                 System.currentTimeMillis() + time));
 

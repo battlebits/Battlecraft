@@ -1,5 +1,7 @@
 package br.com.battlebits.battlecraft.warp;
 
+import br.com.battlebits.battlecraft.Battlecraft;
+import br.com.battlebits.battlecraft.event.fight.PlayerFightFinishEvent;
 import br.com.battlebits.battlecraft.event.fight.PlayerFightStartEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
@@ -17,14 +19,17 @@ import br.com.battlebits.commons.translate.Language;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.*;
@@ -118,6 +123,26 @@ public class Warp1v1 extends Warp {
         OneVsOneMap map = event.getChallenge().getMap();
         event.getPlayers()[0].teleport(map.getFirstLocation());
         event.getPlayers()[1].teleport(map.getSecondLocation());
+    }
+
+    @EventHandler
+    public void onFightFinish(PlayerFightFinishEvent event) {
+        Player winner = event.getWinner();
+        Player loser = event.getWinner();
+        int winnerSoups = 0;
+        for (ItemStack sopa : winner.getInventory().getContents()) {
+            if (sopa != null && sopa.getType() != Material.AIR
+                    && sopa.getType() == Material.MUSHROOM_SOUP) {
+                winnerSoups += sopa.getAmount();
+            }
+        }
+        DecimalFormat dm = new DecimalFormat("##.#");
+        String health = dm.format(((Damageable) winner).getHealth() / 2);
+        Language winnerLang = Commons.getLanguage(winner.getUniqueId());
+        Language loserLang = Commons.getLanguage(loser.getUniqueId());
+        winner.sendMessage(winnerLang.tl(WARP_1V1_TAG) + winnerLang.tl(WARP_1V1_WON, loser.getName(), health, winnerSoups));
+        loser.sendMessage(winnerLang.tl(WARP_1V1_TAG) + winnerLang.tl(WARP_1V1_LOST, winner.getName(), health, winnerSoups));
+        Battlecraft.getInstance().getWarpManager().joinWarp(winner, this);
     }
 
     @EventHandler
