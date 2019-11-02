@@ -19,8 +19,30 @@ public class PvPAccount {
     private UUID uniqueId;
     private String name;
     private Map<Warp, WarpStatus> warpStatus;
+    private Map<String, Object> globalValues;
+    private Warp actualWarp;
 
-    public void with(Warp warp, Consumer<WarpStatus> statusConsumer) {
+    public <T> boolean containsValue(T value) {
+        return globalValues.containsValue(value);
+    }
+
+    public boolean containsKey(String key) {
+        return globalValues.containsKey(key);
+    }
+
+    public <T> void save(String key, T t) {
+        globalValues.put(key, t);
+    }
+
+    public <T> T get(String key) {
+        return (T) globalValues.get(key);
+    }
+
+    public WarpStatus getStatus(Warp warp) {
+        return warpStatus.get(warp);
+    }
+
+    public void withWarp(Warp warp, Consumer<WarpStatus> statusConsumer) {
         if (warpStatus.containsKey(warp)) {
             statusConsumer.accept(warpStatus.get(warp));
         } else {
@@ -30,4 +52,7 @@ public class PvPAccount {
         }
     }
 
+    public void with(Consumer<PvPAccount> consumer) {
+       consumer.accept(this);
+    }
 }

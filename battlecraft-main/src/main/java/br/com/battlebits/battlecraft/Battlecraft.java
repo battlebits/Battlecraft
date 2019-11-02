@@ -1,6 +1,6 @@
 package br.com.battlebits.battlecraft;
 
-import br.com.battlebits.battlecraft.backend.PvPStatusStorage;
+import br.com.battlebits.battlecraft.manager.PvPStatusManager;
 import br.com.battlebits.battlecraft.listener.*;
 import br.com.battlebits.battlecraft.manager.AbilityManager;
 import br.com.battlebits.battlecraft.manager.CombatLogManager;
@@ -102,6 +102,6 @@ public class Battlecraft extends JavaPlugin {
 
     private void loadManagers() {
         AbilityManager.registerAbilities();
-        PvPStatusStorage.create();
+        PvPStatusManager.create();
     }
 }
