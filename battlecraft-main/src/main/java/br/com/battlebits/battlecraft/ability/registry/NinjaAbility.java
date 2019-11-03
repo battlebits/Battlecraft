@@ -4,12 +4,11 @@ import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.battlecraft.event.PlayerDamagePlayerEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpDeathEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
-import br.com.battlebits.battlecraft.manager.CooldownManager;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.translate.Language;
-import br.com.battlebits.commons.util.DateUtils;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,8 +23,8 @@ public class NinjaAbility extends Ability {
 
     private static final int MAX_DISTANCE = 40;
 
-    private static final String COOLDOWN_KEY = "ninja";
-    private static final long COOLDOWN_DURATION = 4000;
+    private static final String COOLDOWN_KEY = ChatColor.translateAlternateColorCodes('&',"&B&LNINJA");
+    private static final long COOLDOWN_DURATION = 4;
 
     private BiMap<Player, Player> ability;
 
@@ -78,13 +77,6 @@ public class NinjaAbility extends Ability {
 
                     player.getWorld().playSound(player.getLocation().add(0.0, 0.5, 0.0), Sound
                             .ENTITY_ENDERDRAGON_FLAP, 0.3F, 1.0F);
-                } else {
-                    Language language = Commons.getLanguage(player.getUniqueId());
-
-                    long cooldownTime = CooldownManager.getCooldown(player, COOLDOWN_KEY).getTime();
-
-                    player.sendMessage(tl(language, KIT_NINJA_TAG) +
-                            tl(language, KIT_NINJA_COOLDOWN, DateUtils.getDifferenceFormat(language, cooldownTime)));
                 }
             }
         }

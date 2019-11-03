@@ -1,9 +1,8 @@
 package br.com.battlebits.battlecraft.ability;
 
 import br.com.battlebits.battlecraft.Battlecraft;
-import br.com.battlebits.battlecraft.manager.CooldownManager;
-import br.com.battlebits.battlecraft.manager.CooldownManager.Cooldown;
 import br.com.battlebits.commons.bukkit.api.cooldown.CooldownAPI;
+import br.com.battlebits.commons.bukkit.api.cooldown.types.ItemCooldown;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -11,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -56,7 +56,7 @@ public abstract class Ability implements Listener {
      */
     public void unregisterPlayer(Player player) {
         players.remove(player);
-        CooldownManager.removeAllCooldowns(player);
+        CooldownAPI.removeAllCooldowns(player);
         if (players.isEmpty() && !Disableable.class.isAssignableFrom(getClass()))
             HandlerList.unregisterAll(this);
     }
@@ -69,7 +69,7 @@ public abstract class Ability implements Listener {
      * @return if player has the cooldown
      */
     protected boolean hasCooldown(Player player, String cooldown) {
-        return CooldownManager.hasCooldown(player, cooldown);
+        return CooldownAPI.hasCooldown(player, cooldown);
     }
 
     /**
@@ -81,15 +81,28 @@ public abstract class Ability implements Listener {
      * @param time
      */
     protected void addCooldown(Player player, String cooldownName, long time) {
-        if (CooldownManager.hasCooldown(player, cooldownName)) {
-            CooldownManager.removeCooldown(player, cooldownName);
-        }
+//        if (CooldownManager.hasCooldown(player, cooldownName)) {
+//            CooldownManager.removeCooldown(player, cooldownName);
+//        }
         if(CooldownAPI.hasCooldown(player, cooldownName)) {
             CooldownAPI.removeCooldown(player, cooldownName);
         }
         CooldownAPI.addCooldown(player, new br.com.battlebits.commons.bukkit.api.cooldown.types.Cooldown(cooldownName, time));
-        CooldownManager.addCooldown(new Cooldown(player, cooldownName,
-                System.currentTimeMillis() + time));
+//        CooldownManager.addCooldown(new Cooldown(player, cooldownName,
+//                System.currentTimeMillis() + time));
+
+    }
+
+    protected void addItemCooldown(Player player, ItemStack item, String cooldownName, long time) {
+//        if (CooldownManager.hasCooldown(player, cooldownName)) {
+//            CooldownManager.removeCooldown(player, cooldownName);
+//        }
+        if(CooldownAPI.hasCooldown(player, cooldownName)) {
+            CooldownAPI.removeCooldown(player, cooldownName);
+        }
+        CooldownAPI.addCooldown(player, new ItemCooldown(item, cooldownName, time));
+//        CooldownManager.addCooldown(new Cooldown(player, cooldownName,
+//                System.currentTimeMillis() + time));
 
     }
 
