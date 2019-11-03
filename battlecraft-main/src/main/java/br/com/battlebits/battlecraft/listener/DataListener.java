@@ -22,28 +22,29 @@ public class DataListener implements Listener {
 
     @EventHandler
     public void onPlayerWarpDeathEvent(PlayerWarpDeathEvent event) {
+        final PvPStatusManager statusManager = Battlecraft.getInstance().getStatusManager();
         final Player player = event.getPlayer();
         final UUID uniqueId = player.getUniqueId();
-        PvPStatusManager.get(uniqueId).with(account -> {
+        statusManager.get(uniqueId).with(account -> {
             account.getStatus(event.getWarp()).save("deaths", (int) account.get("deaths") + 1);
             account.save("killstreak", 0);
             final BukkitAccount bukkitAccount = (BukkitAccount) Commons.getAccount(uniqueId);
             bukkitAccount.getBattleboard().update();
             Commons.getPlatform().runAsync(() -> {
-                PvPStatusManager.dataStatus().saveAccount(account, "warpStatus");
-                PvPStatusManager.dataStatus().saveAccount(account, "globalValues");
+                statusManager.dataStatus().saveAccount(account, "warpStatus");
+                statusManager.dataStatus().saveAccount(account, "globalValues");
             });
         });
         final Player killer = event.getKiller();
         if (killer != null) {
-            PvPStatusManager.get(killer.getUniqueId()).with(account -> {
+            statusManager.get(killer.getUniqueId()).with(account -> {
                 account.getStatus(event.getWarp()).save("kills", (int) account.get("kills") + 1);
                 account.save("killstreak", (int) account.get("killstreak") + 1);
                 final BukkitAccount bukkitAccount = (BukkitAccount) Commons.getAccount(killer.getUniqueId());
                 bukkitAccount.getBattleboard().update();
                 Commons.getPlatform().runAsync(() -> {
-                    PvPStatusManager.dataStatus().saveAccount(account, "warpStatus");
-                    PvPStatusManager.dataStatus().saveAccount(account, "globalValues");
+                    statusManager.dataStatus().saveAccount(account, "warpStatus");
+                    statusManager.dataStatus().saveAccount(account, "globalValues");
                 });
             });
         }

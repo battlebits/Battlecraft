@@ -29,6 +29,7 @@ public class Battlecraft extends JavaPlugin {
 
     @Getter
     private static Battlecraft instance;
+    private PvPStatusManager statusManager;
     private WarpManager warpManager;
 
     @Override
@@ -103,6 +104,6 @@ public class Battlecraft extends JavaPlugin {
 
     private void loadManagers() {
         AbilityManager.registerAbilities();
-        PvPStatusManager.create();
+        this.statusManager = new PvPStatusManager();
     }
 }
