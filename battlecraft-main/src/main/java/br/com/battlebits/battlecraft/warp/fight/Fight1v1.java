@@ -16,6 +16,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -94,15 +95,25 @@ public class Fight1v1 implements Listener {
             event.setCancelled(false);
     }
 
+    @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        this.target.hidePlayer(Battlecraft.getInstance(), event.getPlayer());
+        this.player.hidePlayer(Battlecraft.getInstance(), event.getPlayer());
+    }
+
     public void handleDeath(Player dead) {
         if (!inPvP(dead))
             return;
         Player killer;
         if (dead == this.player)
-            killer = this.player;
-        else
             killer = this.target;
+        else
+            killer = this.player;
         destroy();
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            this.player.showPlayer(Battlecraft.getInstance(), online);
+            this.target.showPlayer(Battlecraft.getInstance(), online);
+        }
         Bukkit.getPluginManager().callEvent(new PlayerFightFinishEvent(killer, dead));
         InventoryUtils.clearInventory(dead);
         InventoryUtils.clearInventory(killer);
@@ -110,8 +121,7 @@ public class Fight1v1 implements Listener {
         killer.setHealth(20D);
         dead.updateInventory();
         killer.updateInventory();
-        VanishAPI.updateVanishToPlayer(dead);
-        VanishAPI.updateVanishToPlayer(killer);
+        Battlecraft.getInstance().getWarpManager().joinWarp(killer, Battlecraft.getInstance().getWarpManager().getWarp("1v1"));
     }
 
     public boolean inPvP(Player player) {

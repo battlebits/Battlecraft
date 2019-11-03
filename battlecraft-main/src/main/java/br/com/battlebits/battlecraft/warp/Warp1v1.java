@@ -47,29 +47,35 @@ public class Warp1v1 extends Warp {
             return false;
         if (target == null)
             return false;
+        if (!inWarp(target))
+            return false;
+
         Language l = Commons.getLanguage(player.getUniqueId());
+        Language lt = Commons.getLanguage(target.getUniqueId());
         if (in1v1(target)) {
             player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_PLAYER_IN_COMBAT));
             return false;
         }
 
-        if (hasChallenge(target, player, ChallengeType.NORMAL)) {
-            Challenge challenge = getChallenge(target, player, ChallengeType.NORMAL);
+        if (hasChallenge(player, target, ChallengeType.NORMAL)) {
+            Challenge challenge = getChallenge(player, target, ChallengeType.NORMAL);
             if (!challenge.isExpired()) {
                 player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_CHALLENGE_ACCEPTED, target.getName()));
-                target.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_YOUR_CHALLENGE_ACCEPTED, player.getName()));
+                target.sendMessage(lt.tl(WARP_1V1_TAG) + lt.tl(WARP_1V1_YOUR_CHALLENGE_ACCEPTED, player.getName()));
                 new Fight1v1(player, target, challenge);
                 return false;
             }
         }
-        if (hasChallenge(player, target, ChallengeType.NORMAL)) {
-            Challenge challenge = getChallenge(player, target, ChallengeType.NORMAL);
+        if (hasChallenge(target, player, ChallengeType.NORMAL)) {
+            Challenge challenge = getChallenge(target, player, ChallengeType.NORMAL);
             if (!challenge.isExpired()) {
                 player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_WAIT_TIME));
                 return false;
             }
         }
         newChallenge(target, player, new Challenge(player, target, maps.get(random.nextInt(maps.size()))));
+        player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_CHALLENGE_SENT, target.getName()));
+        target.sendMessage(lt.tl(WARP_1V1_TAG) + lt.tl(WARP_1V1_CHALLENGE_RECEIVED, player.getName()));
         return false;
     };
 
@@ -80,8 +86,8 @@ public class Warp1v1 extends Warp {
         maps = new ArrayList<>();
         ActionItemStack.register(challenge1v1);
         World world = spawnLocation.getWorld();
-        Location first = new Location(world, 150.5, 67.5, 138.5);
-        Location second = new Location(world, 150.5, 67.5, 162.5, 180f, 0f);
+        Location first = new Location(world, 0.5, world.getHighestBlockYAt(0, 10), 10.5);
+        Location second = new Location(world, 0.5, world.getHighestBlockYAt(0, -10), -10.5, 180f, 0f);
         maps.add(new OneVsOneMap(first, second));
     }
 
@@ -128,7 +134,9 @@ public class Warp1v1 extends Warp {
     @EventHandler
     public void onFightFinish(PlayerFightFinishEvent event) {
         Player winner = event.getWinner();
-        Player loser = event.getWinner();
+        Player loser = event.getLoser();
+        playersIn1v1.remove(winner);
+        playersIn1v1.remove(loser);
         int winnerSoups = 0;
         for (ItemStack sopa : winner.getInventory().getContents()) {
             if (sopa != null && sopa.getType() != Material.AIR
@@ -142,7 +150,6 @@ public class Warp1v1 extends Warp {
         Language loserLang = Commons.getLanguage(loser.getUniqueId());
         winner.sendMessage(winnerLang.tl(WARP_1V1_TAG) + winnerLang.tl(WARP_1V1_WON, loser.getName(), health, winnerSoups));
         loser.sendMessage(winnerLang.tl(WARP_1V1_TAG) + winnerLang.tl(WARP_1V1_LOST, winner.getName(), health, winnerSoups));
-        Battlecraft.getInstance().getWarpManager().joinWarp(winner, this);
     }
 
     @EventHandler

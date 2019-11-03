@@ -32,6 +32,8 @@ public enum BattlecraftTranslateTag {
     WARP_1V1_PLAYER_IN_COMBAT("warp.1v1.player-in-combat"),
     WARP_1V1_DIRECT_NAME,
     WARP_1V1_DIRECT_LORE,
+    WARP_1V1_CHALLENGE_SENT("warp.1v1.challenge-sent"),
+    WARP_1V1_CHALLENGE_RECEIVED("warp.1v1.challenge-received"),
     WARP_1V1_CHALLENGE_ACCEPTED("warp.1v1.challenge-accepted"),
     WARP_1V1_YOUR_CHALLENGE_ACCEPTED("warp.1v1.your-challenge-accepted"),
     WARP_1V1_WAIT_TIME("warp.1v1.wait-time"),
