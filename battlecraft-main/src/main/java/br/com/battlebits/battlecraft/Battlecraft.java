@@ -9,6 +9,8 @@ import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.warp.Warp;
 import br.com.battlebits.battlecraft.warp.Warp1v1;
 import br.com.battlebits.battlecraft.warp.WarpSpawn;
+import br.com.battlebits.battlecraft.world.map.OneVsOneMap;
+import br.com.battlebits.battlecraft.world.map.SpawnMap;
 import br.com.battlebits.battlecraft.world.map.VoidMap;
 import br.com.battlebits.commons.backend.properties.PropertiesStorageDataTranslation;
 import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
@@ -19,7 +21,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -33,9 +34,7 @@ public class Battlecraft extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        Plugin dependency = this.getServer().getPluginManager()
-                .getPlugin("Commons");
-        if (dependency == null) {
+        if (!this.getServer().getPluginManager().isPluginEnabled("Commons")) {
             this.getLogger()
                     .warning("Commons was not found, disabling Battlecraft");
             this.getPluginLoader().disablePlugin(this);
@@ -44,9 +43,7 @@ public class Battlecraft extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Plugin dependency = this.getServer().getPluginManager()
-                .getPlugin("Commons");
-        if (dependency == null || !dependency.isEnabled()) {
+        if (!this.getServer().getPluginManager().isPluginEnabled("Commons")) {
             this.getLogger().warning("Commons was not enabled, disabling Battlecraft");
             this.getPluginLoader().disablePlugin(this);
             return;
@@ -76,13 +73,10 @@ public class Battlecraft extends JavaPlugin {
     }
 
     private void loadWarps() {
-        World world = this.getServer().getWorld("world");
-        Location spawnLocation = new Location(world, 0.5, world
-                .getHighestBlockYAt(0, 0), 0.5);
-        Warp warp = new WarpSpawn(spawnLocation, new VoidMap());
+        Warp warp = new WarpSpawn(new SpawnMap());
         this.warpManager.addWarp(warp);
         this.warpManager.setDefaultWarp(warp);
-        warp = new Warp1v1(spawnLocation, new VoidMap());
+        warp = new Warp1v1(new OneVsOneMap());
         this.warpManager.addWarp(warp);
     }
 

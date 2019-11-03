@@ -25,8 +25,6 @@ public class InventoryUtils {
             player.removePotionEffect(potion.getType());
         }
         player.setFireTicks(0);
-        player.setVelocity(new Vector());
-
     }
 
     /**

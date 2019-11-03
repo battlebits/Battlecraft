@@ -29,6 +29,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -40,7 +41,7 @@ import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
 public class WarpSpawn extends Warp {
 
-    private static final double SPAWN_RADIUS = 10;
+    private static final double SPAWN_RADIUS = 15;
     private static final double SPAWN_RADIUS_SQUARED = SPAWN_RADIUS * SPAWN_RADIUS;
 
     private Kit defaultKit;
@@ -57,8 +58,8 @@ public class WarpSpawn extends Warp {
         return false;
     };
 
-    public WarpSpawn(Location spawnLocation, WorldMap map) {
-        super("Spawn", Material.GRASS, spawnLocation, map);
+    public WarpSpawn(WorldMap map) {
+        super("Spawn", Material.GRASS, map);
         createKits();
         ActionItemStack.register(kitSelectorHandler);
         ActionItemStack.register(warpSelectorHandler);
@@ -70,6 +71,7 @@ public class WarpSpawn extends Warp {
         if (!inWarp(p))
             return;
         InventoryUtils.clearInventory(p);
+        p.setVelocity(new Vector());
         PlayerInventory inv = p.getInventory();
         Language l = Commons.getLanguage(p.getUniqueId());
         ItemBuilder builder =

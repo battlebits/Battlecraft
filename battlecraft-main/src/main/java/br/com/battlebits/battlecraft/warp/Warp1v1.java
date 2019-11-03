@@ -79,15 +79,15 @@ public class Warp1v1 extends Warp {
         return false;
     };
 
-    public Warp1v1(Location spawnLocation, WorldMap map) {
-        super("1v1", Material.BLAZE_ROD, spawnLocation, map);
+    public Warp1v1(WorldMap map) {
+        super("1v1", Material.BLAZE_ROD, map);
         challenges = new HashMap<>();
         playersIn1v1 = new HashSet<>();
         maps = new ArrayList<>();
         ActionItemStack.register(challenge1v1);
-        World world = spawnLocation.getWorld();
-        Location first = new Location(world, 0.5, world.getHighestBlockYAt(0, 10), 10.5);
-        Location second = new Location(world, 0.5, world.getHighestBlockYAt(0, -10), -10.5, 180f, 0f);
+        World world = getSpawnLocation().getWorld();
+        Location first = new Location(world, 0.5, world.getHighestBlockYAt(0, -13), -13.5);
+        Location second = new Location(world, 0.5, world.getHighestBlockYAt(0, 13), 13.5, 180f, 0f);
         maps.add(new OneVsOneMap(first, second));
     }
 

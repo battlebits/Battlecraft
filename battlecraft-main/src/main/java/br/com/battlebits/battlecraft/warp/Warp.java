@@ -37,13 +37,14 @@ public abstract class Warp implements Listener, CommandClass {
 
     private WorldMap worldMap;
 
-    public Warp(String name, Material material, Location spawnLocation, WorldMap map) {
+    public Warp(String name, Material material, WorldMap map) {
         this.name = name;
         this.material = material;
         this.players = new HashSet<>();
         this.kits = new HashSet<>();
-        this.spawnLocation = spawnLocation;
         this.worldMap = map;
+        this.worldMap.loadMap();
+        this.spawnLocation = map.getSpawnLocation();
     }
 
     public String getId() {
