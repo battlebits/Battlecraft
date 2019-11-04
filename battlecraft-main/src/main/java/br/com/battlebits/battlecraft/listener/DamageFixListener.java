@@ -1,6 +1,6 @@
 package br.com.battlebits.battlecraft.listener;
 
-import org.bukkit.Bukkit;
+import com.destroystokyo.paper.event.entity.EntityKnockbackByEntityEvent;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
@@ -9,12 +9,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
-import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 public class DamageFixListener implements Listener {
 
@@ -126,5 +125,23 @@ public class DamageFixListener implements Listener {
             }
         }
         return damage;
+    }
+
+    @EventHandler
+    public void onKnockback(EntityKnockbackByEntityEvent event) {
+        if (!(event.getEntity() instanceof Player))
+            return;
+        if (!(event.getHitBy() instanceof Player))
+            return;
+        Vector v = event.getAcceleration();
+        Player damager = (Player) event.getHitBy();
+        Player damaged = (Player) event.getEntity();
+        if(!damaged.isOnGround()) {
+            v.setY(0.4D);
+            double y = damaged.getVelocity().getY();
+            double total = y + v.getY();
+            if (total > 0.4000000059604645D)
+                v.setY(0.4000000059604645D - y);
+        }
     }
 }

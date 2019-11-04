@@ -15,12 +15,13 @@ repositories {
     maven { url = uri("https://hub.spigotmc.org/nexus/content/groups/public") }
     maven { url "http://repo.dmulloy2.net/nexus/repository/public/" }
     maven { url "https://repo.battlebits.com.br/repository/public/" }
+    maven { url "https://papermc.io/repo/repository/maven-public/" }
     mavenLocal()
 }
 
 dependencies {
     implementation 'io.reactivex.rxjava3:rxjava:3.0.0-RC3'
-    compile group: 'org.spigotmc', name: 'spigot-api', version: '1.12.2-R0.1-SNAPSHOT'
+    compile group: 'com.destroystokyo.paper', name: 'paper-api', version: '1.12.2-R0.1-SNAPSHOT'
     compile group: 'br.com.battlebits', name: 'commons-bukkit', version: '1.0.182-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group:  'org.powermock', name: 'powermock-module-junit4', version: '2.0.2'
