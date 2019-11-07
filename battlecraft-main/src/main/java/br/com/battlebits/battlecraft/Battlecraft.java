@@ -18,6 +18,7 @@ import br.com.battlebits.commons.command.CommandLoader;
 import br.com.battlebits.commons.translate.TranslationCommon;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -48,6 +49,7 @@ public class Battlecraft extends JavaPlugin {
             this.getPluginLoader().disablePlugin(this);
             return;
         }
+        Bukkit.setDefaultGameMode(GameMode.ADVENTURE);
         instance = this;
         this.warpManager = new WarpManager(this);
         TranslationCommon.addTranslation(new PropertiesStorageDataTranslation(BattlecraftTranslateTag.class));
