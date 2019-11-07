@@ -70,8 +70,6 @@ public class WarpSpawn extends Warp {
         Player p = event.getPlayer();
         if (!inWarp(p))
             return;
-        InventoryUtils.clearInventory(p);
-        p.setVelocity(new Vector());
         PlayerInventory inv = p.getInventory();
         Language l = Commons.getLanguage(p.getUniqueId());
         ItemBuilder builder =

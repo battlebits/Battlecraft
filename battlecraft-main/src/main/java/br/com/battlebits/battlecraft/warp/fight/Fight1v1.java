@@ -115,8 +115,6 @@ public class Fight1v1 implements Listener {
             this.target.showPlayer(Battlecraft.getInstance(), online);
         }
         Bukkit.getPluginManager().callEvent(new PlayerFightFinishEvent(killer, dead));
-        InventoryUtils.clearInventory(dead);
-        InventoryUtils.clearInventory(killer);
         dead.setHealth(20D);
         killer.setHealth(20D);
         dead.updateInventory();

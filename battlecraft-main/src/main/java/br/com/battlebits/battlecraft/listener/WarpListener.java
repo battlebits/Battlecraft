@@ -6,6 +6,7 @@ import br.com.battlebits.battlecraft.warp.Warp;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.bukkit.api.title.TitleAPI;
 import br.com.battlebits.commons.translate.Language;
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +24,7 @@ public class WarpListener implements Listener {
     public void onJoin(PlayerJoinEvent event) {
         event.setJoinMessage(null);
         Player player = event.getPlayer();
+        player.setGameMode(GameMode.ADVENTURE);
         WarpManager manager = Battlecraft.getInstance().getWarpManager();
         Warp defaultWarp = manager.getDefaultWarp();
         manager.joinWarp(player, defaultWarp);
