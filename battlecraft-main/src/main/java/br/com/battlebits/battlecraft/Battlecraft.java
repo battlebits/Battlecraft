@@ -1,5 +1,6 @@
 package br.com.battlebits.battlecraft;
 
+import br.com.battlebits.battlecraft.manager.PvPStatusManager;
 import br.com.battlebits.battlecraft.listener.*;
 import br.com.battlebits.battlecraft.manager.AbilityManager;
 import br.com.battlebits.battlecraft.manager.CombatLogManager;
@@ -31,6 +32,7 @@ public class Battlecraft extends JavaPlugin {
 
     @Getter
     private static Battlecraft instance;
+    private PvPStatusManager statusManager;
     private WarpManager warpManager;
 
     @Override
@@ -95,9 +97,11 @@ public class Battlecraft extends JavaPlugin {
         manager.registerEvents(new CombatLogListener(), this);
         manager.registerEvents(new TeleportListener(), this);
         manager.registerEvents(new ItemFrameListener(), this);
+        manager.registerEvents(new DataListener(), this);
     }
 
     private void loadManagers() {
         AbilityManager.registerAbilities();
+        this.statusManager = new PvPStatusManager();
     }
 }
