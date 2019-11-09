@@ -13,9 +13,11 @@ import br.com.battlebits.battlecraft.inventory.KitSelector;
 import br.com.battlebits.battlecraft.inventory.WarpSelector;
 import br.com.battlebits.battlecraft.manager.KitManager;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
+import br.com.battlebits.battlecraft.util.InventoryUtils;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.bukkit.api.item.ActionItemStack;
+import br.com.battlebits.commons.bukkit.api.item.ActionItemStack.InteractHandler;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import br.com.battlebits.commons.translate.Language;
 import org.bukkit.Location;
@@ -24,8 +26,10 @@ import org.bukkit.block.Block;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -37,13 +41,28 @@ import static br.com.battlebits.commons.translate.TranslationCommon.tl;
 
 public class WarpSpawn extends Warp {
 
-    private static final double SPAWN_RADIUS = 10;
+    private static final double SPAWN_RADIUS = 15;
+    private static final double SPAWN_RADIUS_SQUARED = SPAWN_RADIUS * SPAWN_RADIUS;
 
     private Kit defaultKit;
 
-    public WarpSpawn(Location spawnLocation, WorldMap map) {
-        super("Spawn", Material.GRASS, spawnLocation, map);
+    private InteractHandler kitSelectorHandler = (player, player1, itemStack, itemAction) -> {
+        if (itemAction.name().contains("RIGHT"))
+            new KitSelector(Commons.getLanguage(player.getUniqueId()), this).open(player);
+        return false;
+    };
+
+    private InteractHandler warpSelectorHandler = (player, player1, itemStack, itemAction) -> {
+        if (itemAction.name().contains("RIGHT"))
+            new WarpSelector(Commons.getLanguage(player.getUniqueId()), this).open(player);
+        return false;
+    };
+
+    public WarpSpawn(WorldMap map) {
+        super("Spawn", Material.GRASS, map);
         createKits();
+        ActionItemStack.register(kitSelectorHandler);
+        ActionItemStack.register(warpSelectorHandler);
     }
 
     @EventHandler
@@ -52,26 +71,32 @@ public class WarpSpawn extends Warp {
         if (!inWarp(p))
             return;
         PlayerInventory inv = p.getInventory();
-        inv.clear();
         Language l = Commons.getLanguage(p.getUniqueId());
         ItemBuilder builder =
                 ItemBuilder.create(Material.ENDER_CHEST).name(tl(l, KITSELECTOR_ITEM_NAME)).lore("", tl(l,
-                        KITSELECTOR_ITEM_LORE));
-        ActionItemStack  item = new ActionItemStack(builder.build(), (player, itemStack, action) -> {
-            new KitSelector(l, this).open(p);
-            return false;
-        });
-        inv.setItem(1, item.getItemStack());
+                        KITSELECTOR_ITEM_LORE)).interact(kitSelectorHandler);
+        inv.setItem(1, builder.build());
         builder =
                 ItemBuilder.create(Material.COMPASS).name(tl(l, WARPSELECTOR_ITEM_NAME)).lore("", tl(l,
-                        WARPSELECTOR_ITEM_LORE));
-        item = new ActionItemStack(builder.build(), (player, itemStack, action) -> {
-            new WarpSelector(l, this).open(p);
-            return false;
-        });
-        inv.setItem(2, item.getItemStack());
+                        WARPSELECTOR_ITEM_LORE)).interact(warpSelectorHandler);
+        inv.setItem(2, builder.build());
         inv.setHeldItemSlot(1);
         ProtectionManager.addProtection(p);
+    }
+
+    /**
+     * Insta kill when player in Spawn takes void damage
+     */
+    @EventHandler
+    public void onVoidDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player))
+            return;
+        if (event.getCause() != EntityDamageEvent.DamageCause.VOID)
+            return;
+        Player player = (Player) event.getEntity();
+        if (!inWarp(player))
+            return;
+        event.setDamage(Double.MAX_VALUE);
     }
 
     @EventHandler
@@ -113,8 +138,8 @@ public class WarpSpawn extends Warp {
         double distX = to.getX() - getSpawnLocation().getX();
         double distZ = to.getZ() - getSpawnLocation().getZ();
 
-        double distance = Math.sqrt((distX * distX) + (distZ * distZ));
-        if (above.getType() == Material.GRASS || distance > SPAWN_RADIUS) {
+        double distance = (distX * distX) + (distZ * distZ);
+        if (above.getType() == Material.GRASS || distance > SPAWN_RADIUS_SQUARED) {
             ProtectionManager.removeProtection(p);
         }
     }

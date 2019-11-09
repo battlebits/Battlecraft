@@ -33,7 +33,7 @@ public class MoveListener implements Listener {
             if (locations.containsKey(p)) {
                 Location from = locations.get(p);
                 if (from.getX() == p.getLocation().getX() && from.getZ() == p.getLocation().getZ()
-                        && from.getY() == p.getLocation().getY() && from.distance(p.getLocation()) < 1)
+                        && from.getY() == p.getLocation().getY())
                     continue;
                 Bukkit.getServer().getPluginManager().callEvent(new RealMoveEvent(p, from, p.getLocation()));
             }

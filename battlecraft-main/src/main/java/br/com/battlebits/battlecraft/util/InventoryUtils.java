@@ -5,8 +5,8 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +21,10 @@ public class InventoryUtils {
         player.getInventory().setArmorContents(null);
         player.getInventory().clear();
         player.setItemOnCursor(null);
+        for (PotionEffect potion : player.getActivePotionEffects()) {
+            player.removePotionEffect(potion.getType());
+        }
+        player.setFireTicks(0);
     }
 
     /**
@@ -38,7 +42,8 @@ public class InventoryUtils {
      * @param item item
      */
     public static void repairItem(ItemStack item) {
-        item.setDurability((short)0);
+        if (item != null)
+            item.setDurability((short)0);
     }
 
     /**
@@ -49,7 +54,7 @@ public class InventoryUtils {
     public static void dropItems(Player p, Location l) {
         List<ItemStack> itens = new ArrayList<>();
         for (ItemStack item : p.getInventory().getContents()) {
-            if (item != null && item.getType() != Material.AIR) {
+            if (item != null && item.getType() != Material.AIR && item.getType() != Material.SHIELD) {
                 itens.add(item.clone());
             }
         }

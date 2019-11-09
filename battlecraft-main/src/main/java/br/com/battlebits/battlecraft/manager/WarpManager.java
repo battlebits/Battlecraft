@@ -2,6 +2,7 @@ package br.com.battlebits.battlecraft.manager;
 
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
+import br.com.battlebits.battlecraft.util.InventoryUtils;
 import br.com.battlebits.battlecraft.warp.Warp;
 import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
@@ -10,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -58,7 +60,8 @@ public class WarpManager {
             player.setHealth(attr.getValue());
         }
         player.setFoodLevel(20);
-        player.setGameMode(GameMode.ADVENTURE);
+        InventoryUtils.clearInventory(player);
+        player.setVelocity(new Vector());
         player.teleport(warp.getSpawnLocation());
         plugin.getServer().getPluginManager().callEvent(event);
     }

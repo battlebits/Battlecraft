@@ -8,7 +8,10 @@ import br.com.battlebits.battlecraft.manager.TeleportManager;
 import br.com.battlebits.battlecraft.manager.WarpManager;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.warp.Warp;
+import br.com.battlebits.battlecraft.warp.Warp1v1;
 import br.com.battlebits.battlecraft.warp.WarpSpawn;
+import br.com.battlebits.battlecraft.world.map.OneVsOneMap;
+import br.com.battlebits.battlecraft.world.map.SpawnMap;
 import br.com.battlebits.battlecraft.world.map.VoidMap;
 import br.com.battlebits.commons.backend.properties.PropertiesStorageDataTranslation;
 import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
@@ -16,10 +19,10 @@ import br.com.battlebits.commons.command.CommandLoader;
 import br.com.battlebits.commons.translate.TranslationCommon;
 import lombok.Getter;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,9 +37,7 @@ public class Battlecraft extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        Plugin dependency = this.getServer().getPluginManager()
-                .getPlugin("Commons");
-        if (dependency == null) {
+        if (!this.getServer().getPluginManager().isPluginEnabled("Commons")) {
             this.getLogger()
                     .warning("Commons was not found, disabling Battlecraft");
             this.getPluginLoader().disablePlugin(this);
@@ -45,13 +46,12 @@ public class Battlecraft extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        Plugin dependency = this.getServer().getPluginManager()
-                .getPlugin("Commons");
-        if (dependency == null || !dependency.isEnabled()) {
+        if (!this.getServer().getPluginManager().isPluginEnabled("Commons")) {
             this.getLogger().warning("Commons was not enabled, disabling Battlecraft");
             this.getPluginLoader().disablePlugin(this);
             return;
         }
+        Bukkit.setDefaultGameMode(GameMode.ADVENTURE);
         instance = this;
         this.warpManager = new WarpManager(this);
         TranslationCommon.addTranslation(new PropertiesStorageDataTranslation(BattlecraftTranslateTag.class));
@@ -77,13 +77,11 @@ public class Battlecraft extends JavaPlugin {
     }
 
     private void loadWarps() {
-        World world = this.getServer().getWorld("world");
-        Location spawnLocation = new Location(world, 0.5, world
-                .getHighestBlockYAt(0, 0), 0.5);
-        Warp warp = new WarpSpawn(spawnLocation, new VoidMap());
+        Warp warp = new WarpSpawn(new SpawnMap());
         this.warpManager.addWarp(warp);
         this.warpManager.setDefaultWarp(warp);
-
+        warp = new Warp1v1(new OneVsOneMap());
+        this.warpManager.addWarp(warp);
     }
 
     private void loadListeners() {
@@ -97,8 +95,8 @@ public class Battlecraft extends JavaPlugin {
         manager.registerEvents(new SoupListener(), this);
         manager.registerEvents(new WarpListener(), this);
         manager.registerEvents(new CombatLogListener(), this);
-        manager.registerEvents(new CooldownListener(), this);
         manager.registerEvents(new TeleportListener(), this);
+        manager.registerEvents(new ItemFrameListener(), this);
         manager.registerEvents(new DataListener(), this);
     }
 

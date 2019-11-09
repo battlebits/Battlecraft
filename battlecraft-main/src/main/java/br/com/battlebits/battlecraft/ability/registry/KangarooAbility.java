@@ -28,9 +28,10 @@ import static br.com.battlebits.battlecraft.manager.ProtectionManager.isProtecte
 
 public class KangarooAbility extends Ability implements AbilityItem {
 
-    private static final String JUMP_COOLDOWN = "jump";
+    private static final String JUMP_COOLDOWN = ChatColor.translateAlternateColorCodes('&',"&6&LJUMP");
     private static final double MAX_FALL_DAMAGE = 7.0;
-    private static final long COOLDOWN_TIME = 6000;
+    private static final long COOLDOWN_TIME = 6;
+    private static ItemStack ITEM_COOLDOWN = null;
 
     public static final float JUMP_MULTIPLY_NORMAL = 1F;
     public static final float JUMP_MULTIPLY_NERFED = 0.3F;
@@ -42,6 +43,8 @@ public class KangarooAbility extends Ability implements AbilityItem {
 
     public KangarooAbility() {
         doubleJump = new HashSet<>();
+        ITEM_COOLDOWN = ItemBuilder.create(Material.FIREWORK).name(
+                ChatColor.GOLD + "Kangaroo Boost").build();
     }
 
     @EventHandler
@@ -75,7 +78,7 @@ public class KangarooAbility extends Ability implements AbilityItem {
     private boolean kangaroo(Player player, ItemStack item) {
         if (item!= null && item.getType() == Material.FIREWORK && hasAbility(player)) {
             if (hasCooldown(player, JUMP_COOLDOWN)) {
-                return false;
+                return true;
             }
             if (player.isOnGround()) {
                 Vector vector = player.getEyeLocation().getDirection();
@@ -138,14 +141,13 @@ public class KangarooAbility extends Ability implements AbilityItem {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             final Player player = (Player) event.getEntity();
             if (!isProtected(player)) {
-                addCooldown(player, JUMP_COOLDOWN, COOLDOWN_TIME);
+                addItemCooldown(player, ITEM_COOLDOWN, JUMP_COOLDOWN, COOLDOWN_TIME);
             }
         }
     }
 
     @Override
     public List<ItemStack> getItems() {
-        return Collections.singletonList(ItemBuilder.create(Material.FIREWORK).name(
-                ChatColor.GOLD + "Kangaroo Boost").build());
+        return Collections.singletonList(ITEM_COOLDOWN);
     }
 }
