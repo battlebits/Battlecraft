@@ -8,6 +8,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static br.com.battlebits.battlecraft.manager.ProtectionManager.isProtected;
 
 public class StomperAbility extends Ability {
@@ -25,8 +28,8 @@ public class StomperAbility extends Ability {
 
                 if (hasAbility(damager) && !isProtected(damager)) {
                     damager.getWorld().playSound(damager.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.15F, 1.0F);
-
-                    Battlecraft.getInstance().getWarpManager().getPlayerWarp(damager).getPlayers().stream()
+                    List<Player> playerList = new ArrayList<>(Battlecraft.getInstance().getWarpManager().getPlayerWarp(damager).getPlayers());
+                    playerList.stream()
                             .filter(target -> !target.equals(damager)
                                     && damager.getLocation().distance(target.getLocation()) <= STOMPER_DISTANCE
                                     && !isProtected(target))

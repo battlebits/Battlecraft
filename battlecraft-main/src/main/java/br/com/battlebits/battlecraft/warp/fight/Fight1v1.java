@@ -4,6 +4,7 @@ import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.event.fight.PlayerFightFinishEvent;
 import br.com.battlebits.battlecraft.event.fight.PlayerFightStartEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpDeathEvent;
+import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.util.InventoryUtils;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.bukkit.api.vanish.VanishAPI;
@@ -16,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -74,6 +76,8 @@ public class Fight1v1 implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onQuit(PlayerQuitEvent event) {
+        if(!inPvP(event.getPlayer()))
+            return;
         Player winner;
         if(event.getPlayer() == player)
             winner = target;
@@ -96,9 +100,21 @@ public class Fight1v1 implements Listener {
     }
 
     @EventHandler
+    public void onWarpLeave(PlayerWarpQuitEvent event) {
+        if (inPvP(event.getPlayer()))
+            handleDeath(event.getPlayer());
+    }
+
+    @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         this.target.hidePlayer(Battlecraft.getInstance(), event.getPlayer());
         this.player.hidePlayer(Battlecraft.getInstance(), event.getPlayer());
+    }
+
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent event) {
+        if (inPvP(event.getPlayer()))
+            event.getItemDrop().remove();
     }
 
     public void handleDeath(Player dead) {
@@ -117,6 +133,7 @@ public class Fight1v1 implements Listener {
         Bukkit.getPluginManager().callEvent(new PlayerFightFinishEvent(killer, dead));
         dead.setHealth(20D);
         killer.setHealth(20D);
+        dead.getInventory().clear();
         dead.updateInventory();
         killer.updateInventory();
         Battlecraft.getInstance().getWarpManager().joinWarp(killer, Battlecraft.getInstance().getWarpManager().getWarp("1v1"));

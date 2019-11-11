@@ -13,4 +13,9 @@ public class WarpCommand implements CommandClass {
     public void spawn(BukkitCommandArgs args) {
         TeleportManager.teleport(args.getPlayer(), Battlecraft.getInstance().getWarpManager().getDefaultWarp());
     }
+
+    @Command(name = "1v1")
+    public void onevsone(BukkitCommandArgs args) {
+        TeleportManager.teleport(args.getPlayer(), Battlecraft.getInstance().getWarpManager().getWarp("1v1"));
+    }
 }

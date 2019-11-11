@@ -2,8 +2,7 @@ package br.com.battlebits.battlecraft.warp;
 
 import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.battlecraft.ability.Kit;
-import br.com.battlebits.battlecraft.ability.registry.KangarooAbility;
-import br.com.battlebits.battlecraft.ability.registry.NinjaAbility;
+import br.com.battlebits.battlecraft.ability.registry.*;
 import br.com.battlebits.battlecraft.event.PlayerKitEvent;
 import br.com.battlebits.battlecraft.event.RealMoveEvent;
 import br.com.battlebits.battlecraft.event.protection.PlayerProtectionRemoveEvent;
@@ -165,5 +164,29 @@ public class WarpSpawn extends Warp {
         abilities = Stream.of(getAbilityByClass(KangarooAbility.class));
         icon = new ItemStack(Material.FIREWORK);
         this.kits.add(new Kit("kangaroo", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+
+        abilities = Stream.of(getAbilityByClass(StomperAbility.class));
+        icon = new ItemStack(Material.IRON_BOOTS);
+        this.kits.add(new Kit("stomper", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+
+        abilities = Stream.of(getAbilityByClass(MagmaAbility.class));
+        icon = new ItemStack(Material.LAVA_BUCKET);
+        this.kits.add(new Kit("magma", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+
+        abilities = Stream.of(getAbilityByClass(SnailAbility.class));
+        icon = new ItemStack(Material.WEB);
+        this.kits.add(new Kit("snail", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+
+        abilities = Stream.of(getAbilityByClass(ViperAbility.class));
+        icon = new ItemStack(Material.FERMENTED_SPIDER_EYE);
+        this.kits.add(new Kit("viper", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+
+        abilities = Stream.of(getAbilityByClass(FishermanAbility.class));
+        icon = new ItemStack(Material.FISHING_ROD);
+        this.kits.add(new Kit("fisherman", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+
+//        abilities = Stream.of(getAbilityByClass(AnchorAbility.class));
+//        icon = new ItemStack(Material.ANVIL);
+//        this.kits.add(new Kit("anchor", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
     }
 }
