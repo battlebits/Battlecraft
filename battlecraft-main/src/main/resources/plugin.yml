@@ -3,5 +3,5 @@ version: ${fullVersion}
 description: Plugin de pvp base do Battlebits
 authors: [GustavoInacio]
 main: br.com.battlebits.battlecraft.Battlecraft
-depend: [Commons]
+depend: [Commons, ProtocolLib]
 api-version: "1.12"

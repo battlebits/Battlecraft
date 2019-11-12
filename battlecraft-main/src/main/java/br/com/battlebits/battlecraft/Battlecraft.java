@@ -6,6 +6,7 @@ import br.com.battlebits.battlecraft.manager.AbilityManager;
 import br.com.battlebits.battlecraft.manager.CombatLogManager;
 import br.com.battlebits.battlecraft.manager.TeleportManager;
 import br.com.battlebits.battlecraft.manager.WarpManager;
+import br.com.battlebits.battlecraft.protocol.SoundFilter;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.warp.Warp;
 import br.com.battlebits.battlecraft.warp.Warp1v1;
@@ -17,6 +18,7 @@ import br.com.battlebits.commons.backend.properties.PropertiesStorageDataTransla
 import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
 import br.com.battlebits.commons.command.CommandLoader;
 import br.com.battlebits.commons.translate.TranslationCommon;
+import com.comphenix.protocol.ProtocolLibrary;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -53,6 +55,7 @@ public class Battlecraft extends JavaPlugin {
         }
         Bukkit.setDefaultGameMode(GameMode.ADVENTURE);
         instance = this;
+        ProtocolLibrary.getProtocolManager().addPacketListener(new SoundFilter(this));
         this.warpManager = new WarpManager(this);
         TranslationCommon.addTranslation(new PropertiesStorageDataTranslation(BattlecraftTranslateTag.class));
         loadManagers();
@@ -97,7 +100,7 @@ public class Battlecraft extends JavaPlugin {
         manager.registerEvents(new CombatLogListener(), this);
         manager.registerEvents(new TeleportListener(), this);
         manager.registerEvents(new ItemFrameListener(), this);
-        manager.registerEvents(new DataListener(), this);
+        // manager.registerEvents(new DataListener(), this);
     }
 
     private void loadManagers() {

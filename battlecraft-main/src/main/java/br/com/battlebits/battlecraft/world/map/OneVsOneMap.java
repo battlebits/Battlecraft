@@ -31,7 +31,7 @@ public class OneVsOneMap implements WorldMap {
         world = Bukkit.getServer().createWorld(new WorldCreator("1v1"));
         world.setAutoSave(true);
         Battlecraft.getInstance().getLogger().info("World '1v1' loaded!");
-        spawnLocation = new Location(world, 0.5, 64, 0.5);
+        spawnLocation = new Location(world, 0.5, world.getHighestBlockYAt(0, 0), 0.5);
     }
 
     @Override

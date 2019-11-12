@@ -35,9 +35,11 @@ public class KangarooAbility extends Ability implements AbilityItem {
 
     public static final float JUMP_MULTIPLY_NORMAL = 1F;
     public static final float JUMP_MULTIPLY_NERFED = 0.3F;
-    public static final float JUMP_Y_SNEAKING = 0.65F;
+    public static final float JUMP_Y_SNEAKING = 0.55F;
     public static final float JUMP_Y_GROUND = 0.9F;
     public static final float JUMP_Y_AIR = 0.85F;
+
+    private static final float FALL_DISTANCE = -1;
 
     private Set<Player> doubleJump;
 
@@ -107,6 +109,7 @@ public class KangarooAbility extends Ability implements AbilityItem {
                     }
                 }
             }
+            player.setFallDistance(FALL_DISTANCE);
             return true;
         }
         return false;

@@ -5,6 +5,8 @@ import br.com.battlebits.battlecraft.event.fight.PlayerFightFinishEvent;
 import br.com.battlebits.battlecraft.event.fight.PlayerFightStartEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
+import br.com.battlebits.battlecraft.protocol.OneVsOneFilter;
+import br.com.battlebits.battlecraft.protocol.SoundFilter;
 import br.com.battlebits.battlecraft.warp.fight.Challenge;
 import br.com.battlebits.battlecraft.warp.fight.ChallengeType;
 import br.com.battlebits.battlecraft.warp.fight.Fight1v1;
@@ -16,6 +18,7 @@ import br.com.battlebits.commons.bukkit.api.item.ActionItemStack.InteractHandler
 import br.com.battlebits.commons.bukkit.api.item.ItemAction;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import br.com.battlebits.commons.translate.Language;
+import com.comphenix.protocol.ProtocolLibrary;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -89,6 +92,7 @@ public class Warp1v1 extends Warp {
         Location first = new Location(world, 0.5, world.getHighestBlockYAt(0, -13), -13.5);
         Location second = new Location(world, 0.5, world.getHighestBlockYAt(0, 13), 13.5, 180f, 0f);
         maps.add(new OneVsOneMap(first, second));
+        ProtocolLibrary.getProtocolManager().addPacketListener(new OneVsOneFilter(Battlecraft.getInstance(), this));
     }
 
     // Remove o crafing para quem está na warp
