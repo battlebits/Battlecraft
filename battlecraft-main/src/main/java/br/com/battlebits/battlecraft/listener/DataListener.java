@@ -15,7 +15,7 @@ public class DataListener implements Listener {
         if(event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED)
             return;
         StatusManager manager = Battlecraft.getInstance().getStatusManager();
-        StatusAccount account = manager.dataStatus().getStatus(event.getUniqueId());
+        StatusAccount account = manager.dataStatus().getStatus(event.getUniqueId(), event.getName());
         if (account == null) {
             account = new StatusAccount(event.getUniqueId(), event.getName());
             manager.dataStatus().saveAccount(account);

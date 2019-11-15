@@ -2,53 +2,45 @@ package br.com.battlebits.battlecraft.backend.mongo;
 
 import br.com.battlebits.battlecraft.backend.DataStatus;
 import br.com.battlebits.battlecraft.status.StatusAccount;
-import br.com.battlebits.battlecraft.status.StatusField;
+import br.com.battlebits.battlecraft.status.ranking.RankedQueue;
+import br.com.battlebits.battlecraft.status.warpstatus.Status1v1;
+import br.com.battlebits.battlecraft.status.warpstatus.StatusMain;
 import br.com.battlebits.commons.backend.mongodb.MongoDatabase;
-import com.google.gson.JsonObject;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
-import org.bson.Document;
+import org.bukkit.entity.Player;
+import org.mongodb.morphia.Datastore;
+import org.mongodb.morphia.Morphia;
 
 import java.util.UUID;
 
-import static br.com.battlebits.commons.util.json.JsonUtils.elementToBson;
-import static br.com.battlebits.commons.util.json.JsonUtils.jsonTree;
-
 public class MongoStorageDataStatus implements DataStatus {
 
-    private MongoCollection<StatusAccount> collection;
+    private MongoStatusDAO statusDAO;
 
     public MongoStorageDataStatus(MongoDatabase storage) {
-        com.mongodb.client.MongoDatabase database = storage.getDb();
-        collection = database.getCollection("pvpaccount", StatusAccount.class);
+        Morphia morphia = new Morphia();
+        morphia.map(StatusAccount.class, StatusMain.class, Status1v1.class, RankedQueue.class);
+        Datastore datastore = morphia.createDatastore(storage.getClient(), "battlecraft");
+        datastore.ensureIndexes();
+
+        statusDAO = new MongoStatusDAO(StatusAccount.class, datastore);
     }
 
     @Override
-    public StatusAccount getStatus(UUID uuid) {
-        return collection.find(Filters.eq("_uniqueId", uuid)).first();
-    }
-
-    @Override
-    public StatusAccount getStatus(String name) {
-        return collection.find(Filters.eq(StatusField.NAME.toString(), name)).first();
-    }
-
-    @Override
-    public void saveAccount(StatusAccount account, StatusField field) {
-        try {
-            JsonObject object = jsonTree(account);
-            if (object.has(field.toString())) {
-                Object value = elementToBson(object.get(field.toString()));
-                collection.updateOne(Filters.eq("_id", account.getUniqueId()),
-                        new Document("$set", new Document(field.toString(), value)));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public StatusAccount getStatus(UUID uniqueId, String name) {
+        StatusAccount account = statusDAO.findOne("uniqueId", uniqueId);
+        if (account == null) {
+            account = new StatusAccount(uniqueId, name);
+            saveAccount(account);
         }
+        if (!account.getName().equals(name)) {
+            account.setName(name);
+            saveAccount(account);
+        }
+        return account;
     }
 
     @Override
     public void saveAccount(StatusAccount account) {
-        collection.insertOne(account);
+        statusDAO.save(account);
     }
 }

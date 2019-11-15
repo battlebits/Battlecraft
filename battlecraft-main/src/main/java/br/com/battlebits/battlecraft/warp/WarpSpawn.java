@@ -86,7 +86,7 @@ public class WarpSpawn extends Warp {
 
         StatusAccount status = Battlecraft.getInstance().getStatusManager().get(p.getUniqueId());
         if (!status.containsWarpStatus(this)) {
-            status.putWarpStatus(this, new StatusMain(this, 0, 0, 0, 0));
+            status.putWarpStatus(this, new StatusMain(0, 0, 0, 0));
         }
     }
 

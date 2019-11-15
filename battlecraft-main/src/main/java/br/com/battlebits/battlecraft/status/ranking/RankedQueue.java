@@ -2,9 +2,11 @@ package br.com.battlebits.battlecraft.status.ranking;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.mongodb.morphia.annotations.Embedded;
 
 @Getter
 @NoArgsConstructor
+@Embedded
 public class RankedQueue {
 
     private int victory;

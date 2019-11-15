@@ -1,17 +1,17 @@
 package br.com.battlebits.battlecraft.status.warpstatus;
 
 import br.com.battlebits.battlecraft.status.WarpStatus;
-import br.com.battlebits.battlecraft.status.ranking.League;
 import br.com.battlebits.battlecraft.status.ranking.Queue1v1;
 import br.com.battlebits.battlecraft.status.ranking.RankedQueue;
-import br.com.battlebits.battlecraft.warp.Warp;
+import org.mongodb.morphia.annotations.Embedded;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-public class Status1v1 extends WarpStatus {
+public class Status1v1 implements WarpStatus {
 
+    @Embedded
     private Map<Queue1v1, RankedQueue> queueStatus;
 
     public Status1v1() {
