@@ -5,9 +5,9 @@ import br.com.battlebits.battlecraft.event.fight.PlayerFightFinishEvent;
 import br.com.battlebits.battlecraft.event.fight.PlayerFightStartEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpDeathEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
+import br.com.battlebits.battlecraft.status.ranking.Queue1v1;
 import br.com.battlebits.battlecraft.util.InventoryUtils;
 import br.com.battlebits.commons.Commons;
-import br.com.battlebits.commons.bukkit.api.vanish.VanishAPI;
 import br.com.battlebits.commons.bukkit.event.vanish.PlayerShowToPlayerEvent;
 import br.com.battlebits.commons.translate.Language;
 import org.bukkit.Bukkit;
@@ -19,7 +19,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.WARP_1V1_LEFT;
@@ -30,10 +29,12 @@ public class Fight1v1 implements Listener {
     private Player player;
     private Player target;
 
+    private Queue1v1 queue;
 
-    public Fight1v1(Player player, Player target, Challenge challenge) {
+    public Fight1v1(Player player, Player target, Challenge challenge, Queue1v1 queue) {
         this.player = player;
         this.target = target;
+        this.queue = queue;
 
         InventoryUtils.clearInventory(this.player);
         InventoryUtils.clearInventory(this.target);
@@ -41,7 +42,7 @@ public class Fight1v1 implements Listener {
         challenge.applyChallengeKit(this.player);
         challenge.applyChallengeKit(this.target);
 
-        Bukkit.getPluginManager().callEvent(new PlayerFightStartEvent(player, target, challenge));
+        Bukkit.getPluginManager().callEvent(new PlayerFightStartEvent(player, target, challenge, queue));
 
         Bukkit.getPluginManager().registerEvents(this, Battlecraft.getInstance());
         for (Player online : Bukkit.getOnlinePlayers()) {
@@ -88,11 +89,6 @@ public class Fight1v1 implements Listener {
         handleDeath(event.getPlayer());
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
-    public void onKick(PlayerKickEvent event) {
-        handleDeath(event.getPlayer());
-    }
-
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerShow(PlayerShowToPlayerEvent event) {
         if (event.isCancelled() && inPvP(event.getToPlayer()) && inPvP(event.getPlayer()))
@@ -130,7 +126,7 @@ public class Fight1v1 implements Listener {
             this.player.showPlayer(Battlecraft.getInstance(), online);
             this.target.showPlayer(Battlecraft.getInstance(), online);
         }
-        Bukkit.getPluginManager().callEvent(new PlayerFightFinishEvent(killer, dead));
+        Bukkit.getPluginManager().callEvent(new PlayerFightFinishEvent(killer, dead, queue));
         dead.setHealth(20D);
         killer.setHealth(20D);
         dead.getInventory().clear();

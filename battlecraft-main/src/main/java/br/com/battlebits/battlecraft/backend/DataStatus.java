@@ -1,17 +1,18 @@
 package br.com.battlebits.battlecraft.backend;
 
-import br.com.battlebits.battlecraft.backend.status.PvPAccount;
+import br.com.battlebits.battlecraft.status.StatusAccount;
+import br.com.battlebits.battlecraft.status.StatusField;
 
 import java.util.UUID;
 
 public interface DataStatus {
 
-    PvPAccount getAccount(UUID uuid);
+    StatusAccount getStatus(UUID uniqueId);
 
-    PvPAccount getAccount(String name);
+    StatusAccount getStatus(String name);
 
-    void saveAccount(PvPAccount account, String field);
+    void saveAccount(StatusAccount account, StatusField field);
 
-    void saveAccount(PvPAccount account);
+    void saveAccount(StatusAccount account);
 
 }

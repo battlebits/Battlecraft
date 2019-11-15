@@ -19,6 +19,7 @@ public class DamageFixListener implements Listener {
 
     private final static double ENCHANTMENT_MULTIPLIER = 1d;
 
+    @SuppressWarnings(value = "deprecation")
     @EventHandler(priority = EventPriority.LOWEST)
     public void onEntityDamageEvent(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof Player))
@@ -134,7 +135,6 @@ public class DamageFixListener implements Listener {
         if (!(event.getHitBy() instanceof Player))
             return;
         Vector v = event.getAcceleration();
-        Player damager = (Player) event.getHitBy();
         Player damaged = (Player) event.getEntity();
         if(!damaged.isOnGround()) {
             v.setY(0.4D);

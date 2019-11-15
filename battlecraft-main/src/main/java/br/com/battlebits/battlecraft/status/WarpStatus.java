@@ -1,9 +1,11 @@
-package br.com.battlebits.battlecraft.backend.status;
+package br.com.battlebits.battlecraft.status;
+
+import br.com.battlebits.battlecraft.warp.Warp;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class WarpStatus {
+public abstract class WarpStatus {
 
     private Map<String, Object> values;
 
@@ -11,19 +13,19 @@ public class WarpStatus {
         values = new HashMap<>();
     }
 
-    public <T> boolean containsValue(T value) {
+    protected <T> boolean containsValue(T value) {
         return values.containsValue(value);
     }
 
-    public boolean containsKey(String key) {
+    protected boolean containsKey(String key) {
         return values.containsKey(key);
     }
 
-    public <T> void save(String key, T t) {
+    protected <T> void save(String key, T t) {
         values.put(key, t);
     }
 
-    public <T> T get(String key) {
+    protected <T> T get(String key) {
         return (T) values.get(key);
     }
 }

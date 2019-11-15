@@ -6,7 +6,9 @@ import br.com.battlebits.battlecraft.event.fight.PlayerFightStartEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.protocol.OneVsOneFilter;
-import br.com.battlebits.battlecraft.protocol.SoundFilter;
+import br.com.battlebits.battlecraft.status.StatusAccount;
+import br.com.battlebits.battlecraft.status.ranking.Queue1v1;
+import br.com.battlebits.battlecraft.status.warpstatus.Status1v1;
 import br.com.battlebits.battlecraft.warp.fight.Challenge;
 import br.com.battlebits.battlecraft.warp.fight.ChallengeType;
 import br.com.battlebits.battlecraft.warp.fight.Fight1v1;
@@ -22,11 +24,9 @@ import com.comphenix.protocol.ProtocolLibrary;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
@@ -65,7 +65,7 @@ public class Warp1v1 extends Warp {
             if (!challenge.isExpired()) {
                 player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_CHALLENGE_ACCEPTED, target.getName()));
                 target.sendMessage(lt.tl(WARP_1V1_TAG) + lt.tl(WARP_1V1_YOUR_CHALLENGE_ACCEPTED, player.getName()));
-                new Fight1v1(player, target, challenge);
+                new Fight1v1(player, target, challenge, Queue1v1.NORMAL);
                 return false;
             }
         }
@@ -116,11 +116,6 @@ public class Warp1v1 extends Warp {
         handleQuit(event.getPlayer());
     }
 
-    @EventHandler
-    public void onKick(PlayerKickEvent event) {
-        handleQuit(event.getPlayer());
-    }
-
     public void handleQuit(Player p) {
         challenges.remove(p);
     }
@@ -149,11 +144,13 @@ public class Warp1v1 extends Warp {
             }
         }
         DecimalFormat dm = new DecimalFormat("##.#");
-        String health = dm.format(((Damageable) winner).getHealth() / 2);
+        String health = dm.format(winner.getHealth() / 2);
         Language winnerLang = Commons.getLanguage(winner.getUniqueId());
         Language loserLang = Commons.getLanguage(loser.getUniqueId());
         winner.sendMessage(winnerLang.tl(WARP_1V1_TAG) + winnerLang.tl(WARP_1V1_WON, loser.getName(), health, winnerSoups));
-        loser.sendMessage(winnerLang.tl(WARP_1V1_TAG) + winnerLang.tl(WARP_1V1_LOST, winner.getName(), health, winnerSoups));
+        loser.sendMessage(loserLang.tl(WARP_1V1_TAG) + loserLang.tl(WARP_1V1_LOST, winner.getName(), health, winnerSoups));
+        getPlayerStatus(loser).getQueueStatus(event.getQueue()).addDefeat();
+        getPlayerStatus(winner).getQueueStatus(event.getQueue()).addVictory();
     }
 
     @EventHandler
@@ -169,6 +166,15 @@ public class Warp1v1 extends Warp {
                         WARP_1V1_DIRECT_LORE)).interact(challenge1v1);
         inv.setItem(4, builder.build());
         ProtectionManager.addProtection(event.getPlayer());
+
+        StatusAccount status = Battlecraft.getInstance().getStatusManager().get(p.getUniqueId());
+        if (!status.containsWarpStatus(this)) {
+            status.putWarpStatus(this, new Status1v1());
+        }
+    }
+
+    private Status1v1 getPlayerStatus(Player player) {
+        return (Status1v1) Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).getWarpStatus(this);
     }
 
     private boolean in1v1(Player player) {

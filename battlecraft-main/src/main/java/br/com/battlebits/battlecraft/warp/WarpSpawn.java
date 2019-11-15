@@ -1,18 +1,21 @@
 package br.com.battlebits.battlecraft.warp;
 
+import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.ability.Ability;
 import br.com.battlebits.battlecraft.ability.Kit;
 import br.com.battlebits.battlecraft.ability.registry.*;
 import br.com.battlebits.battlecraft.event.PlayerKitEvent;
 import br.com.battlebits.battlecraft.event.RealMoveEvent;
 import br.com.battlebits.battlecraft.event.protection.PlayerProtectionRemoveEvent;
+import br.com.battlebits.battlecraft.event.warp.PlayerWarpDeathEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.inventory.KitSelector;
 import br.com.battlebits.battlecraft.inventory.WarpSelector;
 import br.com.battlebits.battlecraft.manager.KitManager;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
-import br.com.battlebits.battlecraft.util.InventoryUtils;
+import br.com.battlebits.battlecraft.status.StatusAccount;
+import br.com.battlebits.battlecraft.status.warpstatus.StatusSpawn;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.bukkit.api.item.ActionItemStack;
@@ -28,7 +31,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.util.Vector;
 
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -81,6 +83,11 @@ public class WarpSpawn extends Warp {
         inv.setItem(2, builder.build());
         inv.setHeldItemSlot(1);
         ProtectionManager.addProtection(p);
+
+        StatusAccount status = Battlecraft.getInstance().getStatusManager().get(p.getUniqueId());
+        if (!status.containsWarpStatus(this)) {
+            status.putWarpStatus(this, new StatusSpawn(this, 0, 0, 0, 0));
+        }
     }
 
     /**
@@ -141,6 +148,23 @@ public class WarpSpawn extends Warp {
         if (above.getType() == Material.GRASS || distance > SPAWN_RADIUS_SQUARED) {
             ProtectionManager.removeProtection(p);
         }
+    }
+
+    @EventHandler
+    public void onPlayerKill(PlayerWarpDeathEvent event) {
+        Player killed = event.getPlayer();
+        if (!inWarp(killed))
+            return;
+        getPlayerStatus(killed).addDeath();
+        if(event.hasKiller()) {
+            if (!inWarp(event.getKiller()))
+                return;
+            getPlayerStatus(event.getKiller()).addKill();
+        }
+    }
+
+    private StatusSpawn getPlayerStatus(Player player) {
+        return (StatusSpawn) Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).getWarpStatus(this);
     }
 
     @EventHandler

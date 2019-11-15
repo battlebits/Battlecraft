@@ -1,5 +1,6 @@
 package br.com.battlebits.battlecraft.event.fight;
 
+import br.com.battlebits.battlecraft.status.ranking.Queue1v1;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -13,9 +14,12 @@ public class PlayerFightFinishEvent extends Event {
     private Player winner;
     private Player loser;
 
-    public PlayerFightFinishEvent(Player winner, Player loser) {
+    private Queue1v1 queue;
+
+    public PlayerFightFinishEvent(Player winner, Player loser, Queue1v1 queue) {
         this.winner = winner;
         this.loser = loser;
+        this.queue = queue;
     }
 
     public HandlerList getHandlers() {
