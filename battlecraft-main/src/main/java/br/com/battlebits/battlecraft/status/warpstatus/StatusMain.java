@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 @Getter
-public class StatusSpawn extends WarpStatus {
+public class StatusMain extends WarpStatus {
 
     // Status
     private int kills;
@@ -32,11 +32,11 @@ public class StatusSpawn extends WarpStatus {
     private int killstreakRecord;
     private int multikillRecord;
 
-    public StatusSpawn(Warp warp, int kills, int deaths, int killstreakRecord, int multikillRecord) {
+    public StatusMain(Warp warp, int kills, int deaths, int killstreakRecord, int multikillRecord) {
         this(warp, kills, deaths, null, killstreakRecord, multikillRecord);
     }
 
-    public StatusSpawn(Warp warp, int kills, int deaths, List<String> kitList, int killstreakRecord, int multikillRecord) {
+    public StatusMain(Warp warp, int kills, int deaths, List<String> kitList, int killstreakRecord, int multikillRecord) {
         super();
         this.kills = kills;
         this.deaths = deaths;
@@ -47,6 +47,9 @@ public class StatusSpawn extends WarpStatus {
             warp.getKits().stream().filter(kit -> kitList.contains(kit.getName())).forEach(kit -> this.ownedKits.add(kit));
     }
 
+    /**
+     * Adiciona uma kill ao jogador e ja calcula killstreak e multikills junto
+     */
     public void addKill() {
         this.kills++;
         this.killstreak++;
@@ -67,13 +70,26 @@ public class StatusSpawn extends WarpStatus {
         this.save("kills", kills);
     }
 
+    /**
+     * Adiciona uma morte ao status do jogador
+     */
     public void addDeath() {
         this.deaths++;
         this.multikill = 0;
-        this.killstreak = 0;
         this.save("deaths", deaths);
     }
 
+    /**
+     * Reseta o killstreak atual
+     */
+    public void resetKillstreak() {
+        this.killstreak = 0;
+    }
+
+    /**
+     * Da um kit para o jogador
+     * @param kit kit selecionado
+     */
     public void giveKit(Kit kit) {
         this.ownedKits.add(kit);
         List<String> kitList = new ArrayList<>();
@@ -81,6 +97,21 @@ public class StatusSpawn extends WarpStatus {
         this.save("ownedKits", kitList);
     }
 
+    /**
+     * Calcula o multikill baseado na ultima kill dos ultimos 5 segundos
+     * @return 0 se o tempo ja expirou ou o valor
+     */
+    public int getMultikill() {
+        if (System.currentTimeMillis() >= this.lastKillTimeMillis + 5000)
+            return 0;
+        return this.multikill;
+    }
+
+    /**
+     * Checka se o jogador possui um kit
+     * @param kit o kit selecionado
+     * @return true se possui, false se nao possui
+     */
     public boolean containsKit(Kit kit) {
         return this.ownedKits.contains(kit);
     }

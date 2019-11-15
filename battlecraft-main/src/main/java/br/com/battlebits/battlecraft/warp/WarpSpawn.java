@@ -15,7 +15,7 @@ import br.com.battlebits.battlecraft.inventory.WarpSelector;
 import br.com.battlebits.battlecraft.manager.KitManager;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.status.StatusAccount;
-import br.com.battlebits.battlecraft.status.warpstatus.StatusSpawn;
+import br.com.battlebits.battlecraft.status.warpstatus.StatusMain;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.bukkit.api.item.ActionItemStack;
@@ -86,7 +86,7 @@ public class WarpSpawn extends Warp {
 
         StatusAccount status = Battlecraft.getInstance().getStatusManager().get(p.getUniqueId());
         if (!status.containsWarpStatus(this)) {
-            status.putWarpStatus(this, new StatusSpawn(this, 0, 0, 0, 0));
+            status.putWarpStatus(this, new StatusMain(this, 0, 0, 0, 0));
         }
     }
 
@@ -163,8 +163,10 @@ public class WarpSpawn extends Warp {
         }
     }
 
-    private StatusSpawn getPlayerStatus(Player player) {
-        return (StatusSpawn) Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).getWarpStatus(this);
+
+
+    private StatusMain getPlayerStatus(Player player) {
+        return (StatusMain) Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).getWarpStatus(this);
     }
 
     @EventHandler
@@ -172,6 +174,7 @@ public class WarpSpawn extends Warp {
         Player p = event.getPlayer();
         if (!inWarp(p))
             return;
+        getPlayerStatus(p).resetKillstreak(); // O Killstreak só é valido enquanto o jogador permanecer vivo e online
         KitManager.removeKit(event.getPlayer());
     }
 
