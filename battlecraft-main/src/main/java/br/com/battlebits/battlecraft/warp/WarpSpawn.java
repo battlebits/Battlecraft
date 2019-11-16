@@ -33,6 +33,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.HashSet;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -74,11 +75,13 @@ public class WarpSpawn extends Warp {
         PlayerInventory inv = p.getInventory();
         Language l = Commons.getLanguage(p.getUniqueId());
         ItemBuilder builder =
-                ItemBuilder.create(Material.ENDER_CHEST).name(tl(l, KITSELECTOR_ITEM_NAME)).lore("", tl(l,
+                ItemBuilder.create(Material.ENDER_CHEST).name(tl(l, KITSELECTOR_ITEM_NAME)).lore(
+                        "", tl(l,
                         KITSELECTOR_ITEM_LORE)).interact(kitSelectorHandler);
         inv.setItem(1, builder.build());
         builder =
-                ItemBuilder.create(Material.COMPASS).name(tl(l, WARPSELECTOR_ITEM_NAME)).lore("", tl(l,
+                ItemBuilder.create(Material.COMPASS).name(tl(l, WARPSELECTOR_ITEM_NAME)).lore("",
+                        tl(l,
                         WARPSELECTOR_ITEM_LORE)).interact(warpSelectorHandler);
         inv.setItem(2, builder.build());
         inv.setHeldItemSlot(1);
@@ -107,7 +110,7 @@ public class WarpSpawn extends Warp {
 
     @EventHandler
     public void onKit(PlayerKitEvent event) {
-        if(!isWarpKit(event.getKit()))
+        if (!isWarpKit(event.getKit()))
             return;
         PlayerInventory inv = event.getPlayer().getInventory();
         inv.setHelmet(new ItemStack(Material.IRON_HELMET));
@@ -155,15 +158,18 @@ public class WarpSpawn extends Warp {
         Player killed = event.getPlayer();
         if (!inWarp(killed))
             return;
-        getPlayerStatus(killed).addDeath();
-        if(event.hasKiller()) {
+        updatePlayerStatus(killed, StatusMain::addDeath);
+        if (event.hasKiller()) {
             if (!inWarp(event.getKiller()))
                 return;
-            getPlayerStatus(event.getKiller()).addKill();
+            updatePlayerStatus(event.getKiller(), StatusMain::addKill);
         }
     }
 
 
+    private void updatePlayerStatus(Player player, Consumer<StatusMain> consumer) {
+        Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).save(statusAccount -> consumer.accept((StatusMain) statusAccount.getWarpStatus(this)));
+    }
 
     private StatusMain getPlayerStatus(Player player) {
         return (StatusMain) Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).getWarpStatus(this);
@@ -174,7 +180,8 @@ public class WarpSpawn extends Warp {
         Player p = event.getPlayer();
         if (!inWarp(p))
             return;
-        getPlayerStatus(p).resetKillstreak(); // O Killstreak só é valido enquanto o jogador permanecer vivo e online
+        getPlayerStatus(p).resetKillstreak(); // O Killstreak só é valido enquanto o jogador
+        // permanecer vivo e online
         KitManager.removeKit(event.getPlayer());
     }
 
@@ -190,11 +197,13 @@ public class WarpSpawn extends Warp {
 
         abilities = Stream.of(getAbilityByClass(KangarooAbility.class));
         icon = new ItemStack(Material.FIREWORK);
-        this.kits.add(new Kit("kangaroo", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+        this.kits.add(new Kit("kangaroo", abilities.collect(Collectors.toSet()), icon,
+                DEFAULT_PRICE));
 
         abilities = Stream.of(getAbilityByClass(StomperAbility.class));
         icon = new ItemStack(Material.IRON_BOOTS);
-        this.kits.add(new Kit("stomper", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+        this.kits.add(new Kit("stomper", abilities.collect(Collectors.toSet()), icon,
+                DEFAULT_PRICE));
 
         abilities = Stream.of(getAbilityByClass(MagmaAbility.class));
         icon = new ItemStack(Material.LAVA_BUCKET);
@@ -210,10 +219,12 @@ public class WarpSpawn extends Warp {
 
         abilities = Stream.of(getAbilityByClass(FishermanAbility.class));
         icon = new ItemStack(Material.FISHING_ROD);
-        this.kits.add(new Kit("fisherman", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+        this.kits.add(new Kit("fisherman", abilities.collect(Collectors.toSet()), icon,
+                DEFAULT_PRICE));
 
 //        abilities = Stream.of(getAbilityByClass(AnchorAbility.class));
 //        icon = new ItemStack(Material.ANVIL);
-//        this.kits.add(new Kit("anchor", abilities.collect(Collectors.toSet()), icon, DEFAULT_PRICE));
+//        this.kits.add(new Kit("anchor", abilities.collect(Collectors.toSet()), icon,
+//        DEFAULT_PRICE));
     }
 }

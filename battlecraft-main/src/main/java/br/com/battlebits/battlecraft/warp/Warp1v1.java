@@ -8,6 +8,7 @@ import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.protocol.OneVsOneFilter;
 import br.com.battlebits.battlecraft.status.StatusAccount;
 import br.com.battlebits.battlecraft.status.ranking.Queue1v1;
+import br.com.battlebits.battlecraft.status.ranking.RankedQueue;
 import br.com.battlebits.battlecraft.status.warpstatus.Status1v1;
 import br.com.battlebits.battlecraft.warp.fight.Challenge;
 import br.com.battlebits.battlecraft.warp.fight.ChallengeType;
@@ -34,6 +35,7 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.function.Consumer;
 
 import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.*;
 import static br.com.battlebits.commons.translate.TranslationCommon.tl;
@@ -46,7 +48,7 @@ public class Warp1v1 extends Warp {
     private List<OneVsOneMap> maps;
 
     private InteractHandler challenge1v1 = (player, target, itemStack, itemAction) -> {
-        if(itemAction != ItemAction.RIGHT_CLICK_PLAYER)
+        if (itemAction != ItemAction.RIGHT_CLICK_PLAYER)
             return false;
         if (target == null)
             return false;
@@ -63,8 +65,10 @@ public class Warp1v1 extends Warp {
         if (hasChallenge(player, target, ChallengeType.NORMAL)) {
             Challenge challenge = getChallenge(player, target, ChallengeType.NORMAL);
             if (!challenge.isExpired()) {
-                player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_CHALLENGE_ACCEPTED, target.getName()));
-                target.sendMessage(lt.tl(WARP_1V1_TAG) + lt.tl(WARP_1V1_YOUR_CHALLENGE_ACCEPTED, player.getName()));
+                player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_CHALLENGE_ACCEPTED,
+                        target.getName()));
+                target.sendMessage(lt.tl(WARP_1V1_TAG) + lt.tl(WARP_1V1_YOUR_CHALLENGE_ACCEPTED,
+                        player.getName()));
                 new Fight1v1(player, target, challenge, Queue1v1.NORMAL);
                 return false;
             }
@@ -76,9 +80,11 @@ public class Warp1v1 extends Warp {
                 return false;
             }
         }
-        newChallenge(target, player, new Challenge(player, target, maps.get(random.nextInt(maps.size()))));
+        newChallenge(target, player, new Challenge(player, target,
+                maps.get(random.nextInt(maps.size()))));
         player.sendMessage(l.tl(WARP_1V1_TAG) + l.tl(WARP_1V1_CHALLENGE_SENT, target.getName()));
-        target.sendMessage(lt.tl(WARP_1V1_TAG) + lt.tl(WARP_1V1_CHALLENGE_RECEIVED, player.getName()));
+        target.sendMessage(lt.tl(WARP_1V1_TAG) + lt.tl(WARP_1V1_CHALLENGE_RECEIVED,
+                player.getName()));
         return false;
     };
 
@@ -123,7 +129,7 @@ public class Warp1v1 extends Warp {
     @EventHandler
     public void onFightStart(PlayerFightStartEvent event) {
         this.playersIn1v1.addAll(Arrays.asList(event.getPlayers()));
-        for(Player player : event.getPlayers())
+        for (Player player : event.getPlayers())
             ProtectionManager.removeProtection(player);
         OneVsOneMap map = event.getChallenge().getMap();
         event.getPlayers()[0].teleport(map.getFirstLocation());
@@ -147,10 +153,12 @@ public class Warp1v1 extends Warp {
         String health = dm.format(winner.getHealth() / 2);
         Language winnerLang = Commons.getLanguage(winner.getUniqueId());
         Language loserLang = Commons.getLanguage(loser.getUniqueId());
-        winner.sendMessage(winnerLang.tl(WARP_1V1_TAG) + winnerLang.tl(WARP_1V1_WON, loser.getName(), health, winnerSoups));
-        loser.sendMessage(loserLang.tl(WARP_1V1_TAG) + loserLang.tl(WARP_1V1_LOST, winner.getName(), health, winnerSoups));
-        getPlayerStatus(loser).getQueueStatus(event.getQueue()).addDefeat();
-        getPlayerStatus(winner).getQueueStatus(event.getQueue()).addVictory();
+        winner.sendMessage(winnerLang.tl(WARP_1V1_TAG) + winnerLang.tl(WARP_1V1_WON,
+                loser.getName(), health, winnerSoups));
+        loser.sendMessage(loserLang.tl(WARP_1V1_TAG) + loserLang.tl(WARP_1V1_LOST,
+                winner.getName(), health, winnerSoups));
+        updatePlayerStatus(loser, event.getQueue(), RankedQueue::addDefeat);
+        updatePlayerStatus(winner, event.getQueue(), RankedQueue::addVictory);
     }
 
     @EventHandler
@@ -173,8 +181,9 @@ public class Warp1v1 extends Warp {
         }
     }
 
-    private Status1v1 getPlayerStatus(Player player) {
-        return (Status1v1) Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).getWarpStatus(this);
+    private void updatePlayerStatus(Player player, Queue1v1 queue,
+                                    Consumer<RankedQueue> consumer) {
+        Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).save(statusAccount -> consumer.accept(((Status1v1) statusAccount.getWarpStatus(this)).getQueueStatus(queue)));
     }
 
     private boolean in1v1(Player player) {
@@ -186,8 +195,10 @@ public class Warp1v1 extends Warp {
     }
 
     public void newChallenge(Player desafiado, Player desafiante, Challenge challenge) {
-        Map<ChallengeType, Map<Player, Challenge>> map = challenges.getOrDefault(desafiado, new HashMap<>());
-        Map<Player, Challenge> playerChallenges = map.getOrDefault(challenge.getChallengeType(), new HashMap<>());
+        Map<ChallengeType, Map<Player, Challenge>> map = challenges.getOrDefault(desafiado,
+                new HashMap<>());
+        Map<Player, Challenge> playerChallenges = map.getOrDefault(challenge.getChallengeType(),
+                new HashMap<>());
         playerChallenges.put(desafiante, challenge);
         map.put(challenge.getChallengeType(), playerChallenges);
         challenges.put(desafiado, map);
@@ -199,8 +210,6 @@ public class Warp1v1 extends Warp {
                 && challenges.get(target).containsKey(type)
                 && challenges.get(target).get(type).containsKey(player);
     }
-
-
 
 
 }

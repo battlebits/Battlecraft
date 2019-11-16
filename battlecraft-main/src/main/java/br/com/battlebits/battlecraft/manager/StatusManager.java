@@ -1,10 +1,7 @@
 package br.com.battlebits.battlecraft.manager;
 
 import br.com.battlebits.battlecraft.backend.DataStatus;
-import br.com.battlebits.battlecraft.backend.mongo.MongoStorageDataStatus;
-import br.com.battlebits.battlecraft.backend.nullable.VoidDataStatus;
 import br.com.battlebits.battlecraft.status.StatusAccount;
-import br.com.battlebits.commons.backend.mongodb.MongoDatabase;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -14,12 +11,8 @@ public class StatusManager {
     private Map<UUID, StatusAccount> accounts;
     private DataStatus dataStatus;
 
-    public StatusManager() {
-//        MongoDatabase database = new MongoDatabase("localhost", "test", "test",
-//                "test", 27017);
-//        database.connect();
-//        dataStatus = new MongoStorageDataStatus(database);
-        dataStatus = new VoidDataStatus();
+    public StatusManager(DataStatus dataStatus) {
+        this.dataStatus = dataStatus;
         accounts = new HashMap<>();
     }
 

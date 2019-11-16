@@ -19,7 +19,7 @@ public class MongoStorageDataStatus implements DataStatus {
     public MongoStorageDataStatus(MongoDatabase storage) {
         Morphia morphia = new Morphia();
         morphia.map(StatusAccount.class, StatusMain.class, Status1v1.class, RankedQueue.class);
-        datastore = morphia.createDatastore(storage.getClient(), "battlecraft");
+        datastore = morphia.createDatastore(storage.getClient(), "test");
         datastore.ensureIndexes();
     }
 
@@ -29,7 +29,7 @@ public class MongoStorageDataStatus implements DataStatus {
         StatusAccount account = null;
         if (accounts.size() == 0) {
             account = new StatusAccount(uniqueId, name);
-            saveAccount(account);
+            datastore.save(account);
         } else {
             account = accounts.get(0);
         }

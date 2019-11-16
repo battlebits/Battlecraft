@@ -1,11 +1,8 @@
 package br.com.battlebits.battlecraft;
 
-import br.com.battlebits.battlecraft.manager.StatusManager;
+import br.com.battlebits.battlecraft.backend.mongo.MongoStorageDataStatus;
 import br.com.battlebits.battlecraft.listener.*;
-import br.com.battlebits.battlecraft.manager.AbilityManager;
-import br.com.battlebits.battlecraft.manager.CombatLogManager;
-import br.com.battlebits.battlecraft.manager.TeleportManager;
-import br.com.battlebits.battlecraft.manager.WarpManager;
+import br.com.battlebits.battlecraft.manager.*;
 import br.com.battlebits.battlecraft.protocol.SoundFilter;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.warp.Warp;
@@ -13,6 +10,7 @@ import br.com.battlebits.battlecraft.warp.Warp1v1;
 import br.com.battlebits.battlecraft.warp.WarpSpawn;
 import br.com.battlebits.battlecraft.world.map.OneVsOneMap;
 import br.com.battlebits.battlecraft.world.map.SpawnMap;
+import br.com.battlebits.commons.backend.mongodb.MongoDatabase;
 import br.com.battlebits.commons.backend.properties.PropertiesStorageDataTranslation;
 import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
 import br.com.battlebits.commons.command.CommandLoader;
@@ -102,6 +100,13 @@ public class Battlecraft extends JavaPlugin {
 
     private void loadManagers() {
         AbilityManager.registerAbilities();
-        this.statusManager = new StatusManager();
+        getLogger().info("Connecting to MongoDB");
+        String hostname = "localhost";
+        MongoDatabase mongoDatabase = new MongoDatabase(hostname, "test", "test", "test",
+                27017);
+        mongoDatabase.connect();
+        getLogger().info("Connected to '" + hostname + "'");
+        MongoStorageDataStatus mongoStorageDataStatus = new MongoStorageDataStatus(mongoDatabase);
+        this.statusManager = new StatusManager(mongoStorageDataStatus);
     }
 }
