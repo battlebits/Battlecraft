@@ -1,8 +1,8 @@
 package br.com.battlebits.battlecraft.status.ranking;
 
+import dev.morphia.annotations.Embedded;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.mongodb.morphia.annotations.Embedded;
 
 @Getter
 @NoArgsConstructor

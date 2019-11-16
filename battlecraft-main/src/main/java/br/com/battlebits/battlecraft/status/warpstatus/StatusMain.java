@@ -2,9 +2,9 @@ package br.com.battlebits.battlecraft.status.warpstatus;
 
 import br.com.battlebits.battlecraft.ability.Kit;
 import br.com.battlebits.battlecraft.status.WarpStatus;
+import dev.morphia.annotations.Embedded;
 import lombok.AccessLevel;
 import lombok.Getter;
-import org.mongodb.morphia.annotations.Embedded;
 
 import java.util.HashSet;
 import java.util.Set;

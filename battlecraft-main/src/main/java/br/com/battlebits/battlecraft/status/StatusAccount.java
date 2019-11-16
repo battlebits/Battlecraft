@@ -1,12 +1,12 @@
 package br.com.battlebits.battlecraft.status;
 
 import br.com.battlebits.battlecraft.warp.Warp;
+import dev.morphia.annotations.Embedded;
+import dev.morphia.annotations.Entity;
+import dev.morphia.annotations.IndexOptions;
+import dev.morphia.annotations.Indexed;
 import lombok.Getter;
 import lombok.Setter;
-import org.mongodb.morphia.annotations.Embedded;
-import org.mongodb.morphia.annotations.Entity;
-import org.mongodb.morphia.annotations.IndexOptions;
-import org.mongodb.morphia.annotations.Indexed;
 
 import java.util.HashMap;
 import java.util.Map;

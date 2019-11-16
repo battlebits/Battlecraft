@@ -6,31 +6,32 @@ import br.com.battlebits.battlecraft.status.ranking.RankedQueue;
 import br.com.battlebits.battlecraft.status.warpstatus.Status1v1;
 import br.com.battlebits.battlecraft.status.warpstatus.StatusMain;
 import br.com.battlebits.commons.backend.mongodb.MongoDatabase;
-import org.bukkit.entity.Player;
-import org.mongodb.morphia.Datastore;
-import org.mongodb.morphia.Morphia;
+import dev.morphia.Datastore;
+import dev.morphia.Morphia;
 
+import java.util.List;
 import java.util.UUID;
 
 public class MongoStorageDataStatus implements DataStatus {
 
-    private MongoStatusDAO statusDAO;
+    private Datastore datastore;
 
     public MongoStorageDataStatus(MongoDatabase storage) {
         Morphia morphia = new Morphia();
         morphia.map(StatusAccount.class, StatusMain.class, Status1v1.class, RankedQueue.class);
-        Datastore datastore = morphia.createDatastore(storage.getClient(), "battlecraft");
+        datastore = morphia.createDatastore(storage.getClient(), "battlecraft");
         datastore.ensureIndexes();
-
-        statusDAO = new MongoStatusDAO(StatusAccount.class, datastore);
     }
 
     @Override
     public StatusAccount getStatus(UUID uniqueId, String name) {
-        StatusAccount account = statusDAO.findOne("uniqueId", uniqueId);
-        if (account == null) {
+        List<StatusAccount> accounts = datastore.createQuery(StatusAccount.class).field("uniqueId").equal(uniqueId).find().toList();
+        StatusAccount account = null;
+        if (accounts.size() == 0) {
             account = new StatusAccount(uniqueId, name);
             saveAccount(account);
+        } else {
+            account = accounts.get(0);
         }
         if (!account.getName().equals(name)) {
             account.setName(name);
@@ -41,6 +42,6 @@ public class MongoStorageDataStatus implements DataStatus {
 
     @Override
     public void saveAccount(StatusAccount account) {
-        statusDAO.save(account);
+        datastore.save(account);
     }
 }

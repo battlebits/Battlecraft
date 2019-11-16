@@ -3,12 +3,12 @@ package br.com.battlebits.battlecraft.status.warpstatus;
 import br.com.battlebits.battlecraft.status.WarpStatus;
 import br.com.battlebits.battlecraft.status.ranking.Queue1v1;
 import br.com.battlebits.battlecraft.status.ranking.RankedQueue;
-import org.mongodb.morphia.annotations.Embedded;
+import dev.morphia.annotations.Embedded;
 
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Embedded
 public class Status1v1 implements WarpStatus {
 
     @Embedded
