@@ -1,53 +1,51 @@
 package br.com.battlebits.battlecraft.backend.mongo;
 
+import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.backend.DataStatus;
-import br.com.battlebits.battlecraft.backend.status.PvPAccount;
+import br.com.battlebits.battlecraft.status.StatusAccount;
+import br.com.battlebits.battlecraft.status.ranking.RankedQueue;
+import br.com.battlebits.battlecraft.status.warpstatus.Status1v1;
+import br.com.battlebits.battlecraft.status.warpstatus.StatusMain;
 import br.com.battlebits.commons.backend.mongodb.MongoDatabase;
-import com.google.gson.JsonObject;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.model.Filters;
-import org.bson.Document;
+import dev.morphia.Datastore;
+import dev.morphia.Morphia;
+import dev.morphia.mapping.MapperOptions;
 
+import java.util.List;
 import java.util.UUID;
-
-import static br.com.battlebits.commons.util.json.JsonUtils.elementToBson;
-import static br.com.battlebits.commons.util.json.JsonUtils.jsonTree;
 
 public class MongoStorageDataStatus implements DataStatus {
 
-    private MongoCollection<PvPAccount> collection;
+    private Datastore datastore;
 
     public MongoStorageDataStatus(MongoDatabase storage) {
-        com.mongodb.client.MongoDatabase database = storage.getDb();
-        collection = database.getCollection("pvpaccount", PvPAccount.class);
+        Morphia morphia = new Morphia();
+        morphia.map(StatusAccount.class, StatusMain.class, Status1v1.class, RankedQueue.class);
+        morphia.getMapper().setOptions(MapperOptions.builder().classLoader(Battlecraft.getInstance().getClass().getClassLoader()).build());
+        datastore = morphia.createDatastore(storage.getClient(), "test");
+        datastore.ensureIndexes();
     }
 
     @Override
-    public PvPAccount getAccount(UUID uuid) {
-        return collection.find(Filters.eq("_uniqueId", uuid)).first();
-    }
-
-    @Override
-    public PvPAccount getAccount(String name) {
-        return collection.find(Filters.eq("_name", name)).first();
-    }
-
-    @Override
-    public void saveAccount(PvPAccount account, String field) {
-        try {
-            JsonObject object = jsonTree(account);
-            if (object.has(field)) {
-                Object value = elementToBson(object.get(field));
-                collection.updateOne(Filters.eq("_id", account.getUniqueId()),
-                        new Document("$set", new Document(field, value)));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    public StatusAccount getStatus(UUID uniqueId, String name) {
+        List<StatusAccount> accounts = datastore.createQuery(StatusAccount.class).field("uniqueId"
+        ).equal(uniqueId).find().toList();
+        StatusAccount account = null;
+        if (accounts.size() == 0) {
+            account = new StatusAccount(uniqueId, name);
+            datastore.save(account);
+        } else {
+            account = accounts.get(0);
         }
+        if (!account.getName().equals(name)) {
+            account.setName(name);
+            saveAccount(account);
+        }
+        return account;
     }
 
     @Override
-    public void saveAccount(PvPAccount account) {
-        collection.insertOne(account);
+    public void saveAccount(StatusAccount account) {
+        datastore.save(account);
     }
 }

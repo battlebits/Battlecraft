@@ -4,7 +4,6 @@ import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.util.InventoryUtils;
 import br.com.battlebits.battlecraft.warp.Warp;
-import org.bukkit.GameMode;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;

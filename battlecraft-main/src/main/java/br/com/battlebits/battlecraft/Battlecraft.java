@@ -1,11 +1,8 @@
 package br.com.battlebits.battlecraft;
 
-import br.com.battlebits.battlecraft.manager.PvPStatusManager;
+import br.com.battlebits.battlecraft.backend.mongo.MongoStorageDataStatus;
 import br.com.battlebits.battlecraft.listener.*;
-import br.com.battlebits.battlecraft.manager.AbilityManager;
-import br.com.battlebits.battlecraft.manager.CombatLogManager;
-import br.com.battlebits.battlecraft.manager.TeleportManager;
-import br.com.battlebits.battlecraft.manager.WarpManager;
+import br.com.battlebits.battlecraft.manager.*;
 import br.com.battlebits.battlecraft.protocol.SoundFilter;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.warp.Warp;
@@ -13,7 +10,7 @@ import br.com.battlebits.battlecraft.warp.Warp1v1;
 import br.com.battlebits.battlecraft.warp.WarpSpawn;
 import br.com.battlebits.battlecraft.world.map.OneVsOneMap;
 import br.com.battlebits.battlecraft.world.map.SpawnMap;
-import br.com.battlebits.battlecraft.world.map.VoidMap;
+import br.com.battlebits.commons.backend.mongodb.MongoDatabase;
 import br.com.battlebits.commons.backend.properties.PropertiesStorageDataTranslation;
 import br.com.battlebits.commons.bukkit.command.BukkitCommandFramework;
 import br.com.battlebits.commons.command.CommandLoader;
@@ -22,8 +19,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -34,7 +29,7 @@ public class Battlecraft extends JavaPlugin {
 
     @Getter
     private static Battlecraft instance;
-    private PvPStatusManager statusManager;
+    private StatusManager statusManager;
     private WarpManager warpManager;
 
     @Override
@@ -100,11 +95,18 @@ public class Battlecraft extends JavaPlugin {
         manager.registerEvents(new CombatLogListener(), this);
         manager.registerEvents(new TeleportListener(), this);
         manager.registerEvents(new ItemFrameListener(), this);
-        // manager.registerEvents(new DataListener(), this);
+        manager.registerEvents(new DataListener(), this);
     }
 
     private void loadManagers() {
         AbilityManager.registerAbilities();
-        this.statusManager = new PvPStatusManager();
+        getLogger().info("Connecting to MongoDB");
+        String hostname = "localhost";
+        MongoDatabase mongoDatabase = new MongoDatabase(hostname, "test", "test", "test",
+                27017);
+        mongoDatabase.connect();
+        getLogger().info("Connected to '" + hostname + "'");
+        MongoStorageDataStatus mongoStorageDataStatus = new MongoStorageDataStatus(mongoDatabase);
+        this.statusManager = new StatusManager(mongoStorageDataStatus);
     }
 }
