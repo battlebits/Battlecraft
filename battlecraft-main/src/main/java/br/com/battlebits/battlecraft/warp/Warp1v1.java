@@ -10,18 +10,27 @@ import br.com.battlebits.battlecraft.status.StatusAccount;
 import br.com.battlebits.battlecraft.status.ranking.Queue1v1;
 import br.com.battlebits.battlecraft.status.ranking.RankedQueue;
 import br.com.battlebits.battlecraft.status.warpstatus.Status1v1;
+import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
+import br.com.battlebits.battlecraft.util.NameUtils;
 import br.com.battlebits.battlecraft.warp.fight.Challenge;
 import br.com.battlebits.battlecraft.warp.fight.ChallengeType;
 import br.com.battlebits.battlecraft.warp.fight.Fight1v1;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.battlecraft.world.map.OneVsOneMap;
 import br.com.battlebits.commons.Commons;
+import br.com.battlebits.commons.CommonsConst;
+import br.com.battlebits.commons.account.BattleAccount;
+import br.com.battlebits.commons.bukkit.api.admin.AdminMode;
 import br.com.battlebits.commons.bukkit.api.item.ActionItemStack;
 import br.com.battlebits.commons.bukkit.api.item.ActionItemStack.InteractHandler;
 import br.com.battlebits.commons.bukkit.api.item.ItemAction;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
+import br.com.battlebits.commons.bukkit.api.player.PingAPI;
+import br.com.battlebits.commons.bukkit.api.tablist.TabListAPI;
+import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import br.com.battlebits.commons.translate.Language;
 import com.comphenix.protocol.ProtocolLibrary;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -159,6 +168,8 @@ public class Warp1v1 extends Warp {
                 winner.getName(), health, winnerSoups));
         updatePlayerStatus(loser, event.getQueue(), RankedQueue::addDefeat);
         updatePlayerStatus(winner, event.getQueue(), RankedQueue::addVictory);
+        applyTabList(loser);
+        applyTabList(winner);
     }
 
     @EventHandler
@@ -186,6 +197,10 @@ public class Warp1v1 extends Warp {
         Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).save(statusAccount -> consumer.accept(((Status1v1) statusAccount.getWarpStatus(this)).getQueueStatus(queue)));
     }
 
+    private Status1v1 getPlayerStatus(Player player) {
+        return (Status1v1) Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).getWarpStatus(this);
+    }
+
     private boolean in1v1(Player player) {
         return playersIn1v1.contains(player);
     }
@@ -211,5 +226,30 @@ public class Warp1v1 extends Warp {
                 && challenges.get(target).get(type).containsKey(player);
     }
 
+    @EventHandler
+    public void onTick(UpdateEvent event) {
+        if (event.getType() != UpdateEvent.UpdateType.SECOND)
+            return;
+        for (Player player : getPlayers()) {
+            applyTabList(player);
+        }
+    }
 
+    @Override
+    protected void applyTabList(Player player) {
+        int ping = PingAPI.getPing(player);
+        int players = Bukkit.getOnlinePlayers().size() - AdminMode.playersInAdmin();
+        Status1v1 status = getPlayerStatus(player);
+        RankedQueue defaultQueue = status.getQueueStatus(Queue1v1.NORMAL);
+        BattleAccount account = Commons.getAccount(player.getUniqueId());
+        String header =
+                account.getLanguage().tl(BattlecraftTranslateTag.WARP_1V1_TABLIST_HEADER,
+                        defaultQueue.getVictory(), defaultQueue.getDefeat(),
+                        NameUtils.formatString(getName()), ping, players, Bukkit.getMaxPlayers());
+        String footer =
+                account.getLanguage().tl(BattlecraftTranslateTag.WARP_DEFAULT_TABLIST_FOOTER,
+                        player.getName(), account.getLevel(), account.getBattleMoney(),
+                        account.getBattleCoins(), CommonsConst.WEBSITE);
+        TabListAPI.setHeaderAndFooter(player, header, footer);
+    }
 }

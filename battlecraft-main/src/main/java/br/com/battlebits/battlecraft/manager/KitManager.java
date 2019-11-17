@@ -25,6 +25,10 @@ public class KitManager {
         return playerKits.containsKey(player);
     }
 
+    public static Kit getCurrentPlayerKit(Player player) {
+        return playerKits.get(player);
+    }
+
     /**
      * Limpa o inventário do jogador, registra nas habilidades e seta o resto do inventário com sopa.
      * @param player
@@ -33,8 +37,8 @@ public class KitManager {
     public static void giveKit(Player player, Kit kit) {
         PlayerKitEvent event = new PlayerKitEvent(player, kit);
         InventoryUtils.clearInventory(player);
-        Battlecraft.getInstance().getServer().getPluginManager().callEvent(event);
         playerKits.put(player, kit);
+        Battlecraft.getInstance().getServer().getPluginManager().callEvent(event);
         kit.getAbilities().forEach(ability -> ability.registerPlayer(player));
         PlayerInventory inv = player.getInventory();
         for (ItemStack is : kit.getItems()) {
