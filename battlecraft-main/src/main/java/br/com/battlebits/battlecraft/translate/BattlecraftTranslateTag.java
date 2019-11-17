@@ -28,6 +28,7 @@ public enum BattlecraftTranslateTag {
 
     WARP_1V1_NAME,
     WARP_1V1_DESCRIPTION,
+    WARP_1V1_TABLIST_HEADER,
     WARP_1V1_TAG,
     WARP_1V1_PLAYER_IN_COMBAT("warp.1v1.player-in-combat"),
     WARP_1V1_DIRECT_NAME,
@@ -51,6 +52,8 @@ public enum BattlecraftTranslateTag {
     KIT_MENU_NO_NEXT_PAGE("kit.menu.no-next-page"),
     KIT_ITEM_NOT_ENABLED("kit.item.not-enabled"),
 
+    KIT_NONE,
+
     KIT_PVP_DESCRIPTION,
     KIT_KANGAROO_DESCRIPTION,
     KIT_NINJA_DESCRIPTION,
@@ -68,10 +71,14 @@ public enum BattlecraftTranslateTag {
     KIT_NINJA_COOLDOWN,
 
 
+    WARP_DEFAULT_TABLIST_FOOTER,
+
     CURRENTLY_HERE,
 
     WARP_SPAWN_NAME,
     WARP_SPAWN_DESCRIPTION,
+    WARP_SPAWN_TABLIST_HEADER,
+
     WARP_LAVACHALLENGE_NAME,
     WARP_LAVACHALLENGE_DESCRIPTION,
     WARP_FPS_NAME,

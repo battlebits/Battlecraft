@@ -26,13 +26,12 @@ import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.va
 @Getter
 public abstract class Warp implements Listener, CommandClass {
 
+    @Getter
+    protected Set<Kit> kits;
     private String name;
     @Getter
     private Material material;
     private Set<Player> players;
-
-    @Getter
-    protected Set<Kit> kits;
     @Getter
     private Location spawnLocation;
     private Consumer<List<Line>> scoreboardLines;
@@ -83,6 +82,13 @@ public abstract class Warp implements Listener, CommandClass {
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
+    public void onApplyTabList(PlayerWarpJoinEvent event) {
+        Player p = event.getPlayer();
+        if (inWarp(p))
+            applyTabList(p);
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
     public void removePlayer(PlayerWarpQuitEvent event) {
         if (inWarp(event.getPlayer())) {
             players.remove(event.getPlayer());
@@ -90,6 +96,8 @@ public abstract class Warp implements Listener, CommandClass {
                 HandlerList.unregisterAll(this);
         }
     }
+
+    protected abstract void applyTabList(Player player);
 
     protected boolean isWarpKit(Kit kit) {
         return this.kits.contains(kit);

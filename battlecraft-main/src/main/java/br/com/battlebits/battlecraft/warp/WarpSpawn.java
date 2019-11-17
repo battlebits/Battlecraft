@@ -16,12 +16,21 @@ import br.com.battlebits.battlecraft.manager.KitManager;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.status.StatusAccount;
 import br.com.battlebits.battlecraft.status.warpstatus.StatusMain;
+import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
+import br.com.battlebits.battlecraft.util.NameUtils;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
+import br.com.battlebits.commons.CommonsConst;
+import br.com.battlebits.commons.account.BattleAccount;
+import br.com.battlebits.commons.bukkit.api.admin.AdminMode;
 import br.com.battlebits.commons.bukkit.api.item.ActionItemStack;
 import br.com.battlebits.commons.bukkit.api.item.ActionItemStack.InteractHandler;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
+import br.com.battlebits.commons.bukkit.api.player.PingAPI;
+import br.com.battlebits.commons.bukkit.api.tablist.TabListAPI;
+import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import br.com.battlebits.commons.translate.Language;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -77,12 +86,12 @@ public class WarpSpawn extends Warp {
         ItemBuilder builder =
                 ItemBuilder.create(Material.ENDER_CHEST).name(tl(l, KITSELECTOR_ITEM_NAME)).lore(
                         "", tl(l,
-                        KITSELECTOR_ITEM_LORE)).interact(kitSelectorHandler);
+                                KITSELECTOR_ITEM_LORE)).interact(kitSelectorHandler);
         inv.setItem(1, builder.build());
         builder =
                 ItemBuilder.create(Material.COMPASS).name(tl(l, WARPSELECTOR_ITEM_NAME)).lore("",
                         tl(l,
-                        WARPSELECTOR_ITEM_LORE)).interact(warpSelectorHandler);
+                                WARPSELECTOR_ITEM_LORE)).interact(warpSelectorHandler);
         inv.setItem(2, builder.build());
         inv.setHeldItemSlot(1);
         ProtectionManager.addProtection(p);
@@ -92,6 +101,16 @@ public class WarpSpawn extends Warp {
             status.putWarpStatus(this, new StatusMain(0, 0, 0, 0));
         }
     }
+
+    @EventHandler
+    public void onTick(UpdateEvent event) {
+        if (event.getType() != UpdateEvent.UpdateType.SECOND)
+            return;
+        for (Player player : getPlayers()) {
+            applyTabList(player);
+        }
+    }
+
 
     /**
      * Insta kill when player in Spawn takes void damage
@@ -121,6 +140,7 @@ public class WarpSpawn extends Warp {
         diamond.addEnchantment(Enchantment.DAMAGE_ALL, 1);
         inv.setItem(0, diamond);
         // TODO Criar tipos de kits para espadas diferentes
+        applyTabList(event.getPlayer());
     }
 
     @EventHandler
@@ -159,10 +179,12 @@ public class WarpSpawn extends Warp {
         if (!inWarp(killed))
             return;
         updatePlayerStatus(killed, StatusMain::addDeath);
+        applyTabList(killed);
         if (event.hasKiller()) {
             if (!inWarp(event.getKiller()))
                 return;
             updatePlayerStatus(event.getKiller(), StatusMain::addKill);
+            applyTabList(event.getKiller());
         }
     }
 
@@ -183,6 +205,26 @@ public class WarpSpawn extends Warp {
         getPlayerStatus(p).resetKillstreak(); // O Killstreak só é valido enquanto o jogador
         // permanecer vivo e online
         KitManager.removeKit(event.getPlayer());
+    }
+
+    @Override
+    protected void applyTabList(Player player) {
+        int ping = PingAPI.getPing(player);
+        int players = Bukkit.getOnlinePlayers().size() - AdminMode.playersInAdmin();
+        StatusMain status = getPlayerStatus(player);
+        BattleAccount account = Commons.getAccount(player.getUniqueId());
+        String kitName = account.getLanguage().tl(KIT_NONE);
+        if (KitManager.containsKit(player))
+            kitName = NameUtils.formatString(KitManager.getCurrentPlayerKit(player).getName());
+        String header =
+                account.getLanguage().tl(BattlecraftTranslateTag.WARP_SPAWN_TABLIST_HEADER,
+                        status.getKills(), status.getDeaths(), status.getKillstreak(), kitName,
+                        NameUtils.formatString(getName()), ping, players, Bukkit.getMaxPlayers());
+        String footer =
+                account.getLanguage().tl(BattlecraftTranslateTag.WARP_DEFAULT_TABLIST_FOOTER,
+                        player.getName(), account.getLevel(), account.getBattleMoney(),
+                        account.getBattleCoins(), CommonsConst.WEBSITE);
+        TabListAPI.setHeaderAndFooter(player, header, footer);
     }
 
     private void createKits() {
