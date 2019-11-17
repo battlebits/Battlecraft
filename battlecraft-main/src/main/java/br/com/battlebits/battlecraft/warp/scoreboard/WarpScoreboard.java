@@ -4,6 +4,10 @@ import org.bukkit.entity.Player;
 
 public interface WarpScoreboard {
 
-    void applyScoreboard(Player p);
+    void applyScoreboard(Player player);
+
+    void updateTitleText();
+
+    void updateTitle(Player player);
 
 }

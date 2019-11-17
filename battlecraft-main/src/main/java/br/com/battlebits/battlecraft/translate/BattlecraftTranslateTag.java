@@ -53,6 +53,7 @@ public enum BattlecraftTranslateTag {
     KIT_ITEM_NOT_ENABLED("kit.item.not-enabled"),
 
     KIT_NONE,
+    PLAYER_NONE,
 
     KIT_PVP_DESCRIPTION,
     KIT_KANGAROO_DESCRIPTION,
@@ -91,9 +92,13 @@ public enum BattlecraftTranslateTag {
     BOARD_MAIN_LEVEL,
     BOARD_MAIN_TOPKS,
     BOARD_MAIN_TOPKS_PLAYER,
-    BOARD_MAIN_TOPKS_NOONE,
     BOARD_MAIN_KIT,
     BOARD_MAIN_WEBSITE,
+
+    BOARD_1v1_VICTORY,
+    BOARD_1v1_DEFEAT,
+    BOARD_1V1_FIGHT,
+    BOARD_1V1_OPPONENT,
 
     ITEM_FRAME_SOUP("item-frame.soup"),
     ITEM_FRAME_RED("item-frame.red"),

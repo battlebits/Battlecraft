@@ -15,6 +15,8 @@ import br.com.battlebits.battlecraft.util.NameUtils;
 import br.com.battlebits.battlecraft.warp.fight.Challenge;
 import br.com.battlebits.battlecraft.warp.fight.ChallengeType;
 import br.com.battlebits.battlecraft.warp.fight.Fight1v1;
+import br.com.battlebits.battlecraft.warp.scoreboard.OneVsOneBoard;
+import br.com.battlebits.battlecraft.warp.scoreboard.WarpScoreboard;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.battlecraft.world.map.OneVsOneMap;
 import br.com.battlebits.commons.Commons;
@@ -55,6 +57,8 @@ public class Warp1v1 extends Warp {
     private Map<Player, Map<ChallengeType, Map<Player, Challenge>>> challenges;
     private Set<Player> playersIn1v1;
     private List<OneVsOneMap> maps;
+
+    private OneVsOneBoard board;
 
     private InteractHandler challenge1v1 = (player, target, itemStack, itemAction) -> {
         if (itemAction != ItemAction.RIGHT_CLICK_PLAYER)
@@ -102,6 +106,7 @@ public class Warp1v1 extends Warp {
         challenges = new HashMap<>();
         playersIn1v1 = new HashSet<>();
         maps = new ArrayList<>();
+        board = new OneVsOneBoard(this);
         ActionItemStack.register(challenge1v1);
         World world = getSpawnLocation().getWorld();
         Location first = new Location(world, 0.5, world.getHighestBlockYAt(0, -13), -13.5);
@@ -143,6 +148,8 @@ public class Warp1v1 extends Warp {
         OneVsOneMap map = event.getChallenge().getMap();
         event.getPlayers()[0].teleport(map.getFirstLocation());
         event.getPlayers()[1].teleport(map.getSecondLocation());
+        getScoreboard().updateOpponent(event.getPlayers()[0], event.getPlayers()[1].getName());
+        getScoreboard().updateOpponent(event.getPlayers()[1], event.getPlayers()[0].getName());
     }
 
     @EventHandler
@@ -170,6 +177,10 @@ public class Warp1v1 extends Warp {
         updatePlayerStatus(winner, event.getQueue(), RankedQueue::addVictory);
         applyTabList(loser);
         applyTabList(winner);
+        getScoreboard().updateDefeat(loser);
+        getScoreboard().updateVictory(winner);
+        getScoreboard().resetOpponent(loser);
+        getScoreboard().resetOpponent(winner);
     }
 
     @EventHandler
@@ -226,13 +237,26 @@ public class Warp1v1 extends Warp {
                 && challenges.get(target).get(type).containsKey(player);
     }
 
+    private int tickCount;
+
     @EventHandler
     public void onTick(UpdateEvent event) {
+        if(event.getType() == UpdateEvent.UpdateType.TICK &&  tickCount++ % 7 == 0) {
+            getScoreboard().updateTitleText();
+            for (Player player : getPlayers()) {
+                getScoreboard().updateTitle(player);
+            }
+        }
         if (event.getType() != UpdateEvent.UpdateType.SECOND)
             return;
         for (Player player : getPlayers()) {
             applyTabList(player);
         }
+    }
+
+    @Override
+    protected OneVsOneBoard getScoreboard() {
+        return (OneVsOneBoard) board;
     }
 
     @Override
@@ -255,6 +279,6 @@ public class Warp1v1 extends Warp {
 
     @Override
     protected void applyScoreboard(Player player) {
-
+        getScoreboard().applyScoreboard(player);
     }
 }

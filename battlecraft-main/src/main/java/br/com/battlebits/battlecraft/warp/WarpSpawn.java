@@ -19,6 +19,7 @@ import br.com.battlebits.battlecraft.status.warpstatus.StatusMain;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.util.NameUtils;
 import br.com.battlebits.battlecraft.warp.scoreboard.MainBoard;
+import br.com.battlebits.battlecraft.warp.scoreboard.WarpScoreboard;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.CommonsConst;
@@ -61,8 +62,8 @@ public class WarpSpawn extends Warp {
     private static final double SPAWN_RADIUS_SQUARED = SPAWN_RADIUS * SPAWN_RADIUS;
 
     private Kit defaultKit;
-    private MainBoard mainBoard;
     private Map.Entry<String, Integer> topKillstreak;
+    private MainBoard scoreboard;
 
     private InteractHandler kitSelectorHandler = (player, player1, itemStack, itemAction) -> {
         if (itemAction.name().contains("RIGHT"))
@@ -81,8 +82,8 @@ public class WarpSpawn extends Warp {
         createKits();
         ActionItemStack.register(kitSelectorHandler);
         ActionItemStack.register(warpSelectorHandler);
-        mainBoard = new MainBoard(getName());
         topKillstreak = null;
+        this.scoreboard = new MainBoard(getName());
     }
 
     @EventHandler
@@ -116,9 +117,9 @@ public class WarpSpawn extends Warp {
     @EventHandler
     public void onTick(UpdateEvent event) {
         if(event.getType() == UpdateEvent.UpdateType.TICK &&  tickCount++ % 7 == 0) {
-            mainBoard.updateTitleText();
+            getScoreboard().updateTitleText();
             for (Player player : getPlayers()) {
-                mainBoard.updateTitle(player);
+                getScoreboard().updateTitle(player);
             }
         }
         if (event.getType() != UpdateEvent.UpdateType.SECOND)
@@ -159,7 +160,7 @@ public class WarpSpawn extends Warp {
         inv.setItem(0, diamond);
         // TODO Criar tipos de kits para espadas diferentes
         applyTabList(event.getPlayer());
-        mainBoard.updateKit(event.getPlayer(), event.getKit());
+        getScoreboard().updateKit(event.getPlayer(), event.getKit());
     }
 
     @EventHandler
@@ -200,13 +201,13 @@ public class WarpSpawn extends Warp {
             return;
         updatePlayerStatus(killed, StatusMain::addDeath);
         applyTabList(killed);
-        mainBoard.updateDeaths(event.getPlayer());
+        getScoreboard().updateDeaths(event.getPlayer());
         if (event.hasKiller()) {
             if (!inWarp(event.getKiller()))
                 return;
             updatePlayerStatus(event.getKiller(), StatusMain::addKill);
             applyTabList(event.getKiller());
-            mainBoard.updateKills(event.getKiller());
+            getScoreboard().updateKills(event.getKiller());
         }
         updateTopKillstreak();
     }
@@ -252,12 +253,12 @@ public class WarpSpawn extends Warp {
 
     @Override
     protected void applyScoreboard(Player player) {
-        mainBoard.applyScoreboard(player);
+        getScoreboard().applyScoreboard(player);
         if (topKillstreak != null) {
-            mainBoard.updateTopKillstreak(player, topKillstreak.getKey(),
+            getScoreboard().updateTopKillstreak(player, topKillstreak.getKey(),
                     topKillstreak.getValue());
         } else {
-            mainBoard.resetTopKillstreak(player);
+            getScoreboard().resetTopKillstreak(player);
         }
     }
 
@@ -282,17 +283,22 @@ public class WarpSpawn extends Warp {
                 if (killStreak != null) {
                     topKillstreak = killStreak;
                     for (Player player : getPlayers()) {
-                        mainBoard.updateTopKillstreak(player, topKillstreak.getKey(),
+                        getScoreboard().updateTopKillstreak(player, topKillstreak.getKey(),
                                 topKillstreak.getValue());
                     }
                 } else {
                     topKillstreak = null;
                     for (Player player : getPlayers()) {
-                        mainBoard.resetTopKillstreak(player);
+                        getScoreboard().resetTopKillstreak(player);
                     }
                 }
             }
         }.runTaskAsynchronously(Battlecraft.getInstance());
+    }
+
+    @Override
+    protected MainBoard getScoreboard() {
+        return (MainBoard) scoreboard;
     }
 
     private void createKits() {

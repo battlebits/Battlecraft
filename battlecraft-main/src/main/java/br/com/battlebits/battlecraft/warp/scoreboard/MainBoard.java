@@ -25,10 +25,12 @@ public class MainBoard implements WarpScoreboard {
         title = scroller.next();
     }
 
+    @Override
     public void updateTitleText() {
         title = scroller.next();
     }
 
+    @Override
     public void updateTitle(Player player) {
         getBattleBoard(player).update(battleScoreboard -> battleScoreboard.setDisplayName(Commons.getLanguage(player.getUniqueId()).tl(BOARD_MAIN_TITLE, title)));
     }
@@ -64,7 +66,7 @@ public class MainBoard implements WarpScoreboard {
 
     public void resetTopKillstreak(Player player) {
         updateTopKillstreak(player,
-                Commons.getLanguage(player.getUniqueId()).tl(BOARD_MAIN_TOPKS_NOONE), 0);
+                Commons.getLanguage(player.getUniqueId()).tl(PLAYER_NONE), 0);
     }
 
     public void updateTopKillstreak(Player player, String playerName, int killstreak) {
@@ -91,7 +93,7 @@ public class MainBoard implements WarpScoreboard {
         board.addLine("level", l.tl(BOARD_MAIN_LEVEL, account.getLevel()));
         board.addLine("n" + ++nullLine, "");
         board.addLine("topks", l.tl(BOARD_MAIN_TOPKS));
-        String noone = l.tl(BOARD_MAIN_TOPKS_NOONE);
+        String noone = l.tl(PLAYER_NONE);
         board.addLine("topksplayer", l.tl(BOARD_MAIN_TOPKS_PLAYER, noone, 0));
         board.addLine("n" + ++nullLine, "");
         board.addLine("kit", l.tl(BOARD_MAIN_KIT, kitName));
