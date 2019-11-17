@@ -9,8 +9,10 @@ import org.bukkit.metadata.FixedMetadataValue;
 
 public class CombatLogManager {
 
-    private static String COMBATLOG_PLAYER = "combatlog.player";
-    private static String COMBATLOG_EXPIRE = "combatlog.time";
+    private final static String COMBATLOG_PLAYER = "combatlog.player";
+    private final static String COMBATLOG_EXPIRE = "combatlog.time";
+
+    private final static long COMBATLOG_TIME = 10000L; // Miliseconds
 
     public static void newCombatLog(Player damager, Player damaged) {
         setCombatLog(damager, damaged);
@@ -33,14 +35,13 @@ public class CombatLogManager {
         removeCombatLog(player1);
 
         player1.setMetadata(COMBATLOG_PLAYER, new FixedMetadataValue(plugin, player2.getName()));
-        player1.setMetadata(COMBATLOG_EXPIRE, new FixedMetadataValue(plugin, System.currentTimeMillis() + 10000));
+        player1.setMetadata(COMBATLOG_EXPIRE, new FixedMetadataValue(plugin, System.currentTimeMillis()));
 
     }
 
     public static CombatLog getCombatLog(Player player) {
-        Battlecraft plugin = Battlecraft.getInstance();
         String playerName = "";
-        long time = 0l;
+        long time = 0L;
         if (player.hasMetadata(COMBATLOG_PLAYER))
             playerName = player.getMetadata(COMBATLOG_PLAYER).get(0).asString();
         if (player.hasMetadata(COMBATLOG_EXPIRE))
@@ -55,6 +56,10 @@ public class CombatLogManager {
         private final Player combatLogged;
         private final long time;
 
+
+        public boolean isFighting() {
+            return System.currentTimeMillis() < time + COMBATLOG_TIME;
+        }
 
     }
 }

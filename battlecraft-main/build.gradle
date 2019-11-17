@@ -1,10 +1,11 @@
 plugins {
     id "io.freefair.lombok" version "4.0.1"
     id 'java'
+    id 'maven-publish'
 }
 
 group 'br.com.battlebits'
-version '1.0-SNAPSHOT'
+version '1.0'
 
 sourceCompatibility = 1.8
 
@@ -14,26 +15,30 @@ repositories {
     maven { url = uri("https://hub.spigotmc.org/nexus/content/groups/public") }
     maven { url "http://repo.dmulloy2.net/nexus/repository/public/" }
     maven { url "https://repo.battlebits.com.br/repository/public/" }
+    maven { url "https://papermc.io/repo/repository/maven-public/" }
     mavenLocal()
 }
 
 dependencies {
-    compile group: 'org.spigotmc', name: 'spigot-api', version: '1.14.4-R0.1-SNAPSHOT'
-    compile group: 'br.com.battlebits', name: 'commons-bukkit', version: '1.0-SNAPSHOT'
+    implementation 'io.reactivex.rxjava3:rxjava:3.0.0-RC3'
+    compile group: 'com.destroystokyo.paper', name: 'paper-api', version: '1.12.2-R0.1-SNAPSHOT'
+    compile group: 'br.com.battlebits', name: 'commons-bukkit', version: '1.0.187-SNAPSHOT'
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group:  'org.powermock', name: 'powermock-module-junit4', version: '2.0.2'
     testCompile group:  'org.powermock', name: 'powermock-api-mockito2', version: '2.0.2'
     testCompile group:  'org.powermock', name: 'powermock-api-easymock', version: '2.0.2'
-
 }
 
+
 processResources {
-    def fullVersion = version
     if (System.getenv('BUILD_NUMBER')) {
-        fullVersion = version + '-' + System.getenv('BUILD_NUMBER')
+        version = version + '.' + System.getenv('BUILD_NUMBER')
+    }
+    if (System.getenv('GIT_BRANCH') && System.getenv('GIT_BRANCH').contains('develop')) {
+        version = version + '-SNAPSHOT'
     }
     filesMatching('plugin.yml') {
-        expand(["fullVersion":fullVersion])
+        expand(["fullVersion":version])
     }
 
 }
@@ -43,4 +48,29 @@ sourceSets {
     main.resources.srcDir "src/main/resources"
     test.java.srcDir "src/test/java"
     test.resources.srcDir "src/test/resources"
+}
+
+publishing {
+    if(!System.getenv('NEXUS_USER') || !System.getenv('NEXUS_PASS'))
+        return;
+    def nexusUser = System.getenv('NEXUS_USER')
+    def nexusPassword = System.getenv('NEXUS_PASS')
+    publications {
+        mavenBukkit(MavenPublication) {
+            from components.java
+            afterEvaluate {
+                artifactId = 'battlecraft-main'
+            }
+        }
+    }
+    repositories {
+        maven {
+            url = version.endsWith('SNAPSHOT') ? 'https://repo.battlebits.com.br/repository/maven-snapshots/':
+                    'https://repo.battlebits.com.br/repository/maven-releases/'
+            credentials {
+                username nexusUser
+                password nexusPassword
+            }
+        }
+    }
 }

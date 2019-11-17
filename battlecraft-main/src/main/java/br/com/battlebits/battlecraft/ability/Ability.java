@@ -1,31 +1,109 @@
 package br.com.battlebits.battlecraft.ability;
 
+import br.com.battlebits.battlecraft.Battlecraft;
+import br.com.battlebits.commons.bukkit.api.cooldown.CooldownAPI;
+import br.com.battlebits.commons.bukkit.api.cooldown.types.ItemCooldown;
+import lombok.Getter;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.ItemStack;
 
-public interface Ability extends Listener {
+import java.util.HashSet;
+import java.util.Set;
 
-    String getName();
+@Getter
+public abstract class Ability implements Listener {
 
-    ItemStack getIcon();
+    private Set<Player> players;
 
-    String getLorePrefix();
+    public Ability() {
+        this.players = new HashSet<>();
+    }
 
-    String getPermission();
+    protected boolean hasAbility(Player player) {
+        return players.contains(player);
+    }
 
-    int getPrice();
+    @EventHandler
+    public void onDrop(PlayerDropItemEvent event) {
+        if (this instanceof AbilityItem) {
+            AbilityItem giveItem = (AbilityItem) this;
+            if (giveItem.getItems().contains(event.getItemDrop().getItemStack()))
+                event.setCancelled(true);
+        }
+    }
 
-    void onReceiveItems(Player player);
+    /**
+     * Register player in the ability listener
+     *
+     * @param player jogador que vai poder usar as habilidades
+     */
+    public void registerPlayer(Player player) {
+        if (players.isEmpty() && !Disableable.class.isAssignableFrom(getClass())) {
+            Bukkit.getPluginManager().registerEvents(this, Battlecraft.getInstance());
+        }
+        players.add(player);
+    }
 
-    boolean isProtected(Player player);
+    /**
+     * Unregister player from the listener and unregister listener if empty
+     *
+     * @param player
+     */
+    public void unregisterPlayer(Player player) {
+        players.remove(player);
+        CooldownAPI.removeAllCooldowns(player);
+        if (players.isEmpty() && !Disableable.class.isAssignableFrom(getClass()))
+            HandlerList.unregisterAll(this);
+    }
 
-    boolean isUsing(Player player);
+    /**
+     * Checka se o jogador possui o cooldown
+     *
+     * @param player
+     * @param cooldown
+     * @return if player has the cooldown
+     */
+    protected boolean hasCooldown(Player player, String cooldown) {
+        return CooldownAPI.hasCooldown(player, cooldown);
+    }
 
-    boolean hasCooldown(Player player);
+    /**
+     * Adiciona um cooldown ao jogador
+     * Caso ele já possua esse Cooldown, atualiza o tempo
+     *
+     * @param player
+     * @param cooldownName
+     * @param time
+     */
+    protected void addCooldown(Player player, String cooldownName, long time) {
+//        if (CooldownManager.hasCooldown(player, cooldownName)) {
+//            CooldownManager.removeCooldown(player, cooldownName);
+//        }
+        if(CooldownAPI.hasCooldown(player, cooldownName)) {
+            CooldownAPI.removeCooldown(player, cooldownName);
+        }
+        CooldownAPI.addCooldown(player, new br.com.battlebits.commons.bukkit.api.cooldown.types.Cooldown(cooldownName, time));
+//        CooldownManager.addCooldown(new Cooldown(player, cooldownName,
+//                System.currentTimeMillis() + time));
 
-    void addCooldown(Player player, long time);
+    }
 
-    long getCooldown(Player player);
+    protected void addItemCooldown(Player player, ItemStack item, String cooldownName, long time) {
+//        if (CooldownManager.hasCooldown(player, cooldownName)) {
+//            CooldownManager.removeCooldown(player, cooldownName);
+//        }
+        if(CooldownAPI.hasCooldown(player, cooldownName)) {
+            CooldownAPI.removeCooldown(player, cooldownName);
+        }
+        CooldownAPI.addCooldown(player, new ItemCooldown(item, cooldownName, time));
+//        CooldownManager.addCooldown(new Cooldown(player, cooldownName,
+//                System.currentTimeMillis() + time));
+
+    }
 
 }

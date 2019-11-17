@@ -1,6 +1,7 @@
 package br.com.battlebits.battlecraft.listener;
 
 import br.com.battlebits.battlecraft.event.PlayerDamagePlayerEvent;
+import br.com.battlebits.battlecraft.event.warp.PlayerWarpDeathEvent;
 import br.com.battlebits.battlecraft.manager.CombatLogManager;
 import br.com.battlebits.battlecraft.manager.CombatLogManager.CombatLog;
 import org.bukkit.entity.Player;
@@ -16,7 +17,7 @@ public class CombatLogListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerDamage(PlayerDamagePlayerEvent e) {
-        Player damager = e.getDamager();
+        Player damager = e.getPlayer();
         Player damaged = e.getDamaged();
         CombatLogManager.newCombatLog(damaged, damager);
     }
@@ -24,6 +25,11 @@ public class CombatLogListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onDeath(PlayerDeathEvent e) {
         CombatLogManager.removeCombatLog(e.getEntity());
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onDeath(PlayerWarpDeathEvent e) {
+        CombatLogManager.removeCombatLog(e.getPlayer());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -44,9 +50,7 @@ public class CombatLogListener implements Listener {
 
     private void checkCombatLog(Player p) {
         CombatLog log = CombatLogManager.getCombatLog(p);
-        if (log == null)
-            return;
-        if (System.currentTimeMillis() < log.getTime()) {
+        if (log.isFighting()) {
             Player combatLogger = log.getCombatLogged();
             if (combatLogger != null)
                 if (combatLogger.isOnline())

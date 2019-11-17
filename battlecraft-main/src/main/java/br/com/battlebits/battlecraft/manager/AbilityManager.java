@@ -2,55 +2,48 @@ package br.com.battlebits.battlecraft.manager;
 
 import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.ability.Ability;
-import br.com.battlebits.battlecraft.ability.AbilityImpl;
+import br.com.battlebits.battlecraft.ability.Disableable;
 import br.com.battlebits.commons.util.ClassGetter;
 
 import java.lang.reflect.Constructor;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class AbilityManager {
 
-    private static Battlecraft battlecraft;
-    private static Set<Ability> abilities;
+    private static Map<String, Ability> abilities = new HashMap<>();
 
-    private AbilityManager() {
-        battlecraft = Battlecraft.getInstance();
-        abilities = new HashSet<>();
-    }
-
-    public static void create() {
-        new AbilityManager();
-    }
-
-    public static void registerKits() {
-        List<Class<?>> list = ClassGetter.getClassesForPackage(battlecraft.getClass(), "br.com.battlebits.battlecraft.ability");
+    public static void registerAbilities() {
+        List<Class<?>> list =
+                ClassGetter.getClassesForPackage(Battlecraft.getInstance().getClass(), "br.com" +
+                ".battlebits.battlecraft.ability.registry");
         list.forEach(clazz -> {
-            if (clazz != Ability.class && clazz != AbilityImpl.class && Ability.class.isAssignableFrom(clazz)) {
+            if (clazz != Ability.class && Ability.class.isAssignableFrom(clazz)) {
                 try {
                     Constructor<?> constructor = clazz.getConstructor();
                     if (constructor != null) {
-                        Ability kit = (Ability) constructor.newInstance();
-                        abilities.add(kit);
+                        Ability ability = (Ability) constructor.newInstance();
+                        abilities.put(clazz.getSimpleName(), ability);
+                        if (Disableable.class.isAssignableFrom(clazz)) {
+                            Battlecraft.getInstance().getServer().getPluginManager().registerEvents(ability, Battlecraft.getInstance());
+                        }
+                        Battlecraft.getInstance().getLogger().info("Registered ability " + clazz.getSimpleName() + ".");
                     }
                 } catch (Exception e) {
-                    battlecraft.getLogger().warning("Failed to register " + clazz.getSimpleName() + " kit");
+                    Battlecraft.getInstance().getLogger().warning("Failed to register " + clazz.getSimpleName() + " kit");
                     e.printStackTrace();
                 }
             }
         });
-        abilities.forEach(ability -> battlecraft.getServer().getPluginManager().registerEvents(ability, battlecraft));
     }
 
     public static Ability getAbilityByName(String name) {
-        return abilities.stream().filter(ability -> ability.getName().equals(name)).findFirst().orElse(null);
+        return abilities.getOrDefault(name, null);
     }
 
-    public static Ability getRandomKit() {
-        int index = new Random().nextInt(abilities.size());
-        Iterator<Ability> iterator = abilities.iterator();
-        for (int i = 0; i < index; i++) {
-            iterator.next();
-        }
-        return iterator.next();
+    public static Ability getAbilityByClass(Class<? extends Ability> clazz) {
+        return getAbilityByName(clazz.getSimpleName());
     }
+
 }
