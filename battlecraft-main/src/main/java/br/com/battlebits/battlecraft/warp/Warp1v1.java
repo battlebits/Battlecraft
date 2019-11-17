@@ -252,4 +252,9 @@ public class Warp1v1 extends Warp {
                         account.getBattleCoins(), CommonsConst.WEBSITE);
         TabListAPI.setHeaderAndFooter(player, header, footer);
     }
+
+    @Override
+    protected void applyScoreboard(Player player) {
+
+    }
 }

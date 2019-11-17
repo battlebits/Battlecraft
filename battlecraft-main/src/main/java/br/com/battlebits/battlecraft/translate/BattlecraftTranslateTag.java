@@ -84,6 +84,17 @@ public enum BattlecraftTranslateTag {
     WARP_FPS_NAME,
     WARP_FPS_DESCRIPTION,
 
+    BOARD_MAIN_TITLE,
+    BOARD_MAIN_KILLS,
+    BOARD_MAIN_DEATHS,
+    BOARD_MAIN_KILLSTREAK,
+    BOARD_MAIN_LEVEL,
+    BOARD_MAIN_TOPKS,
+    BOARD_MAIN_TOPKS_PLAYER,
+    BOARD_MAIN_TOPKS_NOONE,
+    BOARD_MAIN_KIT,
+    BOARD_MAIN_WEBSITE,
+
     ITEM_FRAME_SOUP("item-frame.soup"),
     ITEM_FRAME_RED("item-frame.red"),
     ITEM_FRAME_BROWN("item-frame.brown"),

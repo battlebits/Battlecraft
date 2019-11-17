@@ -18,6 +18,7 @@ import br.com.battlebits.battlecraft.status.StatusAccount;
 import br.com.battlebits.battlecraft.status.warpstatus.StatusMain;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.util.NameUtils;
+import br.com.battlebits.battlecraft.warp.scoreboard.MainBoard;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.CommonsConst;
@@ -56,6 +57,7 @@ public class WarpSpawn extends Warp {
     private static final double SPAWN_RADIUS_SQUARED = SPAWN_RADIUS * SPAWN_RADIUS;
 
     private Kit defaultKit;
+    private MainBoard mainBoard;
 
     private InteractHandler kitSelectorHandler = (player, player1, itemStack, itemAction) -> {
         if (itemAction.name().contains("RIGHT"))
@@ -74,6 +76,7 @@ public class WarpSpawn extends Warp {
         createKits();
         ActionItemStack.register(kitSelectorHandler);
         ActionItemStack.register(warpSelectorHandler);
+        mainBoard = new MainBoard(getName());
     }
 
     @EventHandler
@@ -102,8 +105,16 @@ public class WarpSpawn extends Warp {
         }
     }
 
+    private int tickCount = 0;
+
     @EventHandler
     public void onTick(UpdateEvent event) {
+        if(event.getType() == UpdateEvent.UpdateType.TICK &&  tickCount++ % 7 == 0) {
+            mainBoard.updateTitleText();
+            for (Player player : getPlayers()) {
+                mainBoard.updateTitle(player);
+            }
+        }
         if (event.getType() != UpdateEvent.UpdateType.SECOND)
             return;
         for (Player player : getPlayers()) {
@@ -127,6 +138,7 @@ public class WarpSpawn extends Warp {
         event.setDamage(Double.MAX_VALUE);
     }
 
+
     @EventHandler
     public void onKit(PlayerKitEvent event) {
         if (!isWarpKit(event.getKit()))
@@ -141,6 +153,7 @@ public class WarpSpawn extends Warp {
         inv.setItem(0, diamond);
         // TODO Criar tipos de kits para espadas diferentes
         applyTabList(event.getPlayer());
+        mainBoard.updateKit(event.getPlayer(), event.getKit());
     }
 
     @EventHandler
@@ -225,6 +238,11 @@ public class WarpSpawn extends Warp {
                         player.getName(), account.getLevel(), account.getBattleMoney(),
                         account.getBattleCoins(), CommonsConst.WEBSITE);
         TabListAPI.setHeaderAndFooter(player, header, footer);
+    }
+
+    @Override
+    protected void applyScoreboard(Player player) {
+        mainBoard.applyScoreboard(player);
     }
 
     private void createKits() {

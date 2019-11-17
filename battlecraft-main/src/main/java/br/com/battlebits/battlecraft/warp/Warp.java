@@ -84,8 +84,10 @@ public abstract class Warp implements Listener, CommandClass {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onApplyTabList(PlayerWarpJoinEvent event) {
         Player p = event.getPlayer();
-        if (inWarp(p))
+        if (inWarp(p)) {
             applyTabList(p);
+            applyScoreboard(p);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -98,6 +100,8 @@ public abstract class Warp implements Listener, CommandClass {
     }
 
     protected abstract void applyTabList(Player player);
+
+    protected abstract void applyScoreboard(Player player);
 
     protected boolean isWarpKit(Kit kit) {
         return this.kits.contains(kit);
