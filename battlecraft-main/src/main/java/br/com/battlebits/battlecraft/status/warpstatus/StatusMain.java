@@ -5,12 +5,14 @@ import br.com.battlebits.battlecraft.status.WarpStatus;
 import dev.morphia.annotations.Embedded;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Getter
 @Embedded
+@NoArgsConstructor
 public class StatusMain implements WarpStatus {
 
     // Status
@@ -35,13 +37,13 @@ public class StatusMain implements WarpStatus {
         this(kills, deaths, null, killstreakRecord, multikillRecord);
     }
 
-    public StatusMain(int kills, int deaths, Set<String> kitList, int killstreakRecord, int multikillRecord) {
-        super();
+    public StatusMain(int kills, int deaths, Set<String> kitList, int killstreakRecord,
+                      int multikillRecord) {
         this.kills = kills;
         this.deaths = deaths;
         this.killstreakRecord = killstreakRecord;
         this.multikillRecord = multikillRecord;
-        if(kitList != null)
+        if (kitList != null)
             this.ownedKits = kitList;
         else
             this.ownedKits = new HashSet<>();
@@ -84,6 +86,7 @@ public class StatusMain implements WarpStatus {
 
     /**
      * Da um kit para o jogador
+     *
      * @param kit kit selecionado
      */
     public void giveKit(Kit kit) {
@@ -92,6 +95,7 @@ public class StatusMain implements WarpStatus {
 
     /**
      * Calcula o multikill baseado na ultima kill dos ultimos 5 segundos
+     *
      * @return 0 se o tempo ja expirou ou o valor
      */
     public int getMultikill() {
@@ -102,6 +106,7 @@ public class StatusMain implements WarpStatus {
 
     /**
      * Checka se o jogador possui um kit
+     *
      * @param kit o kit selecionado
      * @return true se possui, false se nao possui
      */

@@ -15,7 +15,6 @@ public class Status1v1 implements WarpStatus {
     private Map<Queue1v1, RankedQueue> queueStatus;
 
     public Status1v1() {
-        super();
         this.queueStatus = new HashMap<>();
         for (Queue1v1 queue : Queue1v1.values())
             queueStatus.put(queue, new RankedQueue());

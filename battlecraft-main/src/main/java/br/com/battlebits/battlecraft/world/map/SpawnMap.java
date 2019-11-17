@@ -25,7 +25,7 @@ public class SpawnMap implements WorldMap {
         world = Bukkit.getServer().createWorld(new WorldCreator("spawn"));
         world.setAutoSave(true);
         Battlecraft.getInstance().getLogger().info("World 'spawn' loaded!");
-        spawnLocation = new Location(world, 0.5, 100, 0.5);
+        spawnLocation = new Location(world, 0.5, 99, 0.5);
     }
 
     @Override
