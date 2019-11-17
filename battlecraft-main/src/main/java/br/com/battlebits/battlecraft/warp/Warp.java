@@ -4,10 +4,8 @@ import br.com.battlebits.battlecraft.ability.Kit;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
-import br.com.battlebits.battlecraft.warp.scoreboard.MainBoard;
 import br.com.battlebits.battlecraft.warp.scoreboard.WarpScoreboard;
 import br.com.battlebits.battlecraft.world.WorldMap;
-import br.com.battlebits.commons.bukkit.scoreboard.modules.Line;
 import br.com.battlebits.commons.command.CommandClass;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -19,9 +17,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.valueOf;
 

@@ -4,6 +4,7 @@ import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.event.fight.PlayerFightFinishEvent;
 import br.com.battlebits.battlecraft.event.fight.PlayerFightStartEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
+import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.protocol.OneVsOneFilter;
 import br.com.battlebits.battlecraft.status.StatusAccount;
@@ -132,7 +133,7 @@ public class Warp1v1 extends Warp {
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
+    public void onQuit(PlayerWarpQuitEvent event) {
         handleQuit(event.getPlayer());
     }
 
@@ -237,11 +238,9 @@ public class Warp1v1 extends Warp {
                 && challenges.get(target).get(type).containsKey(player);
     }
 
-    private int tickCount;
-
     @EventHandler
     public void onTick(UpdateEvent event) {
-        if(event.getType() == UpdateEvent.UpdateType.TICK &&  tickCount++ % 7 == 0) {
+        if(event.getType() == UpdateEvent.UpdateType.TICK && event.getCurrentTick() % 7 == 0) {
             getScoreboard().updateTitleText();
             for (Player player : getPlayers()) {
                 getScoreboard().updateTitle(player);

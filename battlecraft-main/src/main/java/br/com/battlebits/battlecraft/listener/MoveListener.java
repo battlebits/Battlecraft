@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -20,7 +21,7 @@ public class MoveListener implements Listener {
         locations = new HashMap<>();
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onLeave(PlayerQuitEvent event) {
         locations.remove(event.getPlayer());
     }

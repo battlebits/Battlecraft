@@ -35,7 +35,7 @@ public class WarpListener implements Listener {
                 true);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onQuit(PlayerQuitEvent event) {
         Battlecraft.getInstance().getWarpManager().leaveWarp(event.getPlayer());
     }

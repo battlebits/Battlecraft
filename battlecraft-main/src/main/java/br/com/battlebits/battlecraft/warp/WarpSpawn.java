@@ -19,7 +19,6 @@ import br.com.battlebits.battlecraft.status.warpstatus.StatusMain;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.util.NameUtils;
 import br.com.battlebits.battlecraft.warp.scoreboard.MainBoard;
-import br.com.battlebits.battlecraft.warp.scoreboard.WarpScoreboard;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.CommonsConst;
@@ -42,12 +41,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.AbstractMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -112,11 +109,9 @@ public class WarpSpawn extends Warp {
         }
     }
 
-    private int tickCount = 0;
-
     @EventHandler
     public void onTick(UpdateEvent event) {
-        if(event.getType() == UpdateEvent.UpdateType.TICK &&  tickCount++ % 7 == 0) {
+        if (event.getType() == UpdateEvent.UpdateType.TICK && event.getCurrentTick() % 7 == 0) {
             getScoreboard().updateTitleText();
             for (Player player : getPlayers()) {
                 getScoreboard().updateTitle(player);
@@ -125,7 +120,10 @@ public class WarpSpawn extends Warp {
         if (event.getType() != UpdateEvent.UpdateType.SECOND)
             return;
         for (Player player : getPlayers()) {
-            applyTabList(player);
+            StatusAccount account =
+                    Battlecraft.getInstance().getStatusManager().get(player.getUniqueId());
+            if (account != null && getPlayerStatus(player) != null)
+                applyTabList(player);
         }
     }
 
@@ -218,7 +216,10 @@ public class WarpSpawn extends Warp {
     }
 
     private StatusMain getPlayerStatus(Player player) {
-        return (StatusMain) Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).getWarpStatus(this);
+        StatusAccount account =
+                Battlecraft.getInstance().getStatusManager().get(player.getUniqueId());
+
+        return (StatusMain) account.getWarpStatus(this);
     }
 
     @EventHandler
@@ -229,6 +230,7 @@ public class WarpSpawn extends Warp {
         getPlayerStatus(p).resetKillstreak(); // O Killstreak só é valido enquanto o jogador
         // permanecer vivo e online
         KitManager.removeKit(event.getPlayer());
+        updateTopKillstreak();
     }
 
     @Override
@@ -263,42 +265,37 @@ public class WarpSpawn extends Warp {
     }
 
     private void updateTopKillstreak() {
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                int ks = 0;
-                Map.Entry<String, Integer> killStreak = null;
-                for (Player player : getPlayers()) {
-                    if (!AdminMode.isAdmin(player)) {
-                        if (!ProtectionManager.isProtected(player)) {
-                            StatusMain status =
-                                    getPlayerStatus(player);
-                            if (status.getKillstreak() > ks) {
-                                ks = status.getKillstreak();
-                                killStreak = new AbstractMap.SimpleEntry<>(player.getName(), ks);
-                            }
-                        }
-                    }
-                }
-                if (killStreak != null) {
-                    topKillstreak = killStreak;
-                    for (Player player : getPlayers()) {
-                        getScoreboard().updateTopKillstreak(player, topKillstreak.getKey(),
-                                topKillstreak.getValue());
-                    }
-                } else {
-                    topKillstreak = null;
-                    for (Player player : getPlayers()) {
-                        getScoreboard().resetTopKillstreak(player);
+        int ks = 0;
+        Map.Entry<String, Integer> killStreak = null;
+        for (Player player : getPlayers()) {
+            if (!AdminMode.isAdmin(player)) {
+                if (!ProtectionManager.isProtected(player)) {
+                    StatusMain status =
+                            getPlayerStatus(player);
+                    if (status.getKillstreak() > ks) {
+                        ks = status.getKillstreak();
+                        killStreak = new AbstractMap.SimpleEntry<>(player.getName(), ks);
                     }
                 }
             }
-        }.runTaskAsynchronously(Battlecraft.getInstance());
+        }
+        if (killStreak != null) {
+            topKillstreak = killStreak;
+            for (Player player : getPlayers()) {
+                getScoreboard().updateTopKillstreak(player, topKillstreak.getKey(),
+                        topKillstreak.getValue());
+            }
+        } else {
+            topKillstreak = null;
+            for (Player player : getPlayers()) {
+                getScoreboard().resetTopKillstreak(player);
+            }
+        }
     }
 
     @Override
     protected MainBoard getScoreboard() {
-        return (MainBoard) scoreboard;
+        return scoreboard;
     }
 
     private void createKits() {
