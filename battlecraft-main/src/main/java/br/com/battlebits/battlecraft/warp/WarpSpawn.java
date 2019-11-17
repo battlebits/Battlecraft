@@ -41,8 +41,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.AbstractMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -58,6 +62,7 @@ public class WarpSpawn extends Warp {
 
     private Kit defaultKit;
     private MainBoard mainBoard;
+    private Map.Entry<String, Integer> topKillstreak;
 
     private InteractHandler kitSelectorHandler = (player, player1, itemStack, itemAction) -> {
         if (itemAction.name().contains("RIGHT"))
@@ -77,6 +82,7 @@ public class WarpSpawn extends Warp {
         ActionItemStack.register(kitSelectorHandler);
         ActionItemStack.register(warpSelectorHandler);
         mainBoard = new MainBoard(getName());
+        topKillstreak = null;
     }
 
     @EventHandler
@@ -166,6 +172,7 @@ public class WarpSpawn extends Warp {
         if (!KitManager.containsKit(p)) {
             KitManager.giveKit(p, defaultKit);
         }
+        updateTopKillstreak();
     }
 
     @EventHandler
@@ -193,12 +200,15 @@ public class WarpSpawn extends Warp {
             return;
         updatePlayerStatus(killed, StatusMain::addDeath);
         applyTabList(killed);
+        mainBoard.updateDeaths(event.getPlayer());
         if (event.hasKiller()) {
             if (!inWarp(event.getKiller()))
                 return;
             updatePlayerStatus(event.getKiller(), StatusMain::addKill);
             applyTabList(event.getKiller());
+            mainBoard.updateKills(event.getKiller());
         }
+        updateTopKillstreak();
     }
 
 
@@ -243,6 +253,46 @@ public class WarpSpawn extends Warp {
     @Override
     protected void applyScoreboard(Player player) {
         mainBoard.applyScoreboard(player);
+        if (topKillstreak != null) {
+            mainBoard.updateTopKillstreak(player, topKillstreak.getKey(),
+                    topKillstreak.getValue());
+        } else {
+            mainBoard.resetTopKillstreak(player);
+        }
+    }
+
+    private void updateTopKillstreak() {
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                int ks = 0;
+                Map.Entry<String, Integer> killStreak = null;
+                for (Player player : getPlayers()) {
+                    if (!AdminMode.isAdmin(player)) {
+                        if (!ProtectionManager.isProtected(player)) {
+                            StatusMain status =
+                                    getPlayerStatus(player);
+                            if (status.getKillstreak() > ks) {
+                                ks = status.getKillstreak();
+                                killStreak = new AbstractMap.SimpleEntry<>(player.getName(), ks);
+                            }
+                        }
+                    }
+                }
+                if (killStreak != null) {
+                    topKillstreak = killStreak;
+                    for (Player player : getPlayers()) {
+                        mainBoard.updateTopKillstreak(player, topKillstreak.getKey(),
+                                topKillstreak.getValue());
+                    }
+                } else {
+                    topKillstreak = null;
+                    for (Player player : getPlayers()) {
+                        mainBoard.resetTopKillstreak(player);
+                    }
+                }
+            }
+        }.runTaskAsynchronously(Battlecraft.getInstance());
     }
 
     private void createKits() {

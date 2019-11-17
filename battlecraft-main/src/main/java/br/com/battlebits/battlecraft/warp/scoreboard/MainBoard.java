@@ -42,9 +42,18 @@ public class MainBoard implements WarpScoreboard {
     }
 
     public void updateKills(Player player) {
-        BukkitAccount account = (BukkitAccount) Commons.getAccount(player.getUniqueId());
-        Language l = account.getLanguage();
-        getBattleBoard(player).update(battleScoreboard -> battleScoreboard.getLineById("kills").setText(l.tl(BOARD_MAIN_KILLS, getStatus(player).getKills())));
+        getBattleBoard(player).update(battleScoreboard -> battleScoreboard.getLineById("kills").setText(Commons.getLanguage(player.getUniqueId()).tl(BOARD_MAIN_KILLS, getStatus(player).getKills())));
+        updateKillstreak(player);
+    }
+
+    public void updateDeaths(Player player) {
+        getBattleBoard(player).update(battleScoreboard -> battleScoreboard.getLineById("deaths").setText(Commons.getLanguage(player.getUniqueId()).tl(BOARD_MAIN_DEATHS, getStatus(player).getDeaths())));
+        updateKillstreak(player);
+    }
+
+    private void updateKillstreak(Player player) {
+        getBattleBoard(player).update(battleScoreboard -> battleScoreboard.getLineById(
+                "killstreak").setText(Commons.getLanguage(player.getUniqueId()).tl(BOARD_MAIN_KILLSTREAK, getStatus(player).getKillstreak())));
     }
 
     public void updateKit(Player player, Kit kit) {
@@ -53,12 +62,23 @@ public class MainBoard implements WarpScoreboard {
         getBattleBoard(player).update(battleScoreboard -> battleScoreboard.getLineById("kit").setText(l.tl(BOARD_MAIN_KIT, NameUtils.formatString(kit.getName()))));
     }
 
+    public void resetTopKillstreak(Player player) {
+        updateTopKillstreak(player,
+                Commons.getLanguage(player.getUniqueId()).tl(BOARD_MAIN_TOPKS_NOONE), 0);
+    }
+
+    public void updateTopKillstreak(Player player, String playerName, int killstreak) {
+        getBattleBoard(player).update(battleScoreboard -> battleScoreboard.getLineById(
+                "topksplayer").setText(Commons.getLanguage(player.getUniqueId()).tl(BOARD_MAIN_TOPKS_PLAYER, playerName, killstreak)));
+    }
+
     @Override
     public void applyScoreboard(Player player) {
         BukkitAccount account = (BukkitAccount) Commons.getAccount(player.getUniqueId());
         StatusMain main = getStatus(player);
         Language l = account.getLanguage();
         BattleScoreboard board = account.getBattleboard();
+        board.getLines().clear();
         board.setDisplayName(l.tl(BOARD_MAIN_TITLE, title));
         String kitName = account.getLanguage().tl(KIT_NONE);
         if (KitManager.containsKit(player))
