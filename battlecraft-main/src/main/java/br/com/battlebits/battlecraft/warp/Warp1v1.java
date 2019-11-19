@@ -17,7 +17,6 @@ import br.com.battlebits.battlecraft.warp.fight.Challenge;
 import br.com.battlebits.battlecraft.warp.fight.ChallengeType;
 import br.com.battlebits.battlecraft.warp.fight.Fight1v1;
 import br.com.battlebits.battlecraft.warp.scoreboard.OneVsOneBoard;
-import br.com.battlebits.battlecraft.warp.scoreboard.WarpScoreboard;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.battlecraft.world.map.OneVsOneMap;
 import br.com.battlebits.commons.Commons;
@@ -30,7 +29,6 @@ import br.com.battlebits.commons.bukkit.api.item.ItemAction;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import br.com.battlebits.commons.bukkit.api.player.PingAPI;
 import br.com.battlebits.commons.bukkit.api.tablist.TabListAPI;
-import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import br.com.battlebits.commons.translate.Language;
 import com.comphenix.protocol.ProtocolLibrary;
 import org.bukkit.Bukkit;
@@ -40,7 +38,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -238,24 +235,9 @@ public class Warp1v1 extends Warp {
                 && challenges.get(target).get(type).containsKey(player);
     }
 
-    @EventHandler
-    public void onTick(UpdateEvent event) {
-        if(event.getType() == UpdateEvent.UpdateType.TICK && event.getCurrentTick() % 7 == 0) {
-            getScoreboard().updateTitleText();
-            for (Player player : getPlayers()) {
-                getScoreboard().updateTitle(player);
-            }
-        }
-        if (event.getType() != UpdateEvent.UpdateType.SECOND)
-            return;
-        for (Player player : getPlayers()) {
-            applyTabList(player);
-        }
-    }
-
     @Override
     protected OneVsOneBoard getScoreboard() {
-        return (OneVsOneBoard) board;
+        return board;
     }
 
     @Override

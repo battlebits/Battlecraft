@@ -29,7 +29,6 @@ import br.com.battlebits.commons.bukkit.api.item.ActionItemStack.InteractHandler
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import br.com.battlebits.commons.bukkit.api.player.PingAPI;
 import br.com.battlebits.commons.bukkit.api.tablist.TabListAPI;
-import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import br.com.battlebits.commons.translate.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -108,25 +107,6 @@ public class WarpSpawn extends Warp {
             status.putWarpStatus(this, new StatusMain(0, 0, 0, 0));
         }
     }
-
-    @EventHandler
-    public void onTick(UpdateEvent event) {
-        if (event.getType() == UpdateEvent.UpdateType.TICK && event.getCurrentTick() % 7 == 0) {
-            getScoreboard().updateTitleText();
-            for (Player player : getPlayers()) {
-                getScoreboard().updateTitle(player);
-            }
-        }
-        if (event.getType() != UpdateEvent.UpdateType.SECOND)
-            return;
-        for (Player player : getPlayers()) {
-            StatusAccount account =
-                    Battlecraft.getInstance().getStatusManager().get(player.getUniqueId());
-            if (account != null && getPlayerStatus(player) != null)
-                applyTabList(player);
-        }
-    }
-
 
     /**
      * Insta kill when player in Spawn takes void damage
@@ -259,8 +239,6 @@ public class WarpSpawn extends Warp {
         if (topKillstreak != null) {
             getScoreboard().updateTopKillstreak(player, topKillstreak.getKey(),
                     topKillstreak.getValue());
-        } else {
-            getScoreboard().resetTopKillstreak(player);
         }
     }
 
@@ -279,14 +257,13 @@ public class WarpSpawn extends Warp {
                 }
             }
         }
-        if (killStreak != null) {
-            topKillstreak = killStreak;
+        topKillstreak = killStreak;
+        if (topKillstreak != null) {
             for (Player player : getPlayers()) {
                 getScoreboard().updateTopKillstreak(player, topKillstreak.getKey(),
                         topKillstreak.getValue());
             }
         } else {
-            topKillstreak = null;
             for (Player player : getPlayers()) {
                 getScoreboard().resetTopKillstreak(player);
             }

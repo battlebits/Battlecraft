@@ -15,32 +15,14 @@ import org.bukkit.entity.Player;
 
 import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.*;
 
-public class MainBoard implements WarpScoreboard {
-
-    private StringScroller scroller;
-    private String title;
+public class MainBoard extends WarpScoreboard {
 
     public MainBoard(String warpName) {
-        scroller = new StringScroller("BattleCraft - " + warpName + " -", 14, 1);
-        title = scroller.next();
-    }
-
-    @Override
-    public void updateTitleText() {
-        title = scroller.next();
-    }
-
-    @Override
-    public void updateTitle(Player player) {
-        getBattleBoard(player).update(battleScoreboard -> battleScoreboard.setDisplayName(Commons.getLanguage(player.getUniqueId()).tl(BOARD_MAIN_TITLE, title)));
+        super(new StringScroller("BattleCraft - " + warpName + " -", 14, 1));
     }
 
     private StatusMain getStatus(Player player) {
         return (StatusMain) Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).getWarpStatus(Battlecraft.getInstance().getWarpManager().getDefaultWarp());
-    }
-
-    private BattleScoreboard getBattleBoard(Player player) {
-        return ((BukkitAccount) Commons.getAccount(player.getUniqueId())).getBattleboard();
     }
 
     public void updateKills(Player player) {
@@ -76,12 +58,11 @@ public class MainBoard implements WarpScoreboard {
 
     @Override
     public void applyScoreboard(Player player) {
+        super.applyScoreboard(player);
         BukkitAccount account = (BukkitAccount) Commons.getAccount(player.getUniqueId());
         StatusMain main = getStatus(player);
         Language l = account.getLanguage();
         BattleScoreboard board = account.getBattleboard();
-        board.getLines().clear();
-        board.setDisplayName(l.tl(BOARD_MAIN_TITLE, title));
         String kitName = account.getLanguage().tl(KIT_NONE);
         if (KitManager.containsKit(player))
             kitName = NameUtils.formatString(KitManager.getCurrentPlayerKit(player).getName());
