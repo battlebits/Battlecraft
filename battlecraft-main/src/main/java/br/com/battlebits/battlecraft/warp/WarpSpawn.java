@@ -18,6 +18,7 @@ import br.com.battlebits.battlecraft.status.StatusAccount;
 import br.com.battlebits.battlecraft.status.warpstatus.StatusMain;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
 import br.com.battlebits.battlecraft.util.NameUtils;
+import br.com.battlebits.battlecraft.warp.scoreboard.MainBoard;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.commons.Commons;
 import br.com.battlebits.commons.CommonsConst;
@@ -28,7 +29,6 @@ import br.com.battlebits.commons.bukkit.api.item.ActionItemStack.InteractHandler
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import br.com.battlebits.commons.bukkit.api.player.PingAPI;
 import br.com.battlebits.commons.bukkit.api.tablist.TabListAPI;
-import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import br.com.battlebits.commons.translate.Language;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -41,7 +41,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
+import java.util.AbstractMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -56,6 +58,8 @@ public class WarpSpawn extends Warp {
     private static final double SPAWN_RADIUS_SQUARED = SPAWN_RADIUS * SPAWN_RADIUS;
 
     private Kit defaultKit;
+    private Map.Entry<String, Integer> topKillstreak;
+    private MainBoard scoreboard;
 
     private InteractHandler kitSelectorHandler = (player, player1, itemStack, itemAction) -> {
         if (itemAction.name().contains("RIGHT"))
@@ -74,6 +78,8 @@ public class WarpSpawn extends Warp {
         createKits();
         ActionItemStack.register(kitSelectorHandler);
         ActionItemStack.register(warpSelectorHandler);
+        topKillstreak = null;
+        this.scoreboard = new MainBoard(getName());
     }
 
     @EventHandler
@@ -102,16 +108,6 @@ public class WarpSpawn extends Warp {
         }
     }
 
-    @EventHandler
-    public void onTick(UpdateEvent event) {
-        if (event.getType() != UpdateEvent.UpdateType.SECOND)
-            return;
-        for (Player player : getPlayers()) {
-            applyTabList(player);
-        }
-    }
-
-
     /**
      * Insta kill when player in Spawn takes void damage
      */
@@ -127,6 +123,7 @@ public class WarpSpawn extends Warp {
         event.setDamage(Double.MAX_VALUE);
     }
 
+
     @EventHandler
     public void onKit(PlayerKitEvent event) {
         if (!isWarpKit(event.getKit()))
@@ -141,6 +138,7 @@ public class WarpSpawn extends Warp {
         inv.setItem(0, diamond);
         // TODO Criar tipos de kits para espadas diferentes
         applyTabList(event.getPlayer());
+        getScoreboard().updateKit(event.getPlayer(), event.getKit());
     }
 
     @EventHandler
@@ -153,6 +151,7 @@ public class WarpSpawn extends Warp {
         if (!KitManager.containsKit(p)) {
             KitManager.giveKit(p, defaultKit);
         }
+        updateTopKillstreak();
     }
 
     @EventHandler
@@ -180,12 +179,15 @@ public class WarpSpawn extends Warp {
             return;
         updatePlayerStatus(killed, StatusMain::addDeath);
         applyTabList(killed);
+        getScoreboard().updateDeaths(event.getPlayer());
         if (event.hasKiller()) {
             if (!inWarp(event.getKiller()))
                 return;
             updatePlayerStatus(event.getKiller(), StatusMain::addKill);
             applyTabList(event.getKiller());
+            getScoreboard().updateKills(event.getKiller());
         }
+        updateTopKillstreak();
     }
 
 
@@ -194,7 +196,10 @@ public class WarpSpawn extends Warp {
     }
 
     private StatusMain getPlayerStatus(Player player) {
-        return (StatusMain) Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).getWarpStatus(this);
+        StatusAccount account =
+                Battlecraft.getInstance().getStatusManager().get(player.getUniqueId());
+
+        return (StatusMain) account.getWarpStatus(this);
     }
 
     @EventHandler
@@ -205,6 +210,7 @@ public class WarpSpawn extends Warp {
         getPlayerStatus(p).resetKillstreak(); // O Killstreak só é valido enquanto o jogador
         // permanecer vivo e online
         KitManager.removeKit(event.getPlayer());
+        updateTopKillstreak();
     }
 
     @Override
@@ -225,6 +231,48 @@ public class WarpSpawn extends Warp {
                         player.getName(), account.getLevel(), account.getBattleMoney(),
                         account.getBattleCoins(), CommonsConst.WEBSITE);
         TabListAPI.setHeaderAndFooter(player, header, footer);
+    }
+
+    @Override
+    protected void applyScoreboard(Player player) {
+        getScoreboard().applyScoreboard(player);
+        if (topKillstreak != null) {
+            getScoreboard().updateTopKillstreak(player, topKillstreak.getKey(),
+                    topKillstreak.getValue());
+        }
+    }
+
+    private void updateTopKillstreak() {
+        int ks = 0;
+        Map.Entry<String, Integer> killStreak = null;
+        for (Player player : getPlayers()) {
+            if (!AdminMode.isAdmin(player)) {
+                if (!ProtectionManager.isProtected(player)) {
+                    StatusMain status =
+                            getPlayerStatus(player);
+                    if (status.getKillstreak() > ks) {
+                        ks = status.getKillstreak();
+                        killStreak = new AbstractMap.SimpleEntry<>(player.getName(), ks);
+                    }
+                }
+            }
+        }
+        topKillstreak = killStreak;
+        if (topKillstreak != null) {
+            for (Player player : getPlayers()) {
+                getScoreboard().updateTopKillstreak(player, topKillstreak.getKey(),
+                        topKillstreak.getValue());
+            }
+        } else {
+            for (Player player : getPlayers()) {
+                getScoreboard().resetTopKillstreak(player);
+            }
+        }
+    }
+
+    @Override
+    protected MainBoard getScoreboard() {
+        return scoreboard;
     }
 
     private void createKits() {

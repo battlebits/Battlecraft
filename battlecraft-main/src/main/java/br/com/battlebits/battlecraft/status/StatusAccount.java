@@ -30,6 +30,7 @@ public class StatusAccount {
     @Embedded
     private Map<String, WarpStatus> warpStatus = new HashMap<>();
 
+    private transient Warp currentWarp = null;
     // Completou o tutorial
     private boolean tutorialCompleted = false;
 
@@ -48,6 +49,14 @@ public class StatusAccount {
 
     public void putWarpStatus(Warp warp, WarpStatus status) {
         this.warpStatus.put(warp.getId(), status);
+    }
+
+    public void joinWarp(Warp warp) {
+        this.currentWarp = warp;
+    }
+
+    public void leaveWarp() {
+        this.currentWarp = null;
     }
 
     public void withWarp(Warp warp, Consumer<WarpStatus> statusConsumer) {

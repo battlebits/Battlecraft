@@ -4,6 +4,7 @@ import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.event.fight.PlayerFightFinishEvent;
 import br.com.battlebits.battlecraft.event.fight.PlayerFightStartEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
+import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.manager.ProtectionManager;
 import br.com.battlebits.battlecraft.protocol.OneVsOneFilter;
 import br.com.battlebits.battlecraft.status.StatusAccount;
@@ -15,6 +16,7 @@ import br.com.battlebits.battlecraft.util.NameUtils;
 import br.com.battlebits.battlecraft.warp.fight.Challenge;
 import br.com.battlebits.battlecraft.warp.fight.ChallengeType;
 import br.com.battlebits.battlecraft.warp.fight.Fight1v1;
+import br.com.battlebits.battlecraft.warp.scoreboard.OneVsOneBoard;
 import br.com.battlebits.battlecraft.world.WorldMap;
 import br.com.battlebits.battlecraft.world.map.OneVsOneMap;
 import br.com.battlebits.commons.Commons;
@@ -27,7 +29,6 @@ import br.com.battlebits.commons.bukkit.api.item.ItemAction;
 import br.com.battlebits.commons.bukkit.api.item.ItemBuilder;
 import br.com.battlebits.commons.bukkit.api.player.PingAPI;
 import br.com.battlebits.commons.bukkit.api.tablist.TabListAPI;
-import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import br.com.battlebits.commons.translate.Language;
 import com.comphenix.protocol.ProtocolLibrary;
 import org.bukkit.Bukkit;
@@ -37,7 +38,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.inventory.CraftItemEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -55,6 +55,8 @@ public class Warp1v1 extends Warp {
     private Map<Player, Map<ChallengeType, Map<Player, Challenge>>> challenges;
     private Set<Player> playersIn1v1;
     private List<OneVsOneMap> maps;
+
+    private OneVsOneBoard board;
 
     private InteractHandler challenge1v1 = (player, target, itemStack, itemAction) -> {
         if (itemAction != ItemAction.RIGHT_CLICK_PLAYER)
@@ -102,6 +104,7 @@ public class Warp1v1 extends Warp {
         challenges = new HashMap<>();
         playersIn1v1 = new HashSet<>();
         maps = new ArrayList<>();
+        board = new OneVsOneBoard(this);
         ActionItemStack.register(challenge1v1);
         World world = getSpawnLocation().getWorld();
         Location first = new Location(world, 0.5, world.getHighestBlockYAt(0, -13), -13.5);
@@ -127,7 +130,7 @@ public class Warp1v1 extends Warp {
     }
 
     @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
+    public void onQuit(PlayerWarpQuitEvent event) {
         handleQuit(event.getPlayer());
     }
 
@@ -143,6 +146,8 @@ public class Warp1v1 extends Warp {
         OneVsOneMap map = event.getChallenge().getMap();
         event.getPlayers()[0].teleport(map.getFirstLocation());
         event.getPlayers()[1].teleport(map.getSecondLocation());
+        getScoreboard().updateOpponent(event.getPlayers()[0], event.getPlayers()[1].getName());
+        getScoreboard().updateOpponent(event.getPlayers()[1], event.getPlayers()[0].getName());
     }
 
     @EventHandler
@@ -170,6 +175,10 @@ public class Warp1v1 extends Warp {
         updatePlayerStatus(winner, event.getQueue(), RankedQueue::addVictory);
         applyTabList(loser);
         applyTabList(winner);
+        getScoreboard().updateDefeat(loser);
+        getScoreboard().updateVictory(winner);
+        getScoreboard().resetOpponent(loser);
+        getScoreboard().resetOpponent(winner);
     }
 
     @EventHandler
@@ -226,13 +235,9 @@ public class Warp1v1 extends Warp {
                 && challenges.get(target).get(type).containsKey(player);
     }
 
-    @EventHandler
-    public void onTick(UpdateEvent event) {
-        if (event.getType() != UpdateEvent.UpdateType.SECOND)
-            return;
-        for (Player player : getPlayers()) {
-            applyTabList(player);
-        }
+    @Override
+    protected OneVsOneBoard getScoreboard() {
+        return board;
     }
 
     @Override
@@ -251,5 +256,10 @@ public class Warp1v1 extends Warp {
                         player.getName(), account.getLevel(), account.getBattleMoney(),
                         account.getBattleCoins(), CommonsConst.WEBSITE);
         TabListAPI.setHeaderAndFooter(player, header, footer);
+    }
+
+    @Override
+    protected void applyScoreboard(Player player) {
+        getScoreboard().applyScoreboard(player);
     }
 }

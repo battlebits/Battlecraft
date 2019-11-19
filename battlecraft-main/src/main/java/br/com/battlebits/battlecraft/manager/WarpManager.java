@@ -1,5 +1,6 @@
 package br.com.battlebits.battlecraft.manager;
 
+import br.com.battlebits.battlecraft.Battlecraft;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.util.InventoryUtils;
@@ -7,19 +8,15 @@ import br.com.battlebits.battlecraft.warp.Warp;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.entity.Player;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class WarpManager {
 
-    private static final String WARP_META = "warp";
     private Plugin plugin;
 
     private Map<String, Warp> warps;
@@ -39,11 +36,7 @@ public class WarpManager {
     }
 
     public Warp getPlayerWarp(Player player) {
-        if (player.hasMetadata(WARP_META)) {
-            List<MetadataValue> list = player.getMetadata(WARP_META);
-            return getWarp(!list.isEmpty() ? list.get(0).asString() : null);
-        }
-        return null;
+        return Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).getCurrentWarp();
     }
 
     public void joinWarp(Player player, Warp warp) {
@@ -52,9 +45,9 @@ public class WarpManager {
             plugin.getServer().getPluginManager().registerEvents(warp, plugin);
         }
         PlayerWarpJoinEvent event = new PlayerWarpJoinEvent(player, warp);
-        player.setMetadata(WARP_META, new FixedMetadataValue(plugin, warp.getId()));
+        Battlecraft.getInstance().getStatusManager().get(player.getUniqueId()).joinWarp(warp);
         AttributeInstance attr = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
-        if(attr != null) {
+        if (attr != null) {
             attr.setBaseValue(20.0);
             player.setHealth(attr.getValue());
         }
@@ -66,10 +59,9 @@ public class WarpManager {
     }
 
     public void leaveWarp(Player p) {
-        Warp lastWarp = getPlayerWarp(p);
-        if (lastWarp == null)
-            return;
-        PlayerWarpQuitEvent event = new PlayerWarpQuitEvent(p, lastWarp);
+        Warp currentWarp = getPlayerWarp(p);
+        PlayerWarpQuitEvent event = new PlayerWarpQuitEvent(p, currentWarp);
+        Battlecraft.getInstance().getStatusManager().get(p.getUniqueId()).leaveWarp();
         plugin.getServer().getPluginManager().callEvent(event);
     }
 

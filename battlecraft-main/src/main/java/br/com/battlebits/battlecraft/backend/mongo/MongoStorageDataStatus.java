@@ -30,7 +30,7 @@ public class MongoStorageDataStatus implements DataStatus {
     public StatusAccount getStatus(UUID uniqueId, String name) {
         List<StatusAccount> accounts = datastore.createQuery(StatusAccount.class).field("uniqueId"
         ).equal(uniqueId).find().toList();
-        StatusAccount account = null;
+        StatusAccount account;
         if (accounts.size() == 0) {
             account = new StatusAccount(uniqueId, name);
             datastore.save(account);

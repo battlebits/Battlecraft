@@ -4,8 +4,9 @@ import br.com.battlebits.battlecraft.ability.Kit;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpJoinEvent;
 import br.com.battlebits.battlecraft.event.warp.PlayerWarpQuitEvent;
 import br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag;
+import br.com.battlebits.battlecraft.warp.scoreboard.WarpScoreboard;
 import br.com.battlebits.battlecraft.world.WorldMap;
-import br.com.battlebits.commons.bukkit.scoreboard.modules.Line;
+import br.com.battlebits.commons.bukkit.event.update.UpdateEvent;
 import br.com.battlebits.commons.command.CommandClass;
 import lombok.Getter;
 import org.bukkit.Location;
@@ -17,14 +18,14 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import static br.com.battlebits.battlecraft.translate.BattlecraftTranslateTag.valueOf;
 
 @Getter
 public abstract class Warp implements Listener, CommandClass {
+
+    private static final int SCOREBOARD_TICK_UPDATE = 7;
 
     @Getter
     protected Set<Kit> kits;
@@ -34,7 +35,6 @@ public abstract class Warp implements Listener, CommandClass {
     private Set<Player> players;
     @Getter
     private Location spawnLocation;
-    private Consumer<List<Line>> scoreboardLines;
 
     private WorldMap worldMap;
 
@@ -84,8 +84,10 @@ public abstract class Warp implements Listener, CommandClass {
     @EventHandler(priority = EventPriority.MONITOR)
     public void onApplyTabList(PlayerWarpJoinEvent event) {
         Player p = event.getPlayer();
-        if (inWarp(p))
+        if (inWarp(p)) {
             applyTabList(p);
+            applyScoreboard(p);
+        }
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
@@ -97,7 +99,26 @@ public abstract class Warp implements Listener, CommandClass {
         }
     }
 
+    @EventHandler
+    public void onTick(UpdateEvent event) {
+        if (event.getType() == UpdateEvent.UpdateType.TICK && event.getCurrentTick() % SCOREBOARD_TICK_UPDATE == 0) {
+            getScoreboard().updateTitleText();
+            for (Player player : getPlayers()) {
+                getScoreboard().updateTitle(player);
+            }
+        }
+        if (event.getType() != UpdateEvent.UpdateType.SECOND)
+            return;
+        for (Player player : getPlayers()) {
+            applyTabList(player);
+        }
+    }
+
     protected abstract void applyTabList(Player player);
+
+    protected abstract void applyScoreboard(Player player);
+
+    protected abstract WarpScoreboard getScoreboard();
 
     protected boolean isWarpKit(Kit kit) {
         return this.kits.contains(kit);
